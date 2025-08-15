@@ -51,7 +51,7 @@
 
 .description p {
   font-weight: 100;
-    font-size: 1.2em;
+    font-size: 1.5em;
 }
 .login-container {
     display: flex;
@@ -131,4 +131,5 @@
   .google-button mat-icon {
     margin-right: 8px; /* Espacio entre el ícono y el texto */
   }
+
 

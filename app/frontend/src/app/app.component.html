@@ -1,6 +1,6 @@
 <!-- Barra fija arriba -->
 <div style="position: fixed; top: 10px; right: 10px; z-index: 1000;">
-  <button mat-button [matMenuTriggerFor]="menu">
+  <button mat-button class="language-button" [matMenuTriggerFor]="menu">
     <mat-icon>language</mat-icon>
     {{ selectedLanguageLabel }}
   </button>
@@ -12,5 +12,6 @@
   <button mat-menu-item (click)="changeLanguage('it')">Italiano</button>
   <button mat-menu-item (click)="changeLanguage('en')">Inglés</button>
 </mat-menu>
+
 
 <router-outlet></router-outlet>

@@ -1,0 +1,11 @@
+.language-button {
+  background-color: white;
+  color: black;
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+.language-button:hover {
+  color: black;
+  background-color: #005cbb;
+}
