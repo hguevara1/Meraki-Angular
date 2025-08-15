@@ -1,0 +1,32 @@
+# IntelliJ IDEA
+.idea/
+
+*.iml
+
+app/backend/seedUsers.js
+
+
+
+# Node.js
+node_modules/
+
+# Logs
+logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Compiled files
+dist/
+build/
+
+
+
+# Ignorar las dependencias instaladas en el backend y frontend
+app/backend/node_modules/
+app/frontend/node_modules/
+
+app/frontend/.angular/
+app/frontend/.vscode
