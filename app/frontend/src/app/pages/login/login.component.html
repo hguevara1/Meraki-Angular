@@ -1,0 +1,53 @@
+<!--
+<div class="menu-left">
+  <div class="language-switcher">
+    <select (change)="changeLanguage($event)">
+      <option *ngFor="let language of languages" [value]="language.value" [selected]="language.value === selectedLanguage">
+        {{ language.label }}
+      </option>
+    </select>
+  </div>
+</div>
+-->
+<div class="main-container">
+  <div class="description">
+    <h1>Bienvenido a Meraki</h1>
+    <p>Donde cada presupuesto cuenta una historia, y cada torta se hornea con el corazón.</p>
+    <p>Meraki es tu herramienta para crear presupuestos de tortas con precisión, estilo y mucho amor. Porque sabemos que detrás de cada receta hay una emoción, una celebración, un momento único.</p>
+    <p><strong>Sabores de amor</strong> no es solo nuestro lema, es nuestra esencia. ¡Gracias por formar parte de esta dulce comunidad!</p>
+  </div>
+
+  <div class="login-container">
+    <mat-card class="login-card">
+      <mat-card-header>
+        <mat-card-title>Iniciar Sesión</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <mat-form-field appearance="fill">
+            <mat-label>Usuario</mat-label>
+            <input matInput formControlName="email" required>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Contraseña</mat-label>
+            <input matInput type="password" formControlName="password" required>
+          </mat-form-field>
+
+          <button mat-flat-button color="primary" type="submit" class="login-button">Iniciar Sesión</button>
+          <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
+
+          <span class="ForgotPassword"><a href="">¿Olvidaste tu contraseña?</a></span>
+          <p>O continuar con</p>
+          <button mat-stroked-button color="#fff" class="google-button" (click)="loginWithGoogle()">
+            <img src="google.png" alt="Google Logo" class="google-logo">
+            Acceso con Google
+          </button>
+          <span class="SignUp">¿ No tienes una cuenta ? <a routerLink="/registro">Registrarse</a></span>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

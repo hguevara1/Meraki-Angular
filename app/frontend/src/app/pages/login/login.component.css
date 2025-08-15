@@ -1,0 +1,134 @@
+.error-message {
+  color: red;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.google-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background-color: #fff !important;
+  font-size: 12px;
+  margin-bottom: 15px;
+  margin-top: 15px;
+}
+
+.google-logo {
+  width: 20px;
+  height: 20px;
+  margin-top: 0px;
+  margin-bottom: -3px;
+  margin-right: 5px;
+
+}
+
+
+/* Contenedor principal */
+.main-container {
+  display: flex;
+  justify-content: space-between; /* Separa los elementos */
+  align-items: center; /* Centra verticalmente */
+  height: 100vh; /* Ocupa toda la altura de la pantalla */
+  padding: 0 2em; /* Añade un margen a los lados */
+}
+
+/* Descripción */
+.description {
+    max-width: 500px; /* Ancho máximo de la descripción */
+    color: white; /* Color del texto */
+    margin-left: 150px;
+
+}
+
+.description h1 {
+    font-size: 2.5em;
+    margin-bottom: 0.5em;
+    font-weight: 500;
+
+}
+
+.description p {
+  font-weight: 100;
+    font-size: 1.2em;
+}
+.login-container {
+    display: flex;
+    justify-content: flex-end; /* Centra horizontalmente */
+    align-items: center;     /* Centra verticalmente */
+    height: 100vh;           /* Ocupa toda la altura de la pantalla */
+    margin-right: 200px;
+    width: 60vw;
+  }
+
+  .login-card {
+    max-width: 400px;
+    width: 100%;             /* Asegura que ocupe el ancho máximo */
+    padding: 2em;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  mat-form-field {
+    width: 100%;
+    margin-bottom: 1em;
+  }
+
+  mat-card-title{
+    margin-bottom:20px ;
+    color: #005cbb;
+  }
+  mat-card-header{
+    justify-content: center;
+
+  }
+  mat-card-content{
+    justify-content: center;
+    align-items: center;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra el botón horizontalmente */
+  }
+
+  .login-button {
+    width: 100%; /* Opcional: Ajusta el ancho del botón */
+    max-width: 200px; /* Opcional: Limita el ancho máximo */
+    border-radius: 20px;
+  }
+
+  mat-label{
+    font-size: 14px;
+  }
+
+  .SignUp{
+
+    font-size: 12px;
+  }
+  .ForgotPassword{
+    margin-top: 15px;
+    font-size: 12px;
+  }
+  .ForgotPassword a, .SignUp a{
+    color: #005cbb;
+  }
+  .google-button {
+    width: 100%; /* Opcional: Ajusta el ancho del botón */
+    max-width: 200px; /* Opcional: Limita el ancho máximo */
+    background-color: #db4437; /* Color de Google */
+    color: black; /* Texto blanco */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    border-width: 1px;
+    border-color: #000111 !important;
+  }
+
+  .google-button mat-icon {
+    margin-right: 8px; /* Espacio entre el ícono y el texto */
+  }
+

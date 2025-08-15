@@ -1,0 +1,269 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;
+background-color: #005cbb;
+}
+
+/* Estilos del contenedor de facturas */
+.container-factura {
+    padding: 20px;
+}
+
+.table-factura {
+    width: 100%;
+    margin-top: 20px;
+}
+
+/* Estilos del spinner */
+.spinner-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    min-height: 200px;
+}
+
+.spinner-container p {
+    margin-top: 16px;
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 16px;
+}
+
+/* Estilos de la barra de búsqueda y botones */
+.button-container-factura {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-field {
+    flex: 1;
+    max-width: 1200px;
+    margin-right: 16px;
+}
+
+.button-container-factura button {
+    white-space: nowrap;
+}
+
+/* Resto de estilos existentes */
+.full-width {
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+h4 {
+    margin-bottom: 20px;
+}
+
+.acciones {
+    display: flex;
+    justify-content: end;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.acciones button {
+    margin-left: 20px;
+}
+
+.factura-container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 60px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.agregar-producto {
+    display: flex;
+    justify-content: end;
+    margin-bottom: 40px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.logo img {
+    max-width: 100px;
+    height: auto;
+}
+
+.id-factura h2 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.cliente-info {
+    margin-bottom: 20px;
+}
+
+.cliente-info p {
+    margin: 5px 0;
+}
+
+table {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.total {
+    text-align: left;
+    margin-top: 20px;
+}
+
+.total h2 {
+    font-size: 28px;
+    color: #333;
+}
+
+.header-azul {
+    background-color: #005cbb !important;
+    color: white !important;
+}
+
+.mat-header-cell {
+    padding: 12px 16px;
+}
+
+.init {
+    color: #005cbb;
+    font-weight: 800;
+}
+
+/* Estilos de botones */
+.mat-button.mat-success,
+.mat-stroked-button.mat-success {
+    color: #155724;
+}
+
+.mat-button.mat-success:hover,
+.mat-stroked-button.mat-success:hover {
+    background-color: #f0fff3;
+}
+
+.mat-raised-button.mat-success,
+.mat-flat-button.mat-success,
+.mat-fab.mat-success,
+.mat-mini-fab.mat-success {
+    color: #f0fff3;
+    background-color: #155724;
+}
+
+.mat-icon-button.mat-success {
+    color: #155724;
+}
+
+.boton-aceptar {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.language-switcher select {
+    border: none;
+    padding: 6px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.menu-left {
+    display: flex;
+    justify-content: end;
+    margin-top: 0px;
+}
+
+.menu-left .language-switcher {
+    margin-top: 10px;
+    margin-left: 100px;
+    margin-right: 50px;
+}
+
+/* Estilos para el modal de ver factura */
+.factura-detalles {
+    padding: 20px;
+}
+
+.factura-detalles p {
+    margin: 10px 0;
+}
+
+.productos-lista {
+    margin: 20px 0;
+}
+
+.productos-lista table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.productos-lista th,
+.productos-lista td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.productos-lista th {
+    background-color: #f5f5f5;
+}
+
+.total {
+    font-size: 1.2em;
+    margin-top: 20px;
+    text-align: right;
+}
+
+/* Estilos para los Snackbars */
+.success-snackbar {
+  background: #4caf50;
+  color: white;
+}
+
+.error-snackbar {
+  background: #f44336;
+  color: white;
+}
+
+.warning-snackbar {
+  background: #ff9800;
+  color: white;
+}
+
+.success-snackbar .mat-simple-snackbar-action,
+.error-snackbar .mat-simple-snackbar-action,
+.warning-snackbar .mat-simple-snackbar-action {
+  color: white;
+}
+
+/* Estilos para la impresión */
+@media print {
+  .print-button,
+  mat-dialog-actions,
+  button {
+    display: none !important;
+  }
+
+  .factura-detalles {
+    padding: 0 !important;
+  }
+
+  body {
+    margin: 0;
+    padding: 20px;
+  }
+}
+
+.print-button {
+  float: right;
+  margin-left: 10px;
+}
