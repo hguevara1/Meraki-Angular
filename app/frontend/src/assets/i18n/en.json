@@ -1,0 +1,18 @@
+{
+  "LOGIN": {
+    "WELCOME_MESSAGE": "Welcome to Meraki!",
+    "DESCRIPTION1": "Where every budget tells a story, and every cake is baked with heart.",
+    "DESCRIPTION2": "Meraki is your tool to create cake budgets with precision, style, and a lot of love. Because we know that behind every recipe there is an emotion, a celebration, a unique moment.",
+    "LEMMA": "Flavors of love.",
+    "DESCRIPTION3": " is not just our motto, it is our essence. Thank you for being part of this sweet community!",
+    "LOGIN_TITLE": "Login",
+    "USERNAME": "Username",
+    "PASSWORD": "Password",
+    "LOGIN_BUTTON": "Login",
+    "FORGOT_PASSWORD": "Forgot your password?",
+    "OR_CONTINUE_WITH": "Or continue with",
+    "GOOGLE_LOGIN": "Login with Google",
+    "NO_ACCOUNT": "Don't have an account? ",
+    "SIGN_UP": "Sign Up"
+  }
+}

@@ -1,0 +1,39 @@
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.register-card {
+  width: 450px; /* más ancho que el login */
+  padding: 20px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.login-link {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.signin-link {
+  color: #1976d2;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+mat-card-title{
+    margin-bottom:20px ;
+    color: #005cbb;
+  }
+  mat-card-header{
+    justify-content: center;
+
+  }
+  mat-card-content{
+    justify-content: center;
+    align-items: center;
+  }

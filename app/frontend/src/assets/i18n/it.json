@@ -1,0 +1,18 @@
+{
+  "LOGIN": {
+    "WELCOME_MESSAGE": "Benvenuti in Meraki!",
+    "DESCRIPTION1": "Dove ogni preventivo racconta una storia, e ogni torta è fatta con il cuore.",
+    "DESCRIPTION2": "Meraki è il tuo strumento per creare preventivi per torte con precisione, stile e tanto amore. Perché sappiamo che dietro ogni ricetta c'è un'emozione, una celebrazione, un momento unico.",
+    "LEMMA": "Sapori d'amore.",
+    "DESCRIPTION3": " non è solo il nostro motto, è la nostra essenza. Grazie per far parte di questa dolce comunità!",
+    "LOGIN_TITLE": "Accedi",
+    "USERNAME": "Nome utente",
+    "PASSWORD": "Password",
+    "LOGIN_BUTTON": "Accedi",
+    "FORGOT_PASSWORD": "Password dimenticata?",
+    "OR_CONTINUE_WITH": "Oppure continua con",
+    "GOOGLE_LOGIN": "Accedi con Google",
+    "NO_ACCOUNT": "Non hai un account? ",
+    "SIGN_UP": "Registrati"
+  }
+}

@@ -1,6 +1,7 @@
 # IntelliJ IDEA
 .idea/
-.env
+app/backend/.env
+app/frontend/.env
 *.iml
 
 app/backend/seedUsers.js

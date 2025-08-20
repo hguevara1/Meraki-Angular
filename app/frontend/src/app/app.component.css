@@ -1,0 +1,43 @@
+/* Estilos existentes del botón */
+.language-button {
+  background-color: white;
+  color: black;
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+.language-button:hover {
+  color: black;
+  background-color: #005cbb;
+}
+
+/* Nuevos estilos para el menú con scroll */
+.scrollable-language-menu {
+  max-height: 2px; /* Altura máxima antes de mostrar scroll */
+  overflow-y: auto;  /* Activa el scroll vertical */
+  background-color: blue !important;
+  height: 50px;
+}
+
+
+/* Personalización de la barra de scroll */
+.scrollable-language-menu::-webkit-scrollbar {
+  width: 8px; /* Ancho de la barra de scroll */
+}
+
+.scrollable-language-menu::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2); /* Color del "pulgarcito" */
+  border-radius: 4px; /* Bordes redondeados */
+}
+
+.scrollable-language-menu::-webkit-scrollbar-track {
+  background: transparent; /* Fondo transparente */
+}
+
+/* Opcional: Estilo para los items del menú */
+.scrollable-language-menu .mat-menu-item {
+  font-size: 14px;
+  padding: 0 16px;
+  height: 36px;
+  line-height: 36px;
+}

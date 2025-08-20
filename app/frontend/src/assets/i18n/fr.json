@@ -1,0 +1,18 @@
+{
+  "LOGIN": {
+    "WELCOME_MESSAGE": "Bienvenue chez Meraki !",
+    "DESCRIPTION1": "Où chaque budget raconte une histoire, et chaque gâteau est cuit avec le cœur.",
+    "DESCRIPTION2": "Meraki est votre outil pour créer des devis de gâteaux avec précision, style et beaucoup d'amour. Parce que nous savons que derrière chaque recette il y a une émotion, une célébration, un moment unique.",
+    "LEMMA": "Saveurs d'amour.",
+    "DESCRIPTION3": " n'est pas seulement notre devise, c'est notre essence. Merci de faire partie de cette douce communauté !",
+    "LOGIN_TITLE": "Se connecter",
+    "USERNAME": "Nom d'utilisateur",
+    "PASSWORD": "Mot de passe",
+    "LOGIN_BUTTON": "Se connecter",
+    "FORGOT_PASSWORD": "Mot de passe oublié ?",
+    "OR_CONTINUE_WITH": "Ou continuer avec",
+    "GOOGLE_LOGIN": "Se connecter avec Google",
+    "NO_ACCOUNT": "Vous n'avez pas de compte ? ",
+    "SIGN_UP": "S'inscrire"
+  }
+}

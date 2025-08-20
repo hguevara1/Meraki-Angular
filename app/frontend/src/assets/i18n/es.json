@@ -1,0 +1,18 @@
+{
+  "LOGIN": {
+    "WELCOME_MESSAGE": "¡Bienvenido a Meraki!",
+    "DESCRIPTION1": "Donde cada presupuesto cuenta una historia, y cada torta se hornea con el corazón.",
+    "DESCRIPTION2": "Meraki es tu herramienta para crear presupuestos de tortas con precisión, estilo y mucho amor. Porque sabemos que detrás de cada receta hay una emoción, una celebración, un momento único.",
+    "LEMMA": "Sabores de amor.",
+    "DESCRIPTION3": " no es solo nuestro lema, es nuestra esencia. ¡Gracias por formar parte de esta dulce comunidad!",
+    "LOGIN_TITLE": "Iniciar Sesión",
+    "USERNAME": "Usuario",
+    "PASSWORD": "Contraseña",
+    "LOGIN_BUTTON": "Iniciar Sesión",
+    "FORGOT_PASSWORD": "¿Olvidaste tu contraseña?",
+    "OR_CONTINUE_WITH": "O continuar con",
+    "GOOGLE_LOGIN": "Acceso con Google",
+    "NO_ACCOUNT": "¿ No tienes una cuenta ? ",
+    "SIGN_UP": "Registrarse"
+  }
+}

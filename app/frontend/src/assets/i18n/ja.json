@@ -1,0 +1,18 @@
+{
+  "LOGIN": {
+    "WELCOME_MESSAGE": "Merakiへようこそ！",
+    "DESCRIPTION1": "すべての予算が物語を語り、すべてのケーキが心で焼かれる場所。",
+    "DESCRIPTION2": "Merakiは、正確さ、スタイル、そしてたくさんの愛を込めてケーキの予算を作成するためのツールです。すべてのレシピの背後には感情、お祝い、ユニークな瞬間があることを私たちは知っています。",
+    "LEMMA": "愛の味。",
+    "DESCRIPTION3": "は私たちのモットーであるだけでなく、私たちの本質です。この甘いコミュニティの一員でいてくれてありがとう！",
+    "LOGIN_TITLE": "ログイン",
+    "USERNAME": "ユーザー名",
+    "PASSWORD": "パスワード",
+    "LOGIN_BUTTON": "ログイン",
+    "FORGOT_PASSWORD": "パスワードをお忘れですか？",
+    "OR_CONTINUE_WITH": "または続ける",
+    "GOOGLE_LOGIN": "Googleでログイン",
+    "NO_ACCOUNT": "アカウントをお持ちではありませんか？",
+    "SIGN_UP": "サインアップ"
+  }
+}

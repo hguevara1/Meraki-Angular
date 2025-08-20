@@ -1,0 +1,18 @@
+{
+  "LOGIN": {
+    "WELCOME_MESSAGE": "Bem-vindo à Meraki!",
+    "DESCRIPTION1": "Onde cada orçamento conta uma história, e cada bolo é assado com o coração.",
+    "DESCRIPTION2": "Meraki é a sua ferramenta para criar orçamentos de bolos com precisão, estilo e muito amor. Porque sabemos que por trás de cada receita há uma emoção, uma celebração, um momento único.",
+    "LEMMA": "Sabores de amor.",
+    "DESCRIPTION3": " não é apenas o nosso lema, é a nossa essência. Obrigado por fazer parte desta doce comunidade!",
+    "LOGIN_TITLE": "Entrar",
+    "USERNAME": "Nome de usuário",
+    "PASSWORD": "Senha",
+    "LOGIN_BUTTON": "Entrar",
+    "FORGOT_PASSWORD": "Esqueceu sua senha?",
+    "OR_CONTINUE_WITH": "Ou continue com",
+    "GOOGLE_LOGIN": "Entrar com o Google",
+    "NO_ACCOUNT": "Não tem uma conta? ",
+    "SIGN_UP": "Cadastre-se"
+  }
+}
