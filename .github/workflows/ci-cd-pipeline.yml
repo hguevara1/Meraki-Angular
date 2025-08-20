@@ -26,19 +26,33 @@ jobs:
         with:
           node-version: 18
 
+      - name: Upload test coverage
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./app/backend/coverage/lcov.info
+          flags: backend
+          name: codecov-umbrella
+
       # Paso 1: Instalar dependencias del backend
       - name: Install backend dependencies
         working-directory: ./app/backend
         run: npm install
 
-      # Paso 2: Ejecutar pruebas del backend (si existen)
+      # Paso 2: Ejecutar pruebas del backend con Jest
       - name: Run backend tests
         working-directory: ./app/backend
         run: |
           if [ -f "package.json" ] && grep -q "\"test\"" package.json; then
-            npm test
+            echo "📦 Installing backend dependencies..."
+            npm install
+          
+            echo "🧪 Running backend tests with Jest..."
+            npm test -- --testTimeout=15000
+          
+            # Si quieres generar coverage report
+            # npm test -- --coverage --testTimeout=15000
           else
-            echo "No tests configured for backend"
+            echo "⚠️ No tests configured for backend"
           fi
 
       # Paso 3: Instalar dependencias del frontend
