@@ -1,26 +1,29 @@
-version: "3.8"
-
 services:
   backend:
-    build: ./backend
-    container_name: meraki-backend
+    build:
+      context: ./app/backend
+      dockerfile: Dockerfile
+    image: mi-backend:1.0
+    environment:
+      - MONGO_URI=${MONGO_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - PORT=${PORT}
     ports:
-      - "5000:5000"
-    env_file:
-      - ./backend/.env
+      - "${PORT}:${PORT}"
     networks:
-      - meraki-net
+      - mean-network
 
   frontend:
-    build: ./frontend
-    container_name: meraki-frontend
+    build:
+      context: ./app
+      dockerfile: Dockerfile  # Asegúrate de que el archivo se llame así
     ports:
-      - "4200:80"
+      - "4200:4200"  # Mapeamos el puerto 4200 del contenedor al puerto 4200 del host
     depends_on:
       - backend
     networks:
-      - meraki-net
+      - mean-network
 
 networks:
-  meraki-net:
+  mean-network:
     driver: bridge

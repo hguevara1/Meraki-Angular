@@ -1,18 +1,11 @@
-# Imagen base
-FROM node:20
+FROM node:18
 
-# Crear directorio de trabajo
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Copiar package.json e instalar dependencias
 COPY package*.json ./
-RUN npm install --production
+RUN npm install
 
-# Copiar el resto del backend
 COPY . .
 
-# Exponer puerto
-EXPOSE 5000
-
-# Comando de inicio
+EXPOSE ${PORT}
 CMD ["node", "server.js"]

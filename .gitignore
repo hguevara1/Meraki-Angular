@@ -1,42 +1,134 @@
-# IntelliJ IDEA
-.idea/
-app/backend/.env
-app/frontend/.env
-*.iml
+# ============================================================
+# MEAN Stack Docker Project - .gitignore
+# ============================================================
 
-app/backend/seedUsers.js
+# ========================
+# DEPENDENCIES
+# ========================
+node_modules/
+*/node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pids/
-.logs/
+.pnpm-debug.log*
 
+# ========================
+# ENVIRONMENT VARIABLES
+# ========================
+.env
+.env.local
+.env.production
+.env.development
+.env.test
+.env.example
+.env*.local
 
-# Node.js
-node_modules/
+# ========================
+# DOCKER
+# ========================
+docker-compose.override.yml
+.docker/
 
-# Logs
+# ========================
+# LOGS
+# ========================
 logs
 *.log
+.pids/
+.npm/
+.yarn/
 
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Compiled files
+# ========================
+# BUILD OUTPUTS
+# ========================
 dist/
+*/dist/
 build/
-# Angular
-.angular/cache/
+*/build/
 out-tsc/
 *.tsbuildinfo
 
+# ========================
+# CACHE DIRECTORIES
+# ========================
+.cache/
+.angular/cache/
+.parcel-cache/
+.vscode/.react/
+.yarn/.cache/
 
-# Ignorar las dependencias instaladas en el backend y frontend
-app/backend/node_modules/
-app/frontend/node_modules/
+# ========================
+# IDE & EDITOR
+# ========================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.iml
+*.ipr
+*.iws
 
+# ========================
+# OPERATING SYSTEM
+# ========================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ========================
+# RUNTIME DATA
+# ========================
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# ========================
+# COVERAGE REPORTS
+# ========================
+coverage/
+*.lcov
+html-report/
+
+# ========================
+# MISC
+# ========================
+*.tgz
+*.tar.gz
+.elasticbeanstalk/
+.nyc_output/
+
+# ========================
+# BACKEND SPECIFIC
+# ========================
+app/backend/seedUsers.js
+app/backend/.env
+app/backend/.env.*
+
+# ========================
+# FRONTEND SPECIFIC
+# ========================
 app/frontend/.angular/
-app/frontend/.vscode
+app/frontend/.env
+app/frontend/.env.*
+app/frontend/browser/
+app/frontend/server/
 
-# OS generated files
+# ========================
+# TEMPORARY FILES
+# ========================
+.tmp/
+temp/
+tmp/
+
+# ========================
+# DOCKER IGNORES (opcional, si no quieres subir imágenes)
+# ========================
+# *.tar
+# *.gz
