@@ -1,10 +1,14 @@
 # IntelliJ IDEA
 .idea/
-
+.env
 *.iml
 
 app/backend/seedUsers.js
-
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pids/
+.logs/
 
 
 # Node.js
@@ -21,7 +25,10 @@ Thumbs.db
 # Compiled files
 dist/
 build/
-
+# Angular
+.angular/cache/
+out-tsc/
+*.tsbuildinfo
 
 
 # Ignorar las dependencias instaladas en el backend y frontend
@@ -30,3 +37,5 @@ app/frontend/node_modules/
 
 app/frontend/.angular/
 app/frontend/.vscode
+
+# OS generated files

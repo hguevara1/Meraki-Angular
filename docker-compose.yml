@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  backend:
+    build: ./backend
+    container_name: meraki-backend
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./backend/.env
+    networks:
+      - meraki-net
+
+  frontend:
+    build: ./frontend
+    container_name: meraki-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - meraki-net
+
+networks:
+  meraki-net:
+    driver: bridge
