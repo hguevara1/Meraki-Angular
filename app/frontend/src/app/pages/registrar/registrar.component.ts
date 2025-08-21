@@ -32,15 +32,17 @@ export class RegistrarComponent {
 
   constructor(private fb: FormBuilder, private http: HttpClient) {
     this.registerForm = this.fb.group({
-      name: ['', Validators.required],
+      nombre: ['', Validators.required],
+      apellido: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      phone: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      telefono: ['', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(4)]],
       confirmPassword: ['', Validators.required]
     });
   }
 
   onSubmit() {
+     console.log('Formulario enviado:', this.registerForm.value);
     if (this.registerForm.invalid) {
       this.errorMessage = 'Por favor completa todos los campos correctamente.';
       return;

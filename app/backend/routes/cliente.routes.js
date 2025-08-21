@@ -1,17 +1,15 @@
 import express from "express";
 import {
-  registerUser,
-  loginUser,
+  crearCliente,
   obtenerClientes,
   obtenerCliente,
   actualizarCliente,
   eliminarCliente
-} from "../controllers/user.controller.js";
+} from "../controllers/cliente.controller.js";
 
 const router = express.Router();
 
-router.post("/register", registerUser);
-router.post("/login", loginUser);
+router.post("/", crearCliente);
 router.get("/", obtenerClientes);
 router.get("/:id", obtenerCliente);
 router.put("/:id", actualizarCliente);
