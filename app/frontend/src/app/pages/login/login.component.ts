@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { TranslateService, TranslatePipe  } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -30,11 +31,13 @@ import { RouterLink } from '@angular/router';
 export class LoginComponent {
   loginForm: FormGroup;
   errorMessage: string = '';
+  isLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private http: HttpClient
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -47,10 +50,49 @@ export class LoginComponent {
       this.errorMessage = this.translate.instant('LOGIN.INVALID_FORM');
       return;
     }
-    console.log('Login exitoso:', this.loginForm.value);
+
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    const loginData = {
+      email: this.loginForm.value.email,
+      password: this.loginForm.value.password
+    };
+
+    this.http.post('http://localhost:5000/api/users/login', loginData)
+      .subscribe({
+        next: (response: any) => {
+          this.isLoading = false;
+          localStorage.setItem('authToken', response.token);
+          localStorage.setItem('userData', JSON.stringify(response.user));
+          this.router.navigate(['/dashboard']);
+        },
+        error: (error) => {
+          this.isLoading = false;
+          if (error.status === 400) {
+            this.errorMessage = error.error?.message || this.translate.instant('LOGIN.INVALID_CREDENTIALS');
+          } else if (error.status === 500) {
+            this.errorMessage = this.translate.instant('LOGIN.SERVER_ERROR');
+          } else {
+            this.errorMessage = this.translate.instant('LOGIN.CONNECTION_ERROR');
+          }
+        }
+      });
   }
 
   loginWithGoogle() {
-    console.log('Login con Google iniciado...');
+    this.isLoading = true;
+    window.location.href = 'http://localhost:5000/api/auth/google';
+  }
+
+  ngOnInit() {
+    // Manejar token de Google si viene por URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+    if (token) {
+      localStorage.setItem('authToken', token);
+      this.router.navigate(['/dashboard']);
+    }
   }
 }

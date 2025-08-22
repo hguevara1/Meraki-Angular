@@ -26,26 +26,52 @@
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
           <mat-form-field appearance="fill">
             <mat-label>{{ 'LOGIN.USERNAME' | translate }}</mat-label>
-            <input matInput formControlName="email" required>
+            <input matInput type="email" formControlName="email" required>
+            <mat-error *ngIf="loginForm.get('email')?.invalid">
+              {{ 'LOGIN.EMAIL_ERROR' | translate }}
+            </mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="fill">
             <mat-label>{{ 'LOGIN.PASSWORD' | translate }}</mat-label>
             <input matInput type="password" formControlName="password" required>
+            <mat-error *ngIf="loginForm.get('password')?.invalid">
+              {{ 'LOGIN.PASSWORD_ERROR' | translate }}
+            </mat-error>
           </mat-form-field>
 
-          <button mat-flat-button color="primary" type="submit" class="login-button">{{ 'LOGIN.LOGIN_BUTTON' | translate }}</button>
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            class="login-button"
+            [disabled]="isLoading">
+
+            <span *ngIf="!isLoading">{{ 'LOGIN.LOGIN_BUTTON' | translate }}</span>
+            <span *ngIf="isLoading">{{ 'LOGIN.LOADING' | translate }}</span>
+          </button>
+
           <div *ngIf="errorMessage" class="error-message">
             {{ errorMessage }}
           </div>
 
           <span class="ForgotPassword"><a href="">{{ 'LOGIN.FORGOT_PASSWORD' | translate }}</a></span>
           <p>{{ 'LOGIN.OR_CONTINUE_WITH' | translate }}</p>
-          <button mat-stroked-button color="#fff" class="google-button" (click)="loginWithGoogle()">
+
+          <button
+            mat-stroked-button
+            class="google-button"
+            (click)="loginWithGoogle()"
+            [disabled]="isLoading">
+
             <img src="google.png" alt="Google Logo" class="google-logo">
             {{ 'LOGIN.GOOGLE_LOGIN' | translate }}
           </button>
-          <div class="SignUp">{{ 'LOGIN.NO_ACCOUNT' | translate }} <a routerLink="/registro">{{ 'LOGIN.SIGN_UP' | translate }}</a></div>
+
+          <div class="SignUp">
+            {{ 'LOGIN.NO_ACCOUNT' | translate }}
+            <a routerLink="/registro">{{ 'LOGIN.SIGN_UP' | translate }}</a>
+          </div>
         </form>
       </mat-card-content>
     </mat-card>

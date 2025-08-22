@@ -1,137 +1,257 @@
 .error-message {
-  color: red;
+  color: #d32f2f;
   margin-top: 1rem;
   text-align: center;
+  font-size: 14px;
+  padding: 8px;
+  background-color: #ffebee;
+  border-radius: 4px;
+  border: 1px solid #ffcdd2;
 }
 
 .google-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 10px;
   background-color: #fff !important;
   font-size: 12px;
   margin-bottom: 15px;
   margin-top: 15px;
+  border: 1px solid #dadce0 !important;
+  transition: all 0.3s ease;
+}
+
+.google-button:hover:not([disabled]) {
+  background-color: #f8f9fa !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.google-button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .google-logo {
   width: 20px;
   height: 20px;
-  margin-top: 0px;
-  margin-bottom: -3px;
-  margin-right: 5px;
-
 }
-
 
 /* Contenedor principal */
 .main-container {
   display: flex;
-  justify-content: space-between; /* Separa los elementos */
-  align-items: center; /* Centra verticalmente */
-  height: 100vh; /* Ocupa toda la altura de la pantalla */
-  padding: 0 2em; /* Añade un margen a los lados */
+  justify-content: space-between;
+  align-items: center;
+  height: 100vh;
+  padding: 0 2em;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 /* Descripción */
 .description {
-    max-width: 500px; /* Ancho máximo de la descripción */
-    color: white; /* Color del texto */
-    margin-left: 150px;
-
+  max-width: 500px;
+  color: white;
+  margin-left: 150px;
 }
 
 .description h1 {
-    font-size: 2.5em;
-    margin-bottom: 0.5em;
-    font-weight: 500;
-
+  font-size: 2.5em;
+  margin-bottom: 0.5em;
+  font-weight: 500;
 }
 
 .description p {
   font-weight: 100;
-    font-size: 1.5em;
+  font-size: 1.5em;
+  line-height: 1.4;
 }
+
 .login-container {
-    display: flex;
-    justify-content: flex-end; /* Centra horizontalmente */
-    align-items: center;     /* Centra verticalmente */
-    height: 100vh;           /* Ocupa toda la altura de la pantalla */
-    margin-right: 200px;
-    width: 60vw;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 100vh;
+  margin-right: 200px;
+  width: 60vw;
+}
+
+.login-card {
+  max-width: 400px;
+  width: 100%;
+  padding: 2em;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  background: white;
+}
+
+mat-form-field {
+  width: 100%;
+  margin-bottom: 1.5em;
+}
+
+mat-card-title {
+  margin-bottom: 20px;
+  color: #005cbb;
+  font-size: 1.5em;
+  font-weight: 600;
+  text-align: center;
+}
+
+mat-card-header {
+  justify-content: center;
+}
+
+mat-card-content {
+  justify-content: center;
+  align-items: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.login-button {
+  width: 100%;
+  max-width: 200px;
+  border-radius: 20px;
+  height: 42px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.login-button:not([disabled]):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 92, 187, 0.3);
+}
+
+.login-button[disabled] {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+mat-label {
+  font-size: 14px;
+}
+
+.SignUp {
+  font-size: 12px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.ForgotPassword {
+  margin-top: 15px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.ForgotPassword a,
+.SignUp a {
+  color: #005cbb;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.ForgotPassword a:hover,
+.SignUp a:hover {
+  color: #003a75;
+  text-decoration: underline;
+}
+
+/* Loading state */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  z-index: 10;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .main-container {
+    flex-direction: column;
+    justify-content: center;
+    padding: 2em;
+  }
+
+  .description {
+    margin-left: 0;
+    margin-bottom: 2em;
+    text-align: center;
+    max-width: 100%;
+  }
+
+  .login-container {
+    justify-content: center;
+    margin-right: 0;
+    width: 100%;
+  }
+
+  .description h1 {
+    font-size: 2em;
+  }
+
+  .description p {
+    font-size: 1.2em;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-container {
+    padding: 1em;
   }
 
   .login-card {
-    max-width: 400px;
-    width: 100%;             /* Asegura que ocupe el ancho máximo */
-    padding: 2em;
-    border-radius: 20px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    padding: 1.5em;
   }
 
-  mat-form-field {
-    width: 100%;
-    margin-bottom: 1em;
+  .description h1 {
+    font-size: 1.8em;
   }
 
-  mat-card-title{
-    margin-bottom:20px ;
-    color: #005cbb;
+  .description p {
+    font-size: 1.1em;
   }
-  mat-card-header{
-    justify-content: center;
+}
 
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  mat-card-content{
-    justify-content: center;
-    align-items: center;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
+}
 
-  form {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Centra el botón horizontalmente */
-  }
+.login-card {
+  animation: fadeIn 0.6s ease-out;
+}
 
-  .login-button {
-    width: 100%; /* Opcional: Ajusta el ancho del botón */
-    max-width: 200px; /* Opcional: Limita el ancho máximo */
-    border-radius: 20px;
-  }
+/* Mejoras de accesibilidad */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #005cbb;
+  outline-offset: 2px;
+}
 
-  mat-label{
-    font-size: 14px;
-  }
+/* Estados de validación */
+mat-form-field.ng-invalid.ng-touched .mat-form-field-outline {
+  color: #d32f2f;
+}
 
-  .SignUp{
-
-    font-size: 12px;
-  }
-  .ForgotPassword{
-    margin-top: 15px;
-    font-size: 12px;
-  }
-  .ForgotPassword a, .SignUp a{
-    color: #005cbb;
-  }
-  .google-button {
-    width: 100%; /* Opcional: Ajusta el ancho del botón */
-    max-width: 200px; /* Opcional: Limita el ancho máximo */
-    background-color: #db4437; /* Color de Google */
-    color: black; /* Texto blanco */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 20px;
-    border-width: 1px;
-    border-color: #000111 !important;
-  }
-
-  .google-button mat-icon {
-    margin-right: 8px; /* Espacio entre el ícono y el texto */
-  }
-
-
-
-
+mat-form-field.ng-valid.ng-touched .mat-form-field-outline {
+  color: #4caf50;
+}
