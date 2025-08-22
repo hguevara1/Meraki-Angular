@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Subscription } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 // Angular Material imports
 import { MatIconModule } from '@angular/material/icon';
@@ -25,14 +26,19 @@ import { MatCardModule } from '@angular/material/card';
 export class DashboardComponent implements OnInit, OnDestroy {
   currentUser: any;
   userEmail: string = '';
+  totalIngredientes: number = 0;
   private authSubscription!: Subscription;
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
+    console.log('🔵 DashboardComponent iniciado');
+    this.loadUserData();
+    this.loadIngredientesCount();
     if (!this.authService.isAuthenticated()) {
       this.router.navigate(['/login']);
       return;
@@ -41,6 +47,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private loadUserData() {
+    const userData = this.authService.getUserData();
+    if (userData) {
+      this.userEmail = userData.email;
+    }
     this.authSubscription = this.authService.getCurrentUser().subscribe({
       next: (user: any) => {
         this.currentUser = user;
@@ -56,7 +66,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     });
   }
-
+  private loadIngredientesCount() {
+      this.http.get<any[]>('http://localhost:5000/api/ingredientes')
+        .subscribe({
+          next: (ingredientes) => {
+            this.totalIngredientes = ingredientes.length;
+          },
+          error: (error) => {
+            this.totalIngredientes = 0;
+          },
+          complete: () => {
+            console.log('🏁 Carga de ingredientes completada');
+          }
+        });
+    }
   logout() {
     this.authService.logout();
   }
