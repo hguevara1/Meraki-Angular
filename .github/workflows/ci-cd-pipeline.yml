@@ -30,6 +30,7 @@ jobs:
           key: ${{ runner.os }}-mongodb-binaries
 
       - name: 🧪 Run backend tests with Jest
+        working-directory: ./app/backend
         env:
           NODE_ENV: test
         run: |
