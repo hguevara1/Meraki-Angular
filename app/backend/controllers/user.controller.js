@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 // Registrar usuario
 export const registerUser = async (req, res) => {
@@ -7,87 +8,56 @@ export const registerUser = async (req, res) => {
     const { nombre, apellido, email, telefono, password, confirmPassword } = req.body;
 
     // Validaciones
-    if (!nombre || !apellido || !email || !telefono || !password || !confirmPassword) {
-      return res.status(400).json({ message: "Todos los campos son requeridos" });
-    }
-
     if (password !== confirmPassword) {
       return res.status(400).json({ message: "Las contraseñas no coinciden" });
     }
 
-    // Verificar si el usuario ya existe
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "El usuario ya existe" });
-    }
-
-    // Hashear contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Crear nuevo usuario
-    const newUser = new User({
+    const user = new User({
       nombre,
       apellido,
-      email,
+      email: email.toLowerCase().trim(),
       telefono,
       password: hashedPassword
     });
 
-    await newUser.save();
-
-    res.status(201).json({
-      message: "Usuario registrado correctamente",
-      user: {
-        id: newUser._id,
-        nombre: newUser.nombre,
-        apellido: newUser.apellido,
-        email: newUser.email,
-        telefono: newUser.telefono
-      }
-    });
+    await user.save();
+    res.status(201).json({ message: "Usuario registrado exitosamente" });
 
   } catch (error) {
     if (error.code === 11000) {
-      return res.status(400).json({ message: "El email ya está registrado" });
+      return res.status(400).json({ message: "El usuario ya existe" });
     }
-    res.status(500).json({ message: "Error del servidor", error: error.message });
+    res.status(400).json({ message: "Error al registrar usuario", error: error.message });
   }
 };
 
-// Login de usuario
+// Login usuario
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
 
-    if (!email || !password) {
-      return res.status(400).json({ message: "Email y contraseña son requeridos" });
-    }
-
-    // Buscar usuario
-    const user = await User.findOne({ email });
-    if (!user) {
+    if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(400).json({ message: "Credenciales inválidas" });
     }
 
-    // Verificar contraseña
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Credenciales inválidas" });
-    }
-
-    // Excluir password de la respuesta
-    const userWithoutPassword = {
-      id: user._id,
-      nombre: user.nombre,
-      apellido: user.apellido,
-      email: user.email,
-      telefono: user.telefono,
-      createdAt: user.createdAt
-    };
+    const token = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
 
     res.json({
       message: "Login exitoso",
-      user: userWithoutPassword
+      token,
+      user: {
+        _id: user._id,
+        nombre: user.nombre,
+        apellido: user.apellido,
+        email: user.email,
+        telefono: user.telefono
+      }
     });
 
   } catch (error) {
@@ -96,50 +66,49 @@ export const loginUser = async (req, res) => {
 };
 
 // Obtener todos los usuarios
-export const obtenerClientes = async (req, res) => {
+export const obtenerUsuarios = async (req, res) => {
   try {
-    const clientes = await User.find().select('-password');
-    res.json(clientes);
+    const usuarios = await User.find().select('-password');
+    res.json(usuarios);
   } catch (error) {
-    res.status(500).json({ message: "Error del servidor", error: error.message });
+    res.status(500).json({ message: "Error al obtener usuarios", error: error.message });
   }
 };
 
 // Obtener usuario por ID
-export const obtenerCliente = async (req, res) => {
+export const obtenerUsuario = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select('-password');
-    if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
-    res.json(user);
+    const usuario = await User.findById(req.params.id).select('-password');
+    if (!usuario) return res.status(404).json({ message: "Usuario no encontrado" });
+    res.json(usuario);
   } catch (error) {
-    res.status(500).json({ message: "Error del servidor", error: error.message });
+    res.status(500).json({ message: "Error al obtener usuario", error: error.message });
   }
 };
 
 // Actualizar usuario
-export const actualizarCliente = async (req, res) => {
+export const actualizarUsuario = async (req, res) => {
   try {
     if (req.body.password) {
       req.body.password = await bcrypt.hash(req.body.password, 10);
     }
-    const user = await User.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    ).select('-password');
+    const usuario = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
+    }).select('-password');
 
-    res.json(user);
+    res.json(usuario);
   } catch (error) {
-    res.status(400).json({ message: "Error al actualizar", error: error.message });
+    res.status(400).json({ message: "Error al actualizar usuario", error: error.message });
   }
 };
 
 // Eliminar usuario
-export const eliminarCliente = async (req, res) => {
+export const eliminarUsuario = async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
-    res.json({ message: "Usuario eliminado correctamente" });
+    res.json({ message: "Usuario eliminado exitosamente" });
   } catch (error) {
-    res.status(500).json({ message: "Error del servidor", error: error.message });
+    res.status(500).json({ message: "Error al eliminar usuario", error: error.message });
   }
 };

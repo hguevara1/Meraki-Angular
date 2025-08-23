@@ -1,0 +1,164 @@
+<div class="agregar-subreceta-container">
+  <div class="header">
+    <button mat-button routerLink="/subrecetas" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+      Volver a Subrecetas
+    </button>
+    <h1>{{ isEditMode ? 'Editar' : 'Agregar' }} Subreceta</h1>
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+      <form (ngSubmit)="guardarSubreceta()">
+        <!-- Nombre de la subreceta -->
+        <div class="nombre-section">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nombre de la subreceta</mat-label>
+            <input matInput [(ngModel)]="subreceta.nombre" name="nombre" required>
+          </mat-form-field>
+        </div>
+
+        <!-- Layout principal: formulario izquierda, tabla derecha -->
+        <div class="main-layout">
+          <!-- Columna izquierda: Formulario para agregar ingredientes -->
+          <div class="form-column">
+            <div class="agregar-ingrediente">
+              <h3>Agregar Ingredientes</h3>
+
+              <div class="ingrediente-form compact-form">
+                <!-- Autocomplete para ingredientes -->
+                <mat-form-field appearance="outline" class="compact-field autocomplete-field">
+                  <mat-label>Buscar Ingrediente</mat-label>
+                  <input type="text" matInput
+                         [formControl]="ingredienteSearchControl"
+                         [matAutocomplete]="auto"
+                         placeholder="Escribe para buscar..."
+                         (input)="onSearchInputChange()">
+                  <mat-autocomplete #auto="matAutocomplete"
+                                    [displayWith]="displayIngrediente"
+                                    (optionSelected)="onIngredienteSelected($event)">
+                    <mat-option *ngFor="let ingrediente of filteredIngredientes | async"
+                                [value]="ingrediente">
+                      <div class="ingrediente-option">
+                        <span class="ingrediente-name">{{ingrediente.nombre}}</span>
+                        <span class="ingrediente-details">
+          {{ingrediente.precio | number:'1.2-2'}}€ por {{ingrediente.medida}}{{ingrediente.unidad}}
+        </span>
+                      </div>
+                    </mat-option>
+                  </mat-autocomplete>
+                  <mat-icon matSuffix>search</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="compact-field">
+                  <mat-label>Cantidad</mat-label>
+                  <input matInput type="number" [(ngModel)]="nuevoIngrediente.cantidad"
+                         name="cantidad" min="0" step="0.1" placeholder="0.0">
+                  <span matSuffix>{{ getUnidadIngrediente(nuevoIngrediente.ingrediente) }}</span>
+                </mat-form-field>
+
+                <button mat-raised-button color="primary" type="button"
+                        (click)="agregarIngrediente()" class="add-button"
+                        [disabled]="!nuevoIngrediente.ingrediente || nuevoIngrediente.cantidad <= 0">
+                  <mat-icon>add</mat-icon>
+                  Agregar
+                </button>
+              </div>
+
+              <!-- Información del ingrediente seleccionado -->
+              <div class="ingrediente-info" *ngIf="nuevoIngrediente.ingrediente">
+                <div class="info-card">
+                  <strong>Ingrediente seleccionado:</strong>
+                  {{ getNombreIngrediente(nuevoIngrediente.ingrediente) }}
+                  <br>
+                  <small>
+                    Precio: {{ getPrecioIngrediente(nuevoIngrediente.ingrediente) | number:'1.2-2' }}€
+                    por {{ getMedidaIngrediente(nuevoIngrediente.ingrediente) }}{{ getUnidadIngrediente(nuevoIngrediente.ingrediente) }}
+                    •
+                    Costo unitario: {{ calcularCostoUnitario() | number:'1.2-4' }}€ por {{ getUnidadIngrediente(nuevoIngrediente.ingrediente) }}
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna derecha: Tabla de ingredientes -->
+          <div class="table-column">
+            <div class="ingredientes-list">
+              <div class="table-header">
+                <h3>Ingredientes agregados ({{ subreceta.ingredientes.length }})</h3>
+                <span class="total-cost" *ngIf="subreceta.ingredientes.length > 0">
+                  Costo total: {{ calcularCostoTotal() | number:'1.2-2' }}€
+                </span>
+              </div>
+
+              <div class="table-container" *ngIf="subreceta.ingredientes.length > 0">
+                <table mat-table [dataSource]="subreceta.ingredientes" class="mat-elevation-z1">
+                  <ng-container matColumnDef="nombre">
+                    <th mat-header-cell *matHeaderCellDef>Ingrediente</th>
+                    <td mat-cell *matCellDef="let item">
+                      {{ getNombreIngrediente(item.ingrediente) }}
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="cantidad">
+                    <th mat-header-cell *matHeaderCellDef>Cantidad</th>
+                    <td mat-cell *matCellDef="let item">
+                      {{ item.cantidad | number:'1.2-2' }}
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="unidad">
+                    <th mat-header-cell *matHeaderCellDef>Unidad</th>
+                    <td mat-cell *matCellDef="let item">
+                      {{ getUnidadIngrediente(item.ingrediente) }}
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="costo">
+                    <th mat-header-cell *matHeaderCellDef>Costo (€)</th>
+                    <td mat-cell *matCellDef="let item">
+                      {{ item.costo | number:'1.2-2' }}
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="acciones">
+                    <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                    <td mat-cell *matCellDef="let item; let i = index">
+                      <button mat-icon-button color="warn" (click)="eliminarIngrediente(i)"
+                              matTooltip="Eliminar ingrediente" class="action-button">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="['nombre', 'cantidad', 'unidad', 'costo', 'acciones']"></tr>
+                  <tr mat-row *matRowDef="let row; columns: ['nombre', 'cantidad', 'unidad', 'costo', 'acciones'];"></tr>
+                </table>
+              </div>
+
+              <!-- Mensaje cuando no hay ingredientes -->
+              <div *ngIf="subreceta.ingredientes.length === 0" class="empty-table-message">
+                <mat-icon>inventory_2</mat-icon>
+                <h4>No hay ingredientes agregados</h4>
+                <p>Agrega ingredientes usando el formulario</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="action-buttons">
+          <button mat-button type="button" routerLink="/subrecetas" class="cancel-button">
+            Cancelar
+          </button>
+          <button mat-raised-button color="primary" type="submit"
+                  [disabled]="!subreceta.nombre || subreceta.ingredientes.length === 0"
+                  class="submit-button">
+            {{ isEditMode ? 'Actualizar' : 'Crear' }} Subreceta
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

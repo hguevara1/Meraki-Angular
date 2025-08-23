@@ -1,0 +1,87 @@
+<div class="subrecetas-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <button mat-button routerLink="/dashboard" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+        Volver al Dashboard
+      </button>
+      <h1>📋 Gestión de Subrecetas</h1>
+    </div>
+    <div class="header-actions">
+      <span class="total-badge">Total: {{totalSubrecetas}} subrecetas</span>
+      <button mat-raised-button color="primary" routerLink="/subrecetas/agregar">
+        <mat-icon>add</mat-icon>
+        Agregar Subreceta
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Cargando subrecetas...</p>
+  </div>
+
+  <!-- Tabla de Subrecetas -->
+  <div *ngIf="!isLoading" class="table-container">
+    <div class="table-scroll-container">
+      <table mat-table [dataSource]="subrecetas" class="mat-elevation-z8">
+        <!-- Nombre Column -->
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef>Nombre</th>
+          <td mat-cell *matCellDef="let subreceta">{{subreceta.nombre}}</td>
+        </ng-container>
+
+        <!-- Ingredientes Count Column -->
+        <ng-container matColumnDef="ingredientesCount">
+          <th mat-header-cell *matHeaderCellDef>N° Ingredientes</th>
+          <td mat-cell *matCellDef="let subreceta">{{subreceta.ingredientes.length}}</td>
+        </ng-container>
+
+        <!-- Costo Total Column -->
+        <ng-container matColumnDef="costoTotal">
+          <th mat-header-cell *matHeaderCellDef>Costo Total (€)</th>
+          <td mat-cell *matCellDef="let subreceta">
+            {{calcularCostoTotal(subreceta) | number:'1.2-2'}}
+          </td>
+        </ng-container>
+
+        <!-- Acciones Column -->
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let subreceta">
+            <button mat-icon-button color="primary" [routerLink]="['/subrecetas/editar', subreceta._id]">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="eliminarSubreceta(subreceta._id!)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="subrecetas.length === 0" class="empty-state">
+      <mat-icon>list_alt</mat-icon>
+      <h3>No hay subrecetas registradas</h3>
+      <p>Comienza agregando tu primera subreceta</p>
+      <button mat-raised-button color="primary" routerLink="/subrecetas/agregar">
+        <mat-icon>add</mat-icon>
+        Agregar Primera Subreceta
+      </button>
+    </div>
+  </div>
+
+  <!-- Back Button -->
+  <div class="back-button-container">
+    <button mat-button routerLink="/dashboard" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+      Volver al Dashboard
+    </button>
+  </div>
+</div>

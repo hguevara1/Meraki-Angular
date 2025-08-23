@@ -6,10 +6,10 @@ import morgan from "morgan";
 import helmet from "helmet";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
-import clienteRoutes from "./routes/cliente.routes.js";
 import ingredienteRoutes from "./routes/ingrediente.routes.js";
 import subrecetaRoutes from "./routes/subreceta.routes.js";
 import tortaRoutes from "./routes/torta.routes.js";
+import authRoutes from "./routes/authRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -26,16 +26,19 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(helmet());
 
+console.log("✅ Cargando rutas de ingredientes");
+
+
 // Rutas
 app.get("/", (req, res) => res.send("API Meraki corriendo 🚀"));
 app.get("/api/test", (req, res) => res.status(200).json({ message: "Backend working!" }));
 
 // Rutas de usuario
 app.use("/api/users", userRoutes);
-app.use("/api/clientes", clienteRoutes);
 app.use("/api/ingredientes", ingredienteRoutes);
 app.use("/api/subrecetas", subrecetaRoutes);
 app.use("/api/tortas", tortaRoutes);
+app.use("/api/auth", authRoutes);
 
 // Manejo de rutas no encontradas
 app.use((req, res) => {
