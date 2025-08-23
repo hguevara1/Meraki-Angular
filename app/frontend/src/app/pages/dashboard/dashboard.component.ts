@@ -27,6 +27,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   currentUser: any;
   userEmail: string = '';
   totalIngredientes: number = 0;
+  totalSubrecetas: number = 0;
+  totalTortas: number = 0;
   private authSubscription!: Subscription;
 
   constructor(
@@ -38,7 +40,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit() {
     console.log('🔵 DashboardComponent iniciado');
     this.loadUserData();
-    this.loadIngredientesCount();
+    this.loadCounts();
     if (!this.authService.isAuthenticated()) {
       this.router.navigate(['/login']);
       return;
@@ -66,20 +68,61 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  private loadCounts() {
+    this.loadIngredientesCount();
+    this.loadSubrecetasCount();
+    this.loadTortasCount();
+  }
+
   private loadIngredientesCount() {
-      this.http.get<any[]>('http://localhost:5000/api/ingredientes')
-        .subscribe({
-          next: (ingredientes) => {
-            this.totalIngredientes = ingredientes.length;
-          },
-          error: (error) => {
-            this.totalIngredientes = 0;
-          },
-          complete: () => {
-            console.log('🏁 Carga de ingredientes completada');
-          }
-        });
-    }
+    this.http.get<any[]>('http://localhost:5000/api/ingredientes')
+      .subscribe({
+        next: (ingredientes) => {
+          this.totalIngredientes = ingredientes.length;
+        },
+        error: (error) => {
+          console.error('Error cargando ingredientes:', error);
+          this.totalIngredientes = 0;
+        },
+        complete: () => {
+          console.log('🏁 Carga de ingredientes completada');
+        }
+      });
+  }
+
+  private loadSubrecetasCount() {
+    this.http.get<any[]>('http://localhost:5000/api/subrecetas')
+      .subscribe({
+        next: (subrecetas) => {
+          this.totalSubrecetas = subrecetas.length;
+        },
+        error: (error) => {
+          console.error('Error cargando subrecetas:', error);
+          this.totalSubrecetas = 0;
+        },
+        complete: () => {
+          console.log('🏁 Carga de subrecetas completada');
+        }
+      });
+  }
+
+  private loadTortasCount() {
+    this.http.get<any[]>('http://localhost:5000/api/tortas')
+      .subscribe({
+        next: (tortas) => {
+          this.totalTortas = tortas.length;
+        },
+        error: (error) => {
+          console.error('Error cargando tortas:', error);
+          this.totalTortas = 0;
+        },
+        complete: () => {
+          console.log('🏁 Carga de tortas completada');
+        }
+      });
+  }
+
   logout() {
     this.authService.logout();
   }

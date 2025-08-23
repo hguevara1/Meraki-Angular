@@ -111,3 +111,52 @@ table {
     overflow-x: auto;
   }
 }
+
+/* CONTENEDOR DE TABLA CON SCROLL INTERNO */
+.table-container {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  max-height: 600px;
+  display: flex;
+  flex-direction: column;
+}
+
+.table-scroll-container {
+  overflow-y: auto;
+  max-height: 500px;
+  flex: 1;
+}
+
+.mat-header-row {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.back-button-container {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+/* Scrollbar personalizado */
+.table-scroll-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table-scroll-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

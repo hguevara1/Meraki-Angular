@@ -6,6 +6,7 @@ import { IngredientesComponent } from './pages/ingredientes/ingredientes.compone
 import { AgregarIngredienteComponent } from './pages/agregar-ingrediente/agregar-ingrediente.component';
 import { EditarIngredienteComponent } from './pages/editar-ingrediente/editar-ingrediente.component';
 import { SubrecetasComponent } from './pages/subrecetas/subrecetas.component';
+import { AgregarSubrecetaComponent } from './pages/agregar-subreceta/agregar-subreceta.component';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -41,6 +42,16 @@ export const routes: Routes = [
   {
     path: 'subrecetas',
     component: SubrecetasComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'subrecetas/agregar',
+    component: AgregarSubrecetaComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'subrecetas/editar/:id',
+    component: AgregarSubrecetaComponent,
     canActivate: [AuthGuard]
   },
   { path: '**', redirectTo: '/login' }
