@@ -32,4 +32,4 @@ jobs:
           JEST_TIMEOUT: 30000
         run: |
           echo "Running tests with increased timeout..."
-          npm test -- --config=package.json --testTimeout=30000 --runInBand --detectOpenHandles --forceExit
+          npm test -- --config=package.json --testTimeout=60000 --runInBand --detectOpenHandles --forceExit

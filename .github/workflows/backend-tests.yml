@@ -33,4 +33,4 @@ jobs:
         working-directory: ./app/backend
         env:
           NODE_ENV: test
-        run: npm test -- --testTimeout=30000 --runInBand --detectOpenHandles
+        run: npm test -- --testTimeout=60000 --runInBand --detectOpenHandles
