@@ -1,7 +1,13 @@
 <div class="ingredientes-container">
-  <!-- Header -->
+  <!-- Header CORREGIDO -->
   <div class="header">
-    <h1>📦 Gestión de Ingredientes</h1>
+    <div class="header-left">
+      <button mat-button routerLink="/dashboard" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+        Volver al Dashboard
+      </button>
+      <h1>📦 Gestión de Ingredientes</h1>
+    </div>
     <div class="header-actions">
       <span class="total-badge">Total: {{totalIngredientes}} ingredientes</span>
       <button mat-raised-button color="primary" routerLink="/ingredientes/agregar">

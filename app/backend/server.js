@@ -26,6 +26,9 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(helmet());
 
+console.log("✅ Cargando rutas de ingredientes");
+
+
 // Rutas
 app.get("/", (req, res) => res.send("API Meraki corriendo 🚀"));
 app.get("/api/test", (req, res) => res.status(200).json({ message: "Backend working!" }));

@@ -3,6 +3,8 @@ import { LoginComponent } from './pages/login/login.component';
 import { RegistrarComponent } from './pages/registrar/registrar.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { IngredientesComponent } from './pages/ingredientes/ingredientes.component';
+import { AgregarIngredienteComponent } from './pages/agregar-ingrediente/agregar-ingrediente.component';
+import { EditarIngredienteComponent } from './pages/editar-ingrediente/editar-ingrediente.component';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -18,6 +20,16 @@ export const routes: Routes = [
   {
     path: 'ingredientes',
     component: IngredientesComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'ingredientes/agregar',
+    component: AgregarIngredienteComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'ingredientes/editar/:id',
+    component: EditarIngredienteComponent,
     canActivate: [AuthGuard]
   },
   {
