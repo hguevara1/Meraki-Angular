@@ -29,6 +29,10 @@ jobs:
           path: ~/.cache/mongodb-binaries
           key: ${{ runner.os }}-mongodb-binaries
 
+      - name: Install backend dependencies
+        working-directory: ./app/backend
+        run: npm install
+
       - name: 🧪 Run backend tests with Jest
         working-directory: ./app/backend
         env:
