@@ -5,6 +5,7 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { IngredientesComponent } from './pages/ingredientes/ingredientes.component';
 import { AgregarIngredienteComponent } from './pages/agregar-ingrediente/agregar-ingrediente.component';
 import { EditarIngredienteComponent } from './pages/editar-ingrediente/editar-ingrediente.component';
+import { SubrecetasComponent } from './pages/subrecetas/subrecetas.component';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -39,7 +40,7 @@ export const routes: Routes = [
   },
   {
     path: 'subrecetas',
-    loadComponent: () => import('./pages/subrecetas/subrecetas.component').then(m => m.SubrecetasComponent),
+    component: SubrecetasComponent,
     canActivate: [AuthGuard]
   },
   { path: '**', redirectTo: '/login' }
