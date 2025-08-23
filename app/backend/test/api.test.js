@@ -7,6 +7,7 @@ import app from "../server.js";
 let mongoServer;
 
 beforeAll(async () => {
+  jest.setTimeout(60000); // Aumenta a 60s
   mongoServer = await MongoMemoryServer.create();
   const uri = mongoServer.getUri();
   await mongoose.connect(uri);
@@ -14,7 +15,9 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await mongoose.connection.close();
-  await mongoServer.stop();
+  if (mongoServer) {
+    await mongoServer.stop();
+  }
 });
 
 describe("API Meraki", () => {

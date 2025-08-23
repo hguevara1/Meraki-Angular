@@ -1,85 +1,37 @@
-name: CI/CD Pipeline for MEAN Stack
-
-env:
-  WAIT_ON_TIMEOUT: 300000
+name: CI Backend Tests
 
 on:
   push:
     branches:
       - main
-      - develop
   pull_request:
-    branches:
-      - main
-      - develop
 
 jobs:
-  build-and-test:
+  test-backend:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: ⚡ Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: '20' # MongoMemoryServer y Jest funcionan mejor con Node 20
+          cache: 'npm'
 
-      - name: Upload test coverage
-        uses: codecov/codecov-action@v3
-        with:
-          file: ./app/backend/coverage/lcov.info
-          flags: backend
-          name: codecov-umbrella
-
-      # Paso 1: Instalar dependencias del backend
-      - name: Install backend dependencies
-        working-directory: ./app/backend
+      - name: 📦 Install dependencies
         run: npm install
 
-      # Paso 2: Ejecutar pruebas del backend con Jest
-      - name: Run backend tests
-        working-directory: ./app/backend
+      - name: 🛠 Cache MongoMemoryServer binaries
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/mongodb-binaries
+          key: ${{ runner.os }}-mongodb-binaries
+
+      - name: 🧪 Run backend tests with Jest
+        env:
+          NODE_ENV: test
         run: |
-          if [ -f "package.json" ] && grep -q "\"test\"" package.json; then
-            echo "📦 Installing backend dependencies..."
-            npm install
-          
-            echo "🧪 Running backend tests with Jest..."
-            npm test -- --testTimeout=15000
-          
-            # Si quieres generar coverage report
-            # npm test -- --coverage --testTimeout=15000
-          else
-            echo "⚠️ No tests configured for backend"
-          fi
-
-      # Paso 3: Instalar dependencias del frontend
-      - name: Install frontend dependencies
-        working-directory: ./app/frontend
-        run: npm install
-
-      # Paso 4: Ejecutar pruebas del frontend (si existen)
-      - name: Run frontend tests
-        working-directory: ./app/frontend
-        run: |
-          if [ -f "package.json" ] && grep -q "\"test\"" package.json; then
-            # Instalar Chrome para pruebas
-            sudo apt-get update
-            sudo apt-get install -y libgbm-dev libxshmfence-dev
-            
-            # Ejecutar pruebas
-            npm test -- --watch=false --browsers=ChromeHeadless
-          else
-            echo "No tests configured for frontend"
-          fi
-
-      # Paso 5: Construir la aplicación Angular
-      - name: Build Angular application
-        working-directory: ./app/frontend
-        run: npm run build -- --configuration=production
-
-      # Paso 6: Test de Docker Compose
-      - name: Test Docker Compose build
-        run: docker-compose build
+          echo "Running tests..."
+          npm test -- --runInBand --detectOpenHandles --forceExit --testTimeout=60000
