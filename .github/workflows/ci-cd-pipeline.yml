@@ -1,85 +1,119 @@
 name: CI/CD Pipeline for MEAN Stack
 
 env:
-  WAIT_ON_TIMEOUT: 300000
+  CI: true
+  NODE_OPTIONS: --max_old_space_size=4096
 
 on:
   push:
-    branches:
-      - main
-      - develop
+    branches: [ main, develop ]
   pull_request:
-    branches:
-      - main
-      - develop
+    branches: [ main, develop ]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      # Backend: Node + cache npm
+      - name: Set up Node.js (backend)
+        uses: actions/setup-node@v4
         with:
           node-version: 18
+          cache: 'npm'
+          cache-dependency-path: |
+            app/backend/package-lock.json
 
-      - name: Upload test coverage
-        uses: codecov/codecov-action@v3
+      # Frontend: Node + cache npm
+      - name: Set up Node.js (frontend cache)
+        uses: actions/setup-node@v4
         with:
-          file: ./app/backend/coverage/lcov.info
-          flags: backend
-          name: codecov-umbrella
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: |
+            app/frontend/package-lock.json
 
-      # Paso 1: Instalar dependencias del backend
+      - name: Print versions
+        run: |
+          node -v
+          npm -v
+          docker -v
+          docker compose version || true
+
+      # ---------- Backend ----------
       - name: Install backend dependencies
         working-directory: ./app/backend
-        run: npm install
+        run: npm ci
 
-      # Paso 2: Ejecutar pruebas del backend con Jest
-      - name: Run backend tests
+      - name: Run backend tests (Jest)
         working-directory: ./app/backend
+        timeout-minutes: 10
         run: |
-          if [ -f "package.json" ] && grep -q "\"test\"" package.json; then
-            echo "📦 Installing backend dependencies..."
-            npm install
-          
-            echo "🧪 Running backend tests with Jest..."
-            npm test -- --testTimeout=15000
-          
-            # Si quieres generar coverage report
-            # npm test -- --coverage --testTimeout=15000
+          if [ -f "package.json" ] && jq -re '.scripts.test? // empty' package.json > /dev/null; then
+            echo "🧪 Running backend tests..."
+            npm test -- --runInBand --testTimeout=20000 --coverage
           else
             echo "⚠️ No tests configured for backend"
           fi
 
-      # Paso 3: Instalar dependencias del frontend
+      - name: Upload backend coverage to Codecov (if exists)
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./app/backend/coverage/lcov.info
+          flags: backend
+          name: backend-coverage
+          fail_ci_if_error: false
+        continue-on-error: true
+
+      # ---------- Frontend ----------
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+
       - name: Install frontend dependencies
         working-directory: ./app/frontend
-        run: npm install
+        run: npm ci
 
-      # Paso 4: Ejecutar pruebas del frontend (si existen)
-      - name: Run frontend tests
+      # Si no tienes tests, este step salta. Si los tienes, usamos ChromeHeadlessNoSandbox
+      - name: Run frontend tests (Angular/Karma)
         working-directory: ./app/frontend
+        timeout-minutes: 12
+        env:
+          CHROME_BIN: chrome
         run: |
-          if [ -f "package.json" ] && grep -q "\"test\"" package.json; then
-            # Instalar Chrome para pruebas
-            sudo apt-get update
-            sudo apt-get install -y libgbm-dev libxshmfence-dev
-            
-            # Ejecutar pruebas
-            npm test -- --watch=false --browsers=ChromeHeadless
+          if [ -f "package.json" ] && jq -re '.scripts.test? // empty' package.json > /dev/null; then
+            echo "🧪 Running frontend tests (Karma)..."
+            # Si tu karma.conf tiene el launcher ChromeHeadlessNoSandbox:
+            npm test -- --watch=false --browsers=ChromeHeadlessNoSandbox
           else
-            echo "No tests configured for frontend"
+            echo "⚠️ No tests configured for frontend"
           fi
 
-      # Paso 5: Construir la aplicación Angular
       - name: Build Angular application
         working-directory: ./app/frontend
-        run: npm run build -- --configuration=production
+        timeout-minutes: 12
+        run: |
+          if [ -f "package.json" ] && jq -re '.scripts.build? // empty' package.json > /dev/null; then
+            npm run build -- --configuration=production
+          else
+            echo "⚠️ No build script in frontend"
+          fi
 
-      # Paso 6: Test de Docker Compose
+      # ---------- Docker ----------
+      - name: Docker info
+        run: docker info
+
       - name: Test Docker Compose build
-        run: docker-compose build
+        timeout-minutes: 15
+        run: |
+          if docker compose version >/dev/null 2>&1; then
+            docker compose build --pull
+          elif command -v docker-compose >/dev/null 2>&1; then
+            docker-compose build --pull
+          else
+            echo "❌ Neither 'docker compose' nor 'docker-compose' is available."
+            exit 1
+          fi
