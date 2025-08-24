@@ -1,0 +1,97 @@
+<div class="agregar-torta-container">
+  <div class="header">
+    <button mat-button routerLink="/tortas" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+      Volver a Tortas
+    </button>
+    <h1>{{ isEditMode ? 'Editar' : 'Agregar' }} Torta</h1>
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+      <form (ngSubmit)="guardarTorta()">
+        <!-- Nombre de la torta -->
+        <div class="nombre-section">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nombre de la torta</mat-label>
+            <input matInput [(ngModel)]="torta.nombre" name="nombre" required>
+          </mat-form-field>
+        </div>
+
+        <!-- Layout principal: formulario izquierda, tabla derecha -->
+        <div class="main-layout">
+          <!-- Columna izquierda: Formulario para agregar subrecetas -->
+          <div class="form-column">
+            <div class="agregar-subreceta">
+              <h3>Agregar Subrecetas</h3>
+
+              <div class="subreceta-form compact-form">
+                <mat-form-field appearance="outline" class="compact-field autocomplete-field">
+                  <mat-label>Buscar Subreceta</mat-label>
+                  <input type="text" matInput
+                         [formControl]="subrecetaSearchControl"
+                         [matAutocomplete]="auto"
+                         placeholder="Escribe para buscar...">
+                  <mat-autocomplete #auto="matAutocomplete"
+                                    [displayWith]="displaySubreceta"
+                                    (optionSelected)="onSubrecetaSelected($event)">
+                    <mat-option *ngFor="let subreceta of filteredSubrecetas | async"
+                                [value]="subreceta">
+                      {{subreceta.nombre}}
+                    </mat-option>
+                  </mat-autocomplete>
+                  <mat-icon matSuffix>search</mat-icon>
+                </mat-form-field>
+
+                <button mat-raised-button color="primary" type="button"
+                        (click)="agregarSubreceta()" class="add-button"
+                        [disabled]="!selectedSubreceta">
+                  <mat-icon>add</mat-icon>
+                  Agregar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna derecha: Lista de subrecetas -->
+          <div class="table-column">
+            <div class="subrecetas-list">
+              <div class="table-header">
+                <h3>Subrecetas agregadas ({{ torta.subrecetas.length }})</h3>
+              </div>
+
+              <div class="chips-container" *ngIf="torta.subrecetas.length > 0">
+                <mat-chip-listbox>
+                  <mat-chip *ngFor="let subrecetaId of torta.subrecetas; let i = index"
+                            [removable]="true" (removed)="eliminarSubreceta(i)">
+                    {{ getNombreSubreceta(subrecetaId) }}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                  </mat-chip>
+                </mat-chip-listbox>
+              </div>
+
+              <!-- Mensaje cuando no hay subrecetas -->
+              <div *ngIf="torta.subrecetas.length === 0" class="empty-table-message">
+                <mat-icon>list_alt</mat-icon>
+                <h4>No hay subrecetas agregadas</h4>
+                <p>Agrega subrecetas usando el formulario</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="action-buttons">
+          <button mat-button type="button" routerLink="/tortas" class="cancel-button">
+            Cancelar
+          </button>
+          <button mat-raised-button color="primary" type="submit"
+                  [disabled]="!torta.nombre || torta.subrecetas.length === 0"
+                  class="submit-button">
+            {{ isEditMode ? 'Actualizar' : 'Crear' }} Torta
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -7,6 +7,8 @@ import { AgregarIngredienteComponent } from './pages/agregar-ingrediente/agregar
 import { EditarIngredienteComponent } from './pages/editar-ingrediente/editar-ingrediente.component';
 import { SubrecetasComponent } from './pages/subrecetas/subrecetas.component';
 import { AgregarSubrecetaComponent } from './pages/agregar-subreceta/agregar-subreceta.component';
+import { TortasComponent } from './pages/tortas/tortas.component';
+import { AgregarTortaComponent } from './pages/agregar-torta/agregar-torta.component';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -36,8 +38,18 @@ export const routes: Routes = [
   },
   {
     path: 'tortas',
-    loadComponent: () => import('./pages/tortas/tortas.component').then(m => m.TortasComponent),
+    component: TortasComponent,
     canActivate: [AuthGuard]
+  },
+  {
+      path: 'tortas/nueva',
+      component: AgregarTortaComponent,
+      canActivate: [AuthGuard]
+  },
+  {
+        path: 'tortas/editar/:id',
+        component: AgregarTortaComponent,
+        canActivate: [AuthGuard]
   },
   {
     path: 'subrecetas',
