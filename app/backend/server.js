@@ -15,19 +15,19 @@ dotenv.config();
 connectDB();
 
 const app = express();
+
+// ✅ SOLO UNA configuración de CORS (elimina la duplicada)
 app.use(cors({
   origin: 'http://localhost:4200', // URL de tu Angular app
   credentials: true
 }));
 
 // Middlewares
-app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(helmet());
 
 console.log("✅ Cargando rutas de ingredientes");
-
 
 // Rutas
 app.get("/", (req, res) => res.send("API Meraki corriendo 🚀"));
