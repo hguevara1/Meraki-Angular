@@ -9,6 +9,7 @@ import { SubrecetasComponent } from './pages/subrecetas/subrecetas.component';
 import { AgregarSubrecetaComponent } from './pages/agregar-subreceta/agregar-subreceta.component';
 import { TortasComponent } from './pages/tortas/tortas.component';
 import { AgregarTortaComponent } from './pages/agregar-torta/agregar-torta.component';
+import { PresupuestoTortaComponent } from './pages/presupuesto-torta/presupuesto-torta.component';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -47,9 +48,9 @@ export const routes: Routes = [
       canActivate: [AuthGuard]
   },
   {
-        path: 'tortas/editar/:id',
-        component: AgregarTortaComponent,
-        canActivate: [AuthGuard]
+      path: 'tortas/editar/:id',
+      component: AgregarTortaComponent,
+      canActivate: [AuthGuard]
   },
   {
     path: 'subrecetas',
@@ -64,6 +65,16 @@ export const routes: Routes = [
   {
     path: 'subrecetas/editar/:id',
     component: AgregarSubrecetaComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'tortas/presupuesto/:id',
+    component: PresupuestoTortaComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'tortas/presupuestos',
+    component: PresupuestoTortaComponent,
     canActivate: [AuthGuard]
   },
   { path: '**', redirectTo: '/login' }
