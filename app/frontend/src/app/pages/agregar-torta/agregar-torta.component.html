@@ -18,7 +18,7 @@
           </mat-form-field>
         </div>
 
-        <!-- Layout principal: formulario izquierda, tabla derecha -->
+        <!-- Layout principal: formulario izquierda, preview centro, lista derecha -->
         <div class="main-layout">
           <!-- Columna izquierda: Formulario para agregar subrecetas -->
           <div class="form-column">
@@ -37,7 +37,7 @@
                                     (optionSelected)="onSubrecetaSelected($event)">
                     <mat-option *ngFor="let subreceta of filteredSubrecetas | async"
                                 [value]="subreceta">
-                      {{subreceta.nombre}}
+                      {{subreceta.nombre}} ({{subreceta.costoTotal | number:'1.2-2'}}€)
                     </mat-option>
                   </mat-autocomplete>
                   <mat-icon matSuffix>search</mat-icon>
@@ -53,11 +53,48 @@
             </div>
           </div>
 
+          <!-- Columna centro: Preview de la subreceta seleccionada -->
+          <div class="preview-column" *ngIf="previewSubreceta">
+            <div class="preview-card">
+              <h3>Vista Previa</h3>
+              <mat-card class="subreceta-preview">
+                <mat-card-header>
+                  <mat-card-title>{{previewSubreceta.nombre}}</mat-card-title>
+                  <mat-card-subtitle>
+                    {{previewSubreceta.ingredientes.length}} ingredientes •
+                    {{previewSubreceta.costoTotal | number:'1.2-2'}}€
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <mat-accordion>
+                    <mat-expansion-panel>
+                      <mat-expansion-panel-header>
+                        <mat-panel-title>Ingredientes</mat-panel-title>
+                      </mat-expansion-panel-header>
+                      <mat-list dense>
+                        <mat-list-item *ngFor="let ingrediente of previewSubreceta.ingredientes">
+                          <div matListItemTitle>{{ingrediente.ingrediente.nombre}}</div>
+                          <div matListItemLine>
+                            {{ingrediente.cantidad}} {{ingrediente.ingrediente.unidad}} •
+                            {{ingrediente.costo | number:'1.2-2'}}€
+                          </div>
+                        </mat-list-item>
+                      </mat-list>
+                    </mat-expansion-panel>
+                  </mat-accordion>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+
           <!-- Columna derecha: Lista de subrecetas -->
           <div class="table-column">
             <div class="subrecetas-list">
               <div class="table-header">
                 <h3>Subrecetas agregadas ({{ torta.subrecetas.length }})</h3>
+                <span class="total-cost" *ngIf="torta.subrecetas.length > 0">
+                  Costo total: {{ calcularCostoTotalTorta() | number:'1.2-2' }}€
+                </span>
               </div>
 
               <div class="chips-container" *ngIf="torta.subrecetas.length > 0">

@@ -17,13 +17,28 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatListModule } from '@angular/material/list';
+
+interface IngredienteEnSubreceta {
+  ingrediente: {
+    _id: string;
+    nombre: string;
+    precio: number | null;
+    medida: number;
+    unidad: string;
+  };
+  cantidad: number;
+  costo: number;
+}
 
 interface Subreceta {
   _id: string;
   nombre: string;
-  ingredientes: any[];
+  ingredientes: IngredienteEnSubreceta[];
   createdAt?: string;
   updatedAt?: string;
+  costoTotal?: number;
 }
 
 interface Torta {
@@ -50,7 +65,9 @@ interface Torta {
     MatSelectModule,
     MatTableModule,
     MatAutocompleteModule,
-    MatChipsModule
+    MatChipsModule,
+    MatExpansionModule,
+    MatListModule
   ],
   templateUrl: './agregar-torta.component.html',
   styleUrls: ['./agregar-torta.component.css']
@@ -65,6 +82,7 @@ export class AgregarTortaComponent implements OnInit {
   filteredSubrecetas!: Observable<Subreceta[]>;
   subrecetaSearchControl = new FormControl('');
   selectedSubreceta: Subreceta | null = null;
+  previewSubreceta: Subreceta | null = null;
 
   isEditMode: boolean = false;
 
@@ -94,6 +112,18 @@ export class AgregarTortaComponent implements OnInit {
         return this.subrecetasDisponibles.slice();
       })
     );
+
+    // Suscribirse a cambios en el control de búsqueda para mostrar preview
+    this.subrecetaSearchControl.valueChanges.subscribe(value => {
+      if (typeof value === 'string' && value.trim() !== '') {
+        const subrecetaEncontrada = this.subrecetasDisponibles.find(
+          s => s.nombre.toLowerCase().includes(value.toLowerCase())
+        );
+        this.previewSubreceta = subrecetaEncontrada || null;
+      } else {
+        this.previewSubreceta = null;
+      }
+    });
   }
 
   private _filterSubrecetas(value: string): Subreceta[] {
@@ -111,12 +141,21 @@ export class AgregarTortaComponent implements OnInit {
     this.http.get<Subreceta[]>('http://localhost:5000/api/subrecetas')
       .subscribe({
         next: (data) => {
-          this.subrecetasDisponibles = data;
+          this.subrecetasDisponibles = data.map(subreceta => ({
+            ...subreceta,
+            costoTotal: this.calcularCostoTotalSubreceta(subreceta)
+          }));
         },
         error: (error) => {
           console.error('Error cargando subrecetas:', error);
         }
       });
+  }
+
+  calcularCostoTotalSubreceta(subreceta: Subreceta): number {
+    return subreceta.ingredientes.reduce((total, ingrediente) => {
+      return total + (ingrediente.costo || 0);
+    }, 0);
   }
 
   cargarTorta(id: string) {
@@ -138,6 +177,7 @@ export class AgregarTortaComponent implements OnInit {
   onSubrecetaSelected(event: any): void {
     const subreceta = event.option.value;
     this.selectedSubreceta = subreceta;
+    this.previewSubreceta = subreceta;
   }
 
   agregarSubreceta() {
@@ -145,6 +185,7 @@ export class AgregarTortaComponent implements OnInit {
       this.torta.subrecetas.push(this.selectedSubreceta._id);
       this.subrecetaSearchControl.setValue('');
       this.selectedSubreceta = null;
+      this.previewSubreceta = null;
     }
   }
 
@@ -157,6 +198,17 @@ export class AgregarTortaComponent implements OnInit {
       s => s._id === subrecetaId
     );
     return subreceta ? subreceta.nombre : 'Subreceta no encontrada';
+  }
+
+  getSubrecetaById(subrecetaId: string): Subreceta | undefined {
+    return this.subrecetasDisponibles.find(s => s._id === subrecetaId);
+  }
+
+  calcularCostoTotalTorta(): number {
+    return this.torta.subrecetas.reduce((total, subrecetaId) => {
+      const subreceta = this.getSubrecetaById(subrecetaId);
+      return total + (subreceta?.costoTotal || 0);
+    }, 0);
   }
 
   guardarTorta() {
