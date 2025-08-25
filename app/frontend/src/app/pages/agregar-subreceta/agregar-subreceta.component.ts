@@ -16,6 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 interface Ingrediente {
   _id: string;
@@ -25,6 +26,18 @@ interface Ingrediente {
   unidad: string;
   createdAt?: string;
   updatedAt?: string;
+}
+
+interface IngredienteEditable {
+  ingrediente: string;
+  cantidad: number;
+  costo: number;
+  _ingredienteData?: {
+    nombre: string;
+    unidad: string;
+  };
+  editing?: boolean;
+  tempCantidad?: number;
 }
 
 @Component({
@@ -42,7 +55,8 @@ interface Ingrediente {
     MatInputModule,
     MatSelectModule,
     MatTableModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatTooltipModule
   ],
   templateUrl: './agregar-subreceta.component.html',
   styleUrls: ['./agregar-subreceta.component.css']
@@ -50,7 +64,7 @@ interface Ingrediente {
 export class AgregarSubrecetaComponent implements OnInit {
   subreceta: any = {
     nombre: '',
-    ingredientes: []
+    ingredientes: [] as IngredienteEditable[]
   };
 
   ingredientesDisponibles: Ingrediente[] = [];
@@ -126,6 +140,11 @@ export class AgregarSubrecetaComponent implements OnInit {
       .subscribe({
         next: (data) => {
           this.subreceta = data;
+          // Asegurarse de que cada ingrediente tenga el formato correcto
+          this.subreceta.ingredientes = this.subreceta.ingredientes.map((ing: any) => ({
+            ...ing,
+            editing: false
+          }));
         },
         error: (error) => {
           console.error('Error cargando subreceta:', error);
@@ -185,7 +204,8 @@ export class AgregarSubrecetaComponent implements OnInit {
           _ingredienteData: {
             nombre: ingredienteSeleccionado.nombre,
             unidad: ingredienteSeleccionado.unidad
-          }
+          },
+          editing: false
         });
 
         // Resetear el formulario
@@ -197,6 +217,61 @@ export class AgregarSubrecetaComponent implements OnInit {
         this.subreceta.ingredientes = [...this.subreceta.ingredientes];
       }
     }
+  }
+
+  editarIngrediente(index: number) {
+    // Cancelar edición de otros ingredientes
+    this.subreceta.ingredientes.forEach((ing: IngredienteEditable, i: number) => {
+      if (i !== index && ing.editing) {
+        this.cancelarEdicionIngrediente(i);
+      }
+    });
+
+    const ingrediente = this.subreceta.ingredientes[index];
+    ingrediente.editing = true;
+    ingrediente.tempCantidad = ingrediente.cantidad;
+
+    // Forzar actualización de la vista
+    this.subreceta.ingredientes = [...this.subreceta.ingredientes];
+  }
+
+  guardarEdicionIngrediente(index: number) {
+    const ingrediente = this.subreceta.ingredientes[index];
+
+    if (ingrediente.tempCantidad !== null && ingrediente.tempCantidad > 0) {
+      // Recalcular costo
+      const ingredienteData = this.ingredientesDisponibles.find(
+        ing => ing._id === ingrediente.ingrediente
+      );
+
+      if (ingredienteData && ingredienteData.precio !== null && ingredienteData.precio !== undefined) {
+        const costoUnitario = ingredienteData.precio / ingredienteData.medida;
+        ingrediente.cantidad = ingrediente.tempCantidad;
+        ingrediente.costo = parseFloat((costoUnitario * ingrediente.tempCantidad).toFixed(2));
+      } else {
+        // Si no hay precio, mantener la cantidad pero costo será 0
+        ingrediente.cantidad = ingrediente.tempCantidad;
+        ingrediente.costo = 0;
+      }
+
+      ingrediente.editing = false;
+      delete ingrediente.tempCantidad;
+
+      // Forzar actualización de la vista
+      this.subreceta.ingredientes = [...this.subreceta.ingredientes];
+    } else {
+      // Si la cantidad no es válida, cancelar la edición
+      this.cancelarEdicionIngrediente(index);
+    }
+  }
+
+  cancelarEdicionIngrediente(index: number) {
+    const ingrediente = this.subreceta.ingredientes[index];
+    ingrediente.editing = false;
+    delete ingrediente.tempCantidad;
+
+    // Forzar actualización de la vista
+    this.subreceta.ingredientes = [...this.subreceta.ingredientes];
   }
 
   eliminarIngrediente(index: number) {
