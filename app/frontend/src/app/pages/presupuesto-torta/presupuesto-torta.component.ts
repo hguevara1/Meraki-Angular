@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 
 // Angular Material
 import { MatButtonModule } from '@angular/material/button';
@@ -30,9 +33,11 @@ interface Ingrediente {
 }
 
 interface IngredienteEnSubreceta {
-  ingrediente: Ingrediente;
+  ingrediente: string; // Cambiado a string para almacenar solo el ID
   cantidad: number;
   costo: number;
+  editing?: boolean;
+  tempCantidad?: number;
 }
 
 interface Subreceta {
@@ -62,6 +67,7 @@ interface PresupuestoConfig {
     CommonModule,
     RouterModule,
     FormsModule,
+    ReactiveFormsModule,
     MatButtonModule,
     MatIconModule,
     MatCardModule,
@@ -94,6 +100,17 @@ export class PresupuestoTortaComponent implements OnInit {
   mostrarFormNuevaSubreceta: boolean = false;
   mostrarFormNuevaTorta: boolean = false;
 
+  // Para selección de ingredientes
+  ingredientesDisponibles: Ingrediente[] = [];
+  mostrarSelectorIngredientes: boolean = false;
+  subrecetaParaAgregarIngrediente: Subreceta | null = null;
+  ingredienteSeleccionado: Ingrediente | null = null;
+  cantidadIngrediente: number = 0;
+
+  // Para búsqueda de ingredientes
+  ingredienteSearchControl = new FormControl('');
+  filteredIngredientes!: Observable<Ingrediente[]>;
+
   constructor(
     private http: HttpClient,
     private route: ActivatedRoute,
@@ -104,6 +121,42 @@ export class PresupuestoTortaComponent implements OnInit {
 
   ngOnInit() {
     this.cargarTortas();
+    this.cargarIngredientes();
+
+    // Configurar el filtro de autocompletado
+    this.filteredIngredientes = this.ingredienteSearchControl.valueChanges.pipe(
+      startWith(''),
+      map(value => {
+        if (typeof value === 'string') {
+          return this._filterIngredientes(value);
+        } else if (value && typeof value === 'object' && '_id' in value) {
+          const ingredienteValue = value as Ingrediente;
+          return this._filterIngredientes(ingredienteValue.nombre);
+        }
+        return this.ingredientesDisponibles.slice();
+      })
+    );
+  }
+
+  private _filterIngredientes(value: string): Ingrediente[] {
+    if (!value) {
+      return this.ingredientesDisponibles.slice();
+    }
+
+    const filterValue = value.toLowerCase();
+    return this.ingredientesDisponibles.filter(ingrediente =>
+      ingrediente.nombre.toLowerCase().includes(filterValue) ||
+      ingrediente.unidad.toLowerCase().includes(filterValue)
+    );
+  }
+
+  displayIngrediente(ingrediente: Ingrediente | null): string {
+    return ingrediente && ingrediente.nombre ? ingrediente.nombre : '';
+  }
+
+  onIngredienteSelected(event: any): void {
+    const ingrediente = event.option.value as Ingrediente;
+    this.ingredienteSeleccionado = ingrediente;
   }
 
   cargarTortas() {
@@ -114,7 +167,11 @@ export class PresupuestoTortaComponent implements OnInit {
             ...torta,
             subrecetas: torta.subrecetas.map((sub: any) => ({
               ...sub,
-              factorMultiplicacion: 1
+              factorMultiplicacion: 1,
+              ingredientes: sub.ingredientes.map((ing: any) => ({
+                ...ing,
+                editing: false
+              }))
             }))
           }));
         },
@@ -123,6 +180,33 @@ export class PresupuestoTortaComponent implements OnInit {
           this.snackBar.open('Error al cargar las tortas', 'Cerrar', { duration: 3000 });
         }
       });
+  }
+
+  cargarIngredientes() {
+    this.http.get<Ingrediente[]>('http://localhost:5000/api/ingredientes')
+      .subscribe({
+        next: (data) => {
+          this.ingredientesDisponibles = data;
+        },
+        error: (error) => {
+          console.error('Error cargando ingredientes:', error);
+          this.snackBar.open('Error al cargar los ingredientes', 'Cerrar', { duration: 3000 });
+        }
+      });
+  }
+
+  getNombreIngrediente(ingredienteId: string): string {
+    const ingrediente = this.ingredientesDisponibles.find(
+      ing => ing._id === ingredienteId
+    );
+    return ingrediente ? ingrediente.nombre : 'Nombre no disponible';
+  }
+
+  getUnidadIngrediente(ingredienteId: string): string {
+    const ingrediente = this.ingredientesDisponibles.find(
+      ing => ing._id === ingredienteId
+    );
+    return ingrediente ? ingrediente.unidad : 'u';
   }
 
   seleccionarTorta(torta: Torta) {
@@ -164,8 +248,6 @@ export class PresupuestoTortaComponent implements OnInit {
   }
 
   agregarSubrecetaExistente() {
-    // Lógica para agregar subreceta existente a la torta
-    // Esto requeriría un diálogo modal para seleccionar subrecetas disponibles
     this.snackBar.open('Funcionalidad en desarrollo', 'Cerrar', { duration: 2000 });
   }
 
@@ -193,9 +275,12 @@ export class PresupuestoTortaComponent implements OnInit {
         subrecetas: this.tortaSeleccionada ? [...this.tortaSeleccionada.subrecetas] : []
       };
 
+      this.tortasDisponibles.push(nuevaTorta);
       this.tortaSeleccionada = nuevaTorta;
       this.nuevaTortaNombre = '';
       this.mostrarFormNuevaTorta = false;
+
+      this.snackBar.open('Torta creada correctamente', 'Cerrar', { duration: 2000 });
     }
   }
 
@@ -217,20 +302,115 @@ export class PresupuestoTortaComponent implements OnInit {
     subreceta.editing = true;
   }
 
-  agregarIngredienteASubreceta(subreceta: Subreceta) {
-    // Lógica para agregar ingrediente a subreceta
-    // Esto requeriría un diálogo modal para seleccionar ingredientes
-    this.snackBar.open('Funcionalidad en desarrollo', 'Cerrar', { duration: 2000 });
+  abrirSelectorIngredientes(subreceta: Subreceta) {
+    this.subrecetaParaAgregarIngrediente = subreceta;
+    this.mostrarSelectorIngredientes = true;
+    this.ingredienteSeleccionado = null;
+    this.cantidadIngrediente = 0;
+    this.ingredienteSearchControl.setValue('');
+  }
+
+  agregarIngredienteASubreceta() {
+    if (this.subrecetaParaAgregarIngrediente && this.ingredienteSeleccionado && this.cantidadIngrediente > 0) {
+      // Verificar si el ingrediente ya existe en la subreceta
+      const ingredienteExistente = this.subrecetaParaAgregarIngrediente.ingredientes.find(
+        (ing: any) => ing.ingrediente === this.ingredienteSeleccionado!._id
+      );
+
+      if (ingredienteExistente) {
+        this.snackBar.open('Este ingrediente ya fue agregado a la subreceta', 'Cerrar', { duration: 3000 });
+        return;
+      }
+
+      // Calcular el costo basado en el precio por unidad
+      const costoUnitario = this.ingredienteSeleccionado.precio ?
+                           this.ingredienteSeleccionado.precio / this.ingredienteSeleccionado.medida : 0;
+      const costoTotal = this.cantidadIngrediente * costoUnitario;
+
+      const nuevoIngrediente: IngredienteEnSubreceta = {
+        ingrediente: this.ingredienteSeleccionado._id,
+        cantidad: this.cantidadIngrediente,
+        costo: costoTotal,
+        editing: false
+      };
+
+      this.subrecetaParaAgregarIngrediente.ingredientes.push(nuevoIngrediente);
+      this.cerrarSelectorIngredientes();
+
+      this.snackBar.open('Ingrediente agregado', 'Cerrar', { duration: 2000 });
+    } else {
+      this.snackBar.open('Seleccione un ingrediente y especifique una cantidad válida', 'Cerrar', { duration: 3000 });
+    }
+  }
+
+  cerrarSelectorIngredientes() {
+    this.mostrarSelectorIngredientes = false;
+    this.subrecetaParaAgregarIngrediente = null;
+    this.ingredienteSeleccionado = null;
+    this.cantidadIngrediente = 0;
+    this.ingredienteSearchControl.setValue('');
+  }
+
+  editarIngrediente(subreceta: Subreceta, ingredienteIndex: number) {
+    // Cancelar edición de otros ingredientes
+    subreceta.ingredientes.forEach((ing, i) => {
+      if (i !== ingredienteIndex && ing.editing) {
+        this.cancelarEdicionIngrediente(subreceta, i);
+      }
+    });
+
+    const ingrediente = subreceta.ingredientes[ingredienteIndex];
+    ingrediente.editing = true;
+    ingrediente.tempCantidad = ingrediente.cantidad;
+  }
+
+  guardarEdicionIngrediente(subreceta: Subreceta, ingredienteIndex: number) {
+    const ingrediente = subreceta.ingredientes[ingredienteIndex];
+
+    if (ingrediente.tempCantidad !== undefined && ingrediente.tempCantidad > 0) {
+      // Recalcular costo
+      const ingredienteData = this.ingredientesDisponibles.find(
+        ing => ing._id === ingrediente.ingrediente
+      );
+
+      if (ingredienteData && ingredienteData.precio !== null && ingredienteData.precio !== undefined) {
+        const costoUnitario = ingredienteData.precio / ingredienteData.medida;
+        ingrediente.cantidad = ingrediente.tempCantidad;
+        ingrediente.costo = parseFloat((costoUnitario * ingrediente.tempCantidad).toFixed(2));
+      } else {
+        // Si no hay precio, mantener la cantidad pero costo será 0
+        ingrediente.cantidad = ingrediente.tempCantidad;
+        ingrediente.costo = 0;
+      }
+
+      ingrediente.editing = false;
+      delete ingrediente.tempCantidad;
+    } else {
+      // Si la cantidad no es válida, cancelar la edición
+      this.cancelarEdicionIngrediente(subreceta, ingredienteIndex);
+    }
+  }
+
+  cancelarEdicionIngrediente(subreceta: Subreceta, ingredienteIndex: number) {
+    const ingrediente = subreceta.ingredientes[ingredienteIndex];
+    ingrediente.editing = false;
+    delete ingrediente.tempCantidad;
   }
 
   eliminarIngrediente(subreceta: Subreceta, index: number) {
     subreceta.ingredientes.splice(index, 1);
+    this.snackBar.open('Ingrediente eliminado', 'Cerrar', { duration: 2000 });
   }
 
   guardarPresupuesto() {
-    // Lógica para guardar el presupuesto
+    if (!this.tortaSeleccionada) {
+      this.snackBar.open('No hay ninguna torta seleccionada', 'Cerrar', { duration: 2000 });
+      return;
+    }
+
     const presupuesto = {
-      torta: this.tortaSeleccionada,
+      tortaId: this.tortaSeleccionada._id,
+      tortaNombre: this.tortaSeleccionada.nombre,
       configuracion: this.configuracion,
       costoTotal: this.calcularCostoTotal(),
       costoConGastos: this.calcularCostoConGastos(),
@@ -239,7 +419,7 @@ export class PresupuestoTortaComponent implements OnInit {
     };
 
     console.log('Presupuesto a guardar:', presupuesto);
-    this.snackBar.open('Presupuesto guardado', 'Cerrar', { duration: 2000 });
+    this.snackBar.open('Presupuesto guardado correctamente', 'Cerrar', { duration: 2000 });
   }
 
   imprimirPresupuesto() {

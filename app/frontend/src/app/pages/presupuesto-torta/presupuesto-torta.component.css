@@ -116,11 +116,12 @@
 }
 
 .subreceta-card {
-  padding: 16px;
+  padding: 20px;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  font-size: 16px; /* Tamaño de fuente aumentado */
 }
 
 .subreceta-header {
@@ -158,13 +159,15 @@
 }
 
 .factor-button {
-  min-width: 40px;
-  padding: 0 8px;
+  min-width: 50px; /* Botones más grandes */
+  height: 36px;
+  padding: 0 12px;
   border: 1px solid #ccc;
   background: white;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
+  font-size: 16px; /* Texto más grande */
 }
 
 .factor-button:hover {
@@ -183,11 +186,48 @@
 }
 
 .ingrediente-item {
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  background-color: #fafafa;
+}
+
+
+/* Estilos para el modal de ingredientes */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid #f0f0f0;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.ingrediente-actions {
+  display: flex;
+  gap: 4px;
 }
 
 .ingrediente-info {
@@ -195,12 +235,13 @@
 }
 
 .ingrediente-nombre {
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 16px;
   margin-bottom: 4px;
 }
 
 .ingrediente-detalles {
-  font-size: 12px;
+  font-size: 14px;
   color: #666;
 }
 
@@ -290,4 +331,78 @@
 
 .mat-form-field.config-field .mat-form-field-label {
   font-size: 14px;
+}
+
+/* Configuración con números más grandes */
+.config-input.large-input .mat-input-element {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.config-input.large-input {
+  width: 140px;
+}
+
+/* Estilos compactos para ingredientes */
+.ingrediente-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.ingrediente-info-compact {
+  flex: 1;
+  min-width: 0;
+}
+
+.ingrediente-detalles-compact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.cantidad-text, .costo-text {
+  font-size: 14px;
+}
+
+.costo-text {
+  font-weight: 500;
+  color: #e65100;
+}
+
+.ingrediente-actions-compact {
+  display: flex;
+  gap: 4px;
+}
+
+/* Modo edición compacto */
+.editing-mode-compact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cantidad-input-compact {
+  width: 100px;
+}
+
+.cantidad-input-compact .mat-form-field-wrapper {
+  padding-bottom: 0;
+  margin-bottom: -1.25em;
+}
+
+.cantidad-input-compact .mat-form-field-infix {
+  padding: 0.5em 0;
+  border-top: 0;
+}
+
+.cantidad-input-compact .mat-form-field-label-wrapper {
+  top: -1.25em;
+}
+
+.cantidad-input-compact .mat-form-field-label {
+  top: 1.25em;
 }

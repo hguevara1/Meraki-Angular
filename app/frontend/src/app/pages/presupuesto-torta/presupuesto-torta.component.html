@@ -56,7 +56,7 @@
         <mat-card-content>
           <div class="configuracion-fields">
             <div class="config-field">
-              <mat-form-field appearance="outline" class="config-input">
+              <mat-form-field appearance="outline" class="config-input large-input">
                 <mat-label>% Gastos</mat-label>
                 <input matInput type="number" [(ngModel)]="configuracion.porcentajeGastos" min="0" max="100">
                 <span matSuffix>%</span>
@@ -64,7 +64,7 @@
             </div>
 
             <div class="config-field">
-              <mat-form-field appearance="outline" class="config-input">
+              <mat-form-field appearance="outline" class="config-input large-input">
                 <mat-label>% Ganancia</mat-label>
                 <input matInput type="number" [(ngModel)]="configuracion.porcentajeGanancia" min="0" max="200">
                 <span matSuffix>%</span>
@@ -130,21 +130,49 @@
 
               <div class="ingredientes-list">
                 <div *ngFor="let ingrediente of subreceta.ingredientes; let j = index" class="ingrediente-item">
-                  <div class="ingrediente-info">
-                    <div class="ingrediente-nombre">{{ingrediente.ingrediente.nombre}}</div>
-                    <div class="ingrediente-detalles">
-                      {{ingrediente.cantidad * subreceta.factorMultiplicacion | number:'1.2-2'}}
-                      {{ingrediente.ingrediente.unidad}} •
-                      {{ingrediente.costo * subreceta.factorMultiplicacion | number:'1.2-2'}}€
+                  <div class="ingrediente-info-compact">
+                    <!-- Mostrar el nombre del ingrediente -->
+                    <div class="ingrediente-nombre">{{getNombreIngrediente(ingrediente.ingrediente)}}</div>
+                    <div class="ingrediente-detalles-compact">
+                      <!-- Modo edición -->
+                      <div *ngIf="ingrediente.editing; else viewMode" class="editing-mode-compact">
+                        <mat-form-field appearance="outline" class="cantidad-input-compact">
+                          <mat-label>Cantidad</mat-label>
+                          <input matInput type="number" [(ngModel)]="ingrediente.tempCantidad" min="0" step="0.01">
+                        </mat-form-field>
+                        <span class="unidad-text">{{getUnidadIngrediente(ingrediente.ingrediente)}}</span>
+                        <button mat-icon-button color="primary" (click)="guardarEdicionIngrediente(subreceta, j)">
+                          <mat-icon>check</mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" (click)="cancelarEdicionIngrediente(subreceta, j)">
+                          <mat-icon>close</mat-icon>
+                        </button>
+                      </div>
+
+                      <!-- Modo visualización -->
+                      <ng-template #viewMode>
+                        <span class="cantidad-text">
+                          {{ingrediente.cantidad * subreceta.factorMultiplicacion | number:'1.2-2'}}
+                          {{getUnidadIngrediente(ingrediente.ingrediente)}}
+                        </span>
+                        <span class="costo-text">
+                          {{ingrediente.costo * subreceta.factorMultiplicacion | number:'1.2-2'}}€
+                        </span>
+                      </ng-template>
                     </div>
                   </div>
-                  <button mat-icon-button color="warn" (click)="eliminarIngrediente(subreceta, j)">
-                    <mat-icon>delete</mat-icon>
-                  </button>
+                  <div class="ingrediente-actions-compact">
+                    <button mat-icon-button color="primary" (click)="editarIngrediente(subreceta, j)">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button color="warn" (click)="eliminarIngrediente(subreceta, j)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              <button mat-raised-button color="primary" (click)="agregarIngredienteASubreceta(subreceta)" class="full-width">
+              <button mat-raised-button color="primary" (click)="abrirSelectorIngredientes(subreceta)" class="full-width">
                 <mat-icon>add</mat-icon>
                 Agregar Ingrediente
               </button>
@@ -220,6 +248,33 @@
           </button>
         </mat-card-actions>
       </mat-card>
+    </div>
+  </div>
+
+  <!-- Selector de ingredientes modal -->
+  <div *ngIf="mostrarSelectorIngredientes" class="modal-backdrop">
+    <div class="modal-content">
+      <h3>Agregar Ingrediente</h3>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Buscar Ingrediente</mat-label>
+        <input type="text" matInput [formControl]="ingredienteSearchControl" [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayIngrediente" (optionSelected)="onIngredienteSelected($event)">
+          <mat-option *ngFor="let ingrediente of filteredIngredientes | async" [value]="ingrediente">
+            {{ingrediente.nombre}} ({{ingrediente.unidad}})
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Cantidad</mat-label>
+        <input matInput type="number" [(ngModel)]="cantidadIngrediente" min="0" step="0.01">
+      </mat-form-field>
+
+      <div class="modal-actions">
+        <button mat-button (click)="cerrarSelectorIngredientes()">Cancelar</button>
+        <button mat-raised-button color="primary" (click)="agregarIngredienteASubreceta()">Agregar</button>
+      </div>
     </div>
   </div>
 </div>
