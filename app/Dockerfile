@@ -14,6 +14,9 @@ RUN npm install --legacy-peer-deps
 # Copiar el resto de los archivos del frontend
 COPY frontend/ ./
 
+# ✅ SOLUCIÓN: Usar environment.docker.ts como environment.ts
+RUN cp ./src/environments/environment.docker.ts ./src/environments/environment.ts
+
 # Reinstalar dependencias para asegurar compatibilidad
 RUN npm install --legacy-peer-deps
 

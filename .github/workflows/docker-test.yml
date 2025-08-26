@@ -1,0 +1,51 @@
+name: Docker Compose Test
+on: [push, pull_request]
+
+jobs:
+  docker-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Create .env file for testing
+        run: |
+          cat > .env << EOF
+          PORT=5000
+          MONGO_URI=mongodb://mongo:27017/meraki-test
+          JWT_SECRET=test-jwt-secret-for-ci-$(date +%s)
+          NODE_ENV=test
+          EOF
+
+      - name: Build and start containers
+        run: |
+          docker-compose up --build -d
+          sleep 15  # Wait for containers to start
+
+      - name: Check backend health
+        run: |
+          echo "Testing backend health..."
+          docker-compose exec -T backend curl -f http://localhost:5000/api/test || \
+          (echo "Backend health check failed"; docker-compose logs backend; exit 1)
+
+      - name: Run backend tests
+        run: |
+          echo "Running backend tests..."
+          docker-compose exec -T backend npm run test:ci || \
+          (echo "Tests failed"; docker-compose logs backend; exit 1)
+
+      - name: Test frontend to backend connectivity
+        run: |
+          echo "Testing connectivity between containers..."
+          docker-compose exec -T frontend curl -f http://backend:5000/api/test || \
+          (echo "Frontend to backend connectivity failed"; docker-compose logs; exit 1)
+
+      - name: Cleanup
+        if: always()
+        run: docker-compose down

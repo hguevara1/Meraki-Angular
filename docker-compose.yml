@@ -4,10 +4,12 @@ services:
       context: ./app/backend
       dockerfile: Dockerfile
     image: mi-backend:1.0
+    env_file: .env  # ✅ Cargar variables desde .env
     environment:
       - MONGO_URI=${MONGO_URI}
       - JWT_SECRET=${JWT_SECRET}
       - PORT=${PORT}
+      - NODE_ENV=${NODE_ENV}
     ports:
       - "${PORT}:${PORT}"
     networks:
@@ -16,14 +18,15 @@ services:
   frontend:
     build:
       context: ./app
-      dockerfile: Dockerfile  # Asegúrate de que el archivo se llame así
+      dockerfile: Dockerfile
     ports:
-      - "4200:4200"  # Mapeamos el puerto 4200 del contenedor al puerto 4200 del host
+      - "4200:4200"
     depends_on:
       - backend
     networks:
       - mean-network
 
+# ✅ ELIMINA el servicio mongo completamente
 networks:
   mean-network:
     driver: bridge
