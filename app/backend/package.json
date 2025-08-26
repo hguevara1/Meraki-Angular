@@ -42,10 +42,6 @@
     "testEnvironment": "node",
     "testTimeout": 30000,
     "setupFilesAfterEnv": ["<rootDir>/test/setup.js"],
-    "transform": {},
-    "extensionsToTreatAsEsm": [".js"],
-    "moduleNameMapping": {
-      "^(\\.{1,2}/.*)\\.js$": "$1"
-    }
+    "transform": {}
   }
 }
