@@ -4,6 +4,7 @@
   color: black;
   border-radius: 20px;
   font-weight: bold;
+  margin-top: 18px;
 }
 
 .language-button:hover {
