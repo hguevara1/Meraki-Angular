@@ -10,6 +10,7 @@ import { AgregarSubrecetaComponent } from './pages/agregar-subreceta/agregar-sub
 import { TortasComponent } from './pages/tortas/tortas.component';
 import { AgregarTortaComponent } from './pages/agregar-torta/agregar-torta.component';
 import { PresupuestoTortaComponent } from './pages/presupuesto-torta/presupuesto-torta.component';
+import { AuthCallbackComponent } from './pages/auth-callback/auth-callback.component';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -19,6 +20,11 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'auth-callback',
+    component: AuthCallbackComponent,
     canActivate: [AuthGuard]
   },
   // Nuevas rutas que crearás después

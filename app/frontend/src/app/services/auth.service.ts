@@ -19,19 +19,20 @@ export class AuthService {
     this.loadUserFromStorage();
   }
 
-  private loadUserFromStorage() {
+  public loadUserFromStorage() {  // Cambiar private a public
     const token = localStorage.getItem('authToken');
     const userData = localStorage.getItem('userData');
 
     console.log('🔍 Buscando datos en localStorage:');
-    console.log('Token:', token);
-    console.log('UserData:', userData);
+    console.log('Token:', token ? 'PRESENTE' : 'AUSENTE');
+    console.log('UserData:', userData ? 'PRESENTE' : 'AUSENTE');
 
     if (token && userData) {
       console.log('✅ Datos de usuario encontrados en localStorage');
       this.currentUserSubject.next(JSON.parse(userData));
     } else {
       console.log('❌ No hay datos de autenticación en localStorage');
+      this.currentUserSubject.next(null);
     }
   }
 
@@ -46,6 +47,10 @@ export class AuthService {
     return userData ? JSON.parse(userData) : null;
   }
 
+  forceReload(): void {
+    console.log('🔄 Forzando recarga de datos de autenticación');
+    this.loadUserFromStorage();
+  }
   // Login tradicional
   login(credentials: {email: string, password: string}): Observable<any> {
     return this.http.post(`${this.apiUrl}/users/login`, credentials).pipe(

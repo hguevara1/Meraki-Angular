@@ -1,30 +1,35 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {
+  constructor(private router: Router) {
     console.log('✅ AuthGuard instanciado');
   }
 
-  canActivate(): boolean {
-    console.log('🛡️ AuthGuard ejecutándose...');
-    console.log('¿Autenticado?', this.authService.isAuthenticated());
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+    console.log('🛡️ AuthGuard ejecutándose... state.url=', state.url);
 
-    if (this.authService.isAuthenticated()) {
-      console.log('✅ Acceso permitido al dashboard');
+    // Permitir siempre la ruta de callback (evita bucles y la condición de carrera)
+    if (state.url && state.url.includes('auth-callback')) {
+      console.log('🔓 Acceso permitido: ruta de callback');
       return true;
-    } else {
-      console.log('❌ Acceso denegado - Redirigiendo a login');
+    }
+
+    const token = localStorage.getItem('authToken');
+    console.log('Token en localStorage:', token ? 'PRESENTE' : 'AUSENTE');
+    const isAuthenticated = !!token;
+    console.log('¿Autenticado?', isAuthenticated);
+
+    if (!isAuthenticated) {
+      console.error('❌ Acceso denegado - Redirigiendo a login');
       this.router.navigate(['/login']);
       return false;
     }
+
+    return true;
   }
 }

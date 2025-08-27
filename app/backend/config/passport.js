@@ -1,11 +1,19 @@
+// config/passport.js
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User from "../models/user.model.js";
 
-passport.use(new GoogleStrategy({
+// Función para configurar la estrategia de Google
+const configurePassport = () => {
+  // Verificar que las variables de entorno estén cargadas
+  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+    throw new Error('❌ Google OAuth credentials not found in environment variables');
+  }
+
+  passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: `${process.env.BACKEND_URL}/api/auth/google/callback`
+    callbackURL: `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/auth/google/callback`
   },
   async (accessToken, refreshToken, profile, done) => {
     try {
@@ -47,5 +55,9 @@ passport.use(new GoogleStrategy({
       console.error('❌ Error en Google Strategy:', error);
       return done(error, null);
     }
-  }
-));
+  }));
+
+  return passport;
+};
+
+export default configurePassport; // Exportar la función de configuración

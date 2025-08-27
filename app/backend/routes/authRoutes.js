@@ -8,36 +8,43 @@ const router = express.Router();
 router.get("/google",
   passport.authenticate("google", {
     scope: ["profile", "email"],
-    prompt: "select_account" // Forzar selección de cuenta
+    prompt: "select_account"
   })
 );
 
-// Callback de Google
 router.get("/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: process.env.FRONTEND_URL + "/login?error=auth_failed",
-    session: false
-  }),
-  (req, res) => {
-    try {
-      // Generar JWT token
-      const token = jwt.sign(
-        {
-          userId: req.user._id,
-          email: req.user.email,
-          role: req.user.role
-        },
-        process.env.JWT_SECRET,
-        { expiresIn: '7d' }
-      );
+  (req, res, next) => {
+    passport.authenticate("google", { session: false }, (err, user, info) => {
+      if (err) {
+        console.error('❌ Auth error:', err);
+        return res.redirect(process.env.FRONTEND_URL + "/login?error=auth_failed");
+      }
+      if (!user) {
+        return res.redirect(process.env.FRONTEND_URL + "/login?error=user_not_found");
+      }
 
-      // Redirigir al frontend con el token
-      res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}&login=google`);
+      try {
+        const token = jwt.sign(
+          {
+            userId: user._id,
+            email: user.email,
+            role: user.role,
+            nombre: user.nombre,
+            apellido: user.apellido
+          },
+          process.env.JWT_SECRET,
+          { expiresIn: '7d' }
+        );
+        console.log('🔐 Token a enviar:', token);
+        console.log('🌐 URL de redirección:', `${process.env.FRONTEND_URL}/#/auth-callback?token=${token}&success=true`);
+        // ✅ SOLUCIÓN SIN INLINE SCRIPT - Redirigir con hash
+        res.redirect(`${process.env.FRONTEND_URL}/#/auth-callback?token=${token}&success=true`);
 
-    } catch (error) {
-      console.error('❌ Error generating token:', error);
-      res.redirect(process.env.FRONTEND_URL + '/login?error=token_error');
-    }
+      } catch (error) {
+        console.error('❌ Error generating token:', error);
+        res.redirect(process.env.FRONTEND_URL + '/login?error=token_error');
+      }
+    })(req, res, next);
   }
 );
 

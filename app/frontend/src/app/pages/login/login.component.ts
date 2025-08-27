@@ -86,13 +86,87 @@ export class LoginComponent {
   }
 
   ngOnInit() {
-    // Manejar token de Google si viene por URL
+    // Limpiar cualquier parámetro de error en la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+
+    if (error) {
+      this.errorMessage = this.translate.instant('LOGIN.GOOGLE_ERROR');
+    }
+  }
+
+  private handleGoogleCallback() {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
+    const success = urlParams.get('success');
+    const error = urlParams.get('error');
 
-    if (token) {
+    console.log('🔍 Parámetros URL recibidos:', {
+      token: token ? 'PRESENTE' : 'AUSENTE',
+      success,
+      error
+    });
+
+    if (token && success === 'true') {
+      console.log('✅ Token de Google recibido correctamente');
+
+      // Guardar token y datos de usuario
       localStorage.setItem('authToken', token);
-      this.router.navigate(['/dashboard']);
+
+      // Decodificar el token JWT para obtener los datos del usuario
+      try {
+        const payload = this.decodeJwt(token);
+        const userData = {
+          _id: payload.userId,
+          email: payload.email,
+          role: payload.role,
+          nombre: payload.nombre || '',
+          apellido: payload.apellido || ''
+        };
+
+        localStorage.setItem('userData', JSON.stringify(userData));
+        console.log('👤 Datos de usuario guardados:', userData);
+
+        // Limpiar la URL para evitar que se procese nuevamente
+        window.history.replaceState({}, document.title, window.location.pathname);
+
+        // Redirigir al dashboard
+        this.router.navigate(['/dashboard']);
+
+      } catch (decodeError) {
+        console.error('❌ Error decodificando token:', decodeError);
+        this.errorMessage = 'Error procesando la autenticación';
+        this.isLoading = false;
+      }
+
+    } else if (error) {
+      console.error('❌ Error en autenticación Google:', error);
+      this.errorMessage = this.translate.instant('LOGIN.GOOGLE_ERROR');
+      this.isLoading = false;
+
+    } else {
+      console.log('ℹ️ No hay parámetros de Google Auth en la URL');
+      // No hay token, es un acceso normal al login
+    }
+  }
+
+  private decodeJwt(token: string): any {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          })
+          .join('')
+      );
+
+      return JSON.parse(jsonPayload);
+    } catch (error) {
+      console.error('Error decodificando JWT:', error);
+      throw new Error('Token inválido');
     }
   }
 }

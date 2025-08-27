@@ -10,15 +10,19 @@ import ingredienteRoutes from "./routes/ingrediente.routes.js";
 import subrecetaRoutes from "./routes/subreceta.routes.js";
 import tortaRoutes from "./routes/torta.routes.js";
 import authRoutes from "./routes/authRoutes.js";
+import configurePassport from "./config/passport.js"; // ← Cambiar import
 
+// Cargar variables de entorno PRIMERO
 dotenv.config();
+
+// Conectar a la base de datos
 connectDB();
 
 const app = express();
 
-// ✅ SOLO UNA configuración de CORS (elimina la duplicada)
+// ✅ Configuración de CORS
 app.use(cors({
-  origin: 'http://localhost:4200', // URL de tu Angular app
+  origin: 'http://localhost:4200',
   credentials: true
 }));
 
@@ -27,7 +31,12 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(helmet());
 
-console.log("✅ Cargando rutas de ingredientes");
+// ✅ Configurar passport DESPUÉS de cargar las variables de entorno
+const passport = configurePassport();
+app.use(passport.initialize());
+
+console.log("✅ Google Client ID:", process.env.GOOGLE_CLIENT_ID ? "Cargado" : "No encontrado");
+console.log("✅ Google Client Secret:", process.env.GOOGLE_CLIENT_SECRET ? "Cargado" : "No encontrado");
 
 // Rutas
 app.get("/", (req, res) => res.send("API Meraki corriendo 🚀"));
@@ -45,5 +54,4 @@ app.use((req, res) => {
   res.status(404).json({ error: "Not Found", message: "La ruta solicitada no existe." });
 });
 
-// Exportamos SOLO la app (sin levantar servidor)
 export default app;
