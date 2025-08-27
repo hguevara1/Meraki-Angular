@@ -29,6 +29,8 @@ jobs:
           MONGO_URI=mongodb://mongo:27017/meraki-test
           JWT_SECRET=test-jwt-secret-for-ci-$(date +%s)
           NODE_ENV=test
+          GOOGLE_CLIENT_ID=dummy-client-id
+          GOOGLE_CLIENT_SECRET=dummy-client-secret
           EOF
 
       - name: Build and test Docker containers
