@@ -11,12 +11,14 @@ import { TortasComponent } from './pages/tortas/tortas.component';
 import { AgregarTortaComponent } from './pages/agregar-torta/agregar-torta.component';
 import { PresupuestoTortaComponent } from './pages/presupuesto-torta/presupuesto-torta.component';
 import { AuthCallbackComponent } from './pages/auth-callback/auth-callback.component';
+import { ThemeToggleComponent } from './pages/theme-toggle/theme-toggle.component';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'registro', component: RegistrarComponent },
+  {path: 'theme-toggle', component: ThemeToggleComponent},
   {
     path: 'dashboard',
     component: DashboardComponent,

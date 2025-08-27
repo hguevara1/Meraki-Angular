@@ -1,9 +1,11 @@
+<app-theme-toggle></app-theme-toggle>
 <div style="position: fixed; top: 10px; right: 10px; z-index: 1000;">
     <button mat-button class="language-button" [matMenuTriggerFor]="menu">
         <mat-icon>language</mat-icon>
         {{ selectedLanguageLabel }}
     </button>
 </div>
+
 
 <mat-menu #menu="matMenu" class="scrollable-language-menu">
     <button mat-menu-item (click)="changeLanguage('es')">Español</button>

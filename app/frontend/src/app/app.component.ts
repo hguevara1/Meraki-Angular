@@ -7,6 +7,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LanguageService } from './services/language.service';
 import { AuthService } from './services/auth.service';
 import { filter } from 'rxjs/operators';
+import { ThemeToggleComponent } from './pages/theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +18,7 @@ import { filter } from 'rxjs/operators';
     MatIconModule,
     MatMenuModule,
     TranslatePipe,
+    ThemeToggleComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']

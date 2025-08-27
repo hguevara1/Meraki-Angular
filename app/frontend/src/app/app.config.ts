@@ -5,6 +5,8 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideHttpClient } from '@angular/common/http';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { provideTranslateService } from '@ngx-translate/core';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatIconRegistry } from '@angular/material/icon';
 
 /**
  * APP_INITIALIZER: se ejecuta antes de que Angular arranque y antes de que el router
@@ -73,6 +75,8 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withHashLocation()),
     provideAnimationsAsync(),
+    provideNativeDateAdapter(),
+    MatIconRegistry,
     provideTranslateService({
       lang: 'es',
       fallbackLang: 'es',
