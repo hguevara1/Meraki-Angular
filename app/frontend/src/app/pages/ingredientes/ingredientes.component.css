@@ -24,9 +24,8 @@
 
 
 .ingredientes-container {
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+  padding: 0; /* Eliminar el padding para que el header ocupe todo el ancho */
+  max-width: 100%; /* Ancho completo */
 }
 
 .header h1 {
@@ -159,4 +158,16 @@ table {
 
 .table-scroll-container::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
+}
+
+.sub-header {
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
 }

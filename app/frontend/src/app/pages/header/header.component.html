@@ -1,0 +1,16 @@
+<header class="dashboard-header">
+  <div class="header-left" style="display: flex; align-items: center;">
+    <div class="logo-container">
+      <img src="/logo.jpg" alt="Meraki Logo" class="logo-image">
+      <span class="logo-text">Meraki</span>
+    </div>
+    <span class="welcome-text">Bienvenido, {{userEmail}}</span>
+  </div>
+  <div class="header-right" style="display: flex; align-items: center;">
+    <app-theme-toggle></app-theme-toggle>
+    <button mat-button (click)="logout()" class="logout-btn">
+      <mat-icon>logout</mat-icon>
+      Cerrar Sesión
+    </button>
+  </div>
+</header>

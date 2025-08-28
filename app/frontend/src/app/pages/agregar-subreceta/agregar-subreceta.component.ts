@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { HeaderComponent } from '../header/header.component'
 
 // Angular Material
 import { MatButtonModule } from '@angular/material/button';
@@ -56,7 +57,8 @@ interface IngredienteEditable {
     MatSelectModule,
     MatTableModule,
     MatAutocompleteModule,
-    MatTooltipModule
+    MatTooltipModule,
+    HeaderComponent
   ],
   templateUrl: './agregar-subreceta.component.html',
   styleUrls: ['./agregar-subreceta.component.css']

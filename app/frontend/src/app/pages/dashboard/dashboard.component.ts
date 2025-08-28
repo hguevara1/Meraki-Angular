@@ -5,6 +5,7 @@ import { AuthService } from '../../services/auth.service';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
+import { HeaderComponent } from '../header/header.component';
 
 // Angular Material imports
 import { MatIconModule } from '@angular/material/icon';
@@ -20,7 +21,8 @@ import { MatCardModule } from '@angular/material/card';
     MatIconModule,
     MatButtonModule,
     MatCardModule,
-    ThemeToggleComponent
+    ThemeToggleComponent,
+    HeaderComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']

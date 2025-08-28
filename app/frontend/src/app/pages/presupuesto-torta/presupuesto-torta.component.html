@@ -1,5 +1,9 @@
 <div class="presupuesto-container">
-  <div class="header">
+  <!-- Encabezado reutilizable -->
+  <app-header></app-header>
+
+  <!-- Sub-encabezado específico de esta vista -->
+  <div class="sub-header">
     <button mat-button routerLink="/tortas" class="back-button">
       <mat-icon>arrow_back</mat-icon>
       Volver a Tortas
@@ -7,273 +11,276 @@
     <h1>🧾 Generador de Presupuestos</h1>
   </div>
 
-  <div class="main-layout">
-    <!-- Columna izquierda: Selección de torta -->
-    <div class="selection-column">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>Seleccionar Torta</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="tortas-list">
-            <div *ngFor="let torta of tortasDisponibles"
-                 class="torta-item"
-                 [class.selected]="tortaSeleccionada?._id === torta._id"
-                 (click)="seleccionarTorta(torta)">
-              <h4>{{torta.nombre}}</h4>
-              <span>{{torta.subrecetas.length}} subrecetas</span>
+  <!-- Contenido principal -->
+  <div class="content-container">
+    <div class="main-layout">
+      <!-- Columna izquierda: Selección de torta -->
+      <div class="selection-column">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Seleccionar Torta</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="tortas-list">
+              <div *ngFor="let torta of tortasDisponibles"
+                   class="torta-item"
+                   [class.selected]="tortaSeleccionada?._id === torta._id"
+                   (click)="seleccionarTorta(torta)">
+                <h4>{{torta.nombre}}</h4>
+                <span>{{torta.subrecetas.length}} subrecetas</span>
+              </div>
             </div>
-          </div>
 
-          <div *ngIf="tortasDisponibles.length === 0" class="empty-state">
-            <mat-icon>cake</mat-icon>
-            <p>No hay tortas disponibles</p>
-          </div>
-
-          <button mat-raised-button color="primary" class="full-width" (click)="mostrarFormNuevaTorta = true">
-            <mat-icon>add</mat-icon>
-            Crear Nueva Torta
-          </button>
-
-          <div *ngIf="mostrarFormNuevaTorta" class="nueva-torta-form">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Nombre de la nueva torta</mat-label>
-              <input matInput [(ngModel)]="nuevaTortaNombre">
-            </mat-form-field>
-            <div class="form-actions">
-              <button mat-button (click)="mostrarFormNuevaTorta = false">Cancelar</button>
-              <button mat-raised-button color="primary" (click)="crearNuevaTorta()">Crear</button>
+            <div *ngIf="tortasDisponibles.length === 0" class="empty-state">
+              <mat-icon>cake</mat-icon>
+              <p>No hay tortas disponibles</p>
             </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
 
-      <!-- Configuración del presupuesto -->
-      <mat-card *ngIf="tortaSeleccionada">
-        <mat-card-header>
-          <mat-card-title>Configuración</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="configuracion-fields">
-            <div class="config-field">
-              <mat-form-field appearance="outline" class="config-input large-input">
-                <mat-label>% Gastos</mat-label>
-                <input matInput type="number" [(ngModel)]="configuracion.porcentajeGastos" min="0" max="100">
-                <span matSuffix>%</span>
+            <button mat-raised-button color="primary" class="full-width" (click)="mostrarFormNuevaTorta = true">
+              <mat-icon>add</mat-icon>
+              Crear Nueva Torta
+            </button>
+
+            <div *ngIf="mostrarFormNuevaTorta" class="nueva-torta-form">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Nombre de la nueva torta</mat-label>
+                <input matInput [(ngModel)]="nuevaTortaNombre">
               </mat-form-field>
+              <div class="form-actions">
+                <button mat-button (click)="mostrarFormNuevaTorta = false">Cancelar</button>
+                <button mat-raised-button color="primary" (click)="crearNuevaTorta()">Crear</button>
+              </div>
             </div>
+          </mat-card-content>
+        </mat-card>
 
-            <div class="config-field">
-              <mat-form-field appearance="outline" class="config-input large-input">
-                <mat-label>% Ganancia</mat-label>
-                <input matInput type="number" [(ngModel)]="configuracion.porcentajeGanancia" min="0" max="200">
-                <span matSuffix>%</span>
-              </mat-form-field>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-
-    <!-- Columna central: Edición de la torta -->
-    <div class="edition-column" *ngIf="tortaSeleccionada">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>{{tortaSeleccionada.nombre}}</mat-card-title>
-          <mat-card-subtitle>Presupuesto en edición</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="subrecetas-grid">
-            <div *ngFor="let subreceta of tortaSeleccionada.subrecetas; let i = index" class="subreceta-card">
-              <div class="subreceta-header">
-                <div *ngIf="!subreceta.editing; else editSubrecetaName">
-                  <h3>{{subreceta.nombre}}</h3>
-                  <button mat-icon-button (click)="editarSubreceta(subreceta)">
-                    <mat-icon>edit</mat-icon>
-                  </button>
-                </div>
-                <ng-template #editSubrecetaName>
-                  <mat-form-field appearance="outline">
-                    <mat-label>Nombre subreceta</mat-label>
-                    <input matInput [(ngModel)]="subreceta.nombre">
-                  </mat-form-field>
-                  <button mat-icon-button color="primary" (click)="guardarSubreceta(subreceta)">
-                    <mat-icon>check</mat-icon>
-                  </button>
-                  <button mat-icon-button color="warn" (click)="cancelarEdicionSubreceta(subreceta)">
-                    <mat-icon>close</mat-icon>
-                  </button>
-                </ng-template>
-
-                <button mat-icon-button color="warn" (click)="eliminarSubreceta(i)">
-                  <mat-icon>delete</mat-icon>
-                </button>
+        <!-- Configuración del presupuesto -->
+        <mat-card *ngIf="tortaSeleccionada">
+          <mat-card-header>
+            <mat-card-title>Configuración</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="configuracion-fields">
+              <div class="config-field">
+                <mat-form-field appearance="outline" class="config-input large-input">
+                  <mat-label>% Gastos</mat-label>
+                  <input matInput type="number" [(ngModel)]="configuracion.porcentajeGastos" min="0" max="100">
+                  <span matSuffix>%</span>
+                </mat-form-field>
               </div>
 
-              <div class="factor-multiplicacion">
-                <span>Factor: </span>
-                <div class="factor-buttons">
-                  <button class="factor-button"
-                          [class.active]="subreceta.factorMultiplicacion === 0.5"
-                          (click)="cambiarFactorSubreceta(subreceta, 0.5)">½</button>
-                  <button class="factor-button"
-                          [class.active]="subreceta.factorMultiplicacion === 1"
-                          (click)="cambiarFactorSubreceta(subreceta, 1)">1</button>
-                  <button class="factor-button"
-                          [class.active]="subreceta.factorMultiplicacion === 1.5"
-                          (click)="cambiarFactorSubreceta(subreceta, 1.5)">³/₂</button>
-                  <button class="factor-button"
-                          [class.active]="subreceta.factorMultiplicacion === 2"
-                          (click)="cambiarFactorSubreceta(subreceta, 2)">2</button>
-                </div>
+              <div class="config-field">
+                <mat-form-field appearance="outline" class="config-input large-input">
+                  <mat-label>% Ganancia</mat-label>
+                  <input matInput type="number" [(ngModel)]="configuracion.porcentajeGanancia" min="0" max="200">
+                  <span matSuffix>%</span>
+                </mat-form-field>
               </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
 
-              <div class="ingredientes-list">
-                <div *ngFor="let ingrediente of subreceta.ingredientes; let j = index" class="ingrediente-item">
-                  <div class="ingrediente-info-compact">
-                    <!-- Mostrar el nombre del ingrediente -->
-                    <div class="ingrediente-nombre">{{getNombreIngrediente(ingrediente.ingrediente)}}</div>
-                    <div class="ingrediente-detalles-compact">
-                      <!-- Modo edición -->
-                      <div *ngIf="ingrediente.editing; else viewMode" class="editing-mode-compact">
-                        <mat-form-field appearance="outline" class="cantidad-input-compact">
-                          <mat-label>Cantidad</mat-label>
-                          <input matInput type="number" [(ngModel)]="ingrediente.tempCantidad" min="0" step="0.01">
-                        </mat-form-field>
-                        <span class="unidad-text">{{getUnidadIngrediente(ingrediente.ingrediente)}}</span>
-                        <button mat-icon-button color="primary" (click)="guardarEdicionIngrediente(subreceta, j)">
-                          <mat-icon>check</mat-icon>
-                        </button>
-                        <button mat-icon-button color="warn" (click)="cancelarEdicionIngrediente(subreceta, j)">
-                          <mat-icon>close</mat-icon>
-                        </button>
-                      </div>
-
-                      <!-- Modo visualización -->
-                      <ng-template #viewMode>
-                        <span class="cantidad-text">
-                          {{ingrediente.cantidad * subreceta.factorMultiplicacion | number:'1.2-2'}}
-                          {{getUnidadIngrediente(ingrediente.ingrediente)}}
-                        </span>
-                        <span class="costo-text">
-                          {{ingrediente.costo * subreceta.factorMultiplicacion | number:'1.2-2'}}€
-                        </span>
-                      </ng-template>
-                    </div>
-                  </div>
-                  <div class="ingrediente-actions-compact">
-                    <button mat-icon-button color="primary" (click)="editarIngrediente(subreceta, j)">
+      <!-- Columna central: Edición de la torta -->
+      <div class="edition-column" *ngIf="tortaSeleccionada">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>{{tortaSeleccionada.nombre}}</mat-card-title>
+            <mat-card-subtitle>Presupuesto en edición</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="subrecetas-grid">
+              <div *ngFor="let subreceta of tortaSeleccionada.subrecetas; let i = index" class="subreceta-card">
+                <div class="subreceta-header">
+                  <div *ngIf="!subreceta.editing; else editSubrecetaName">
+                    <h3>{{subreceta.nombre}}</h3>
+                    <button mat-icon-button (click)="editarSubreceta(subreceta)">
                       <mat-icon>edit</mat-icon>
                     </button>
-                    <button mat-icon-button color="warn" (click)="eliminarIngrediente(subreceta, j)">
-                      <mat-icon>delete</mat-icon>
+                  </div>
+                  <ng-template #editSubrecetaName>
+                    <mat-form-field appearance="outline">
+                      <mat-label>Nombre subreceta</mat-label>
+                      <input matInput [(ngModel)]="subreceta.nombre">
+                    </mat-form-field>
+                    <button mat-icon-button color="primary" (click)="guardarSubreceta(subreceta)">
+                      <mat-icon>check</mat-icon>
                     </button>
+                    <button mat-icon-button color="warn" (click)="cancelarEdicionSubreceta(subreceta)">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </ng-template>
+
+                  <button mat-icon-button color="warn" (click)="eliminarSubreceta(i)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+
+                <div class="factor-multiplicacion">
+                  <span>Factor: </span>
+                  <div class="factor-buttons">
+                    <button class="factor-button"
+                            [class.active]="subreceta.factorMultiplicacion === 0.5"
+                            (click)="cambiarFactorSubreceta(subreceta, 0.5)">½</button>
+                    <button class="factor-button"
+                            [class.active]="subreceta.factorMultiplicacion === 1"
+                            (click)="cambiarFactorSubreceta(subreceta, 1)">1</button>
+                    <button class="factor-button"
+                            [class.active]="subreceta.factorMultiplicacion === 1.5"
+                            (click)="cambiarFactorSubreceta(subreceta, 1.5)">³/₂</button>
+                    <button class="factor-button"
+                            [class.active]="subreceta.factorMultiplicacion === 2"
+                            (click)="cambiarFactorSubreceta(subreceta, 2)">2</button>
                   </div>
                 </div>
-              </div>
 
-              <button mat-raised-button color="primary" (click)="abrirSelectorIngredientes(subreceta)" class="full-width">
+                <div class="ingredientes-list">
+                  <div *ngFor="let ingrediente of subreceta.ingredientes; let j = index" class="ingrediente-item">
+                    <div class="ingrediente-info-compact">
+                      <!-- Mostrar el nombre del ingrediente -->
+                      <div class="ingrediente-nombre">{{getNombreIngrediente(ingrediente.ingrediente)}}</div>
+                      <div class="ingrediente-detalles-compact">
+                        <!-- Modo edición -->
+                        <div *ngIf="ingrediente.editing; else viewMode" class="editing-mode-compact">
+                          <mat-form-field appearance="outline" class="cantidad-input-compact">
+                            <mat-label>Cantidad</mat-label>
+                            <input matInput type="number" [(ngModel)]="ingrediente.tempCantidad" min="0" step="0.01">
+                          </mat-form-field>
+                          <span class="unidad-text">{{getUnidadIngrediente(ingrediente.ingrediente)}}</span>
+                          <button mat-icon-button color="primary" (click)="guardarEdicionIngrediente(subreceta, j)">
+                            <mat-icon>check</mat-icon>
+                          </button>
+                          <button mat-icon-button color="warn" (click)="cancelarEdicionIngrediente(subreceta, j)">
+                            <mat-icon>close</mat-icon>
+                          </button>
+                        </div>
+
+                        <!-- Modo visualización -->
+                        <ng-template #viewMode>
+                          <span class="cantidad-text">
+                            {{ingrediente.cantidad * subreceta.factorMultiplicacion | number:'1.2-2'}}
+                            {{getUnidadIngrediente(ingrediente.ingrediente)}}
+                          </span>
+                          <span class="costo-text">
+                            {{ingrediente.costo * subreceta.factorMultiplicacion | number:'1.2-2'}}€
+                          </span>
+                        </ng-template>
+                      </div>
+                    </div>
+                    <div class="ingrediente-actions-compact">
+                      <button mat-icon-button color="primary" (click)="editarIngrediente(subreceta, j)">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button mat-icon-button color="warn" (click)="eliminarIngrediente(subreceta, j)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <button mat-raised-button color="primary" (click)="abrirSelectorIngredientes(subreceta)" class="full-width">
+                  <mat-icon>add</mat-icon>
+                  Agregar Ingrediente
+                </button>
+              </div>
+            </div>
+
+            <div class="action-buttons">
+              <button mat-raised-button color="accent" (click)="mostrarFormNuevaSubreceta = true">
                 <mat-icon>add</mat-icon>
-                Agregar Ingrediente
+                Agregar Subreceta
+              </button>
+
+              <button mat-raised-button color="primary" (click)="agregarSubrecetaExistente()">
+                <mat-icon>library_add</mat-icon>
+                Agregar Subreceta Existente
               </button>
             </div>
-          </div>
 
-          <div class="action-buttons">
-            <button mat-raised-button color="accent" (click)="mostrarFormNuevaSubreceta = true">
-              <mat-icon>add</mat-icon>
-              Agregar Subreceta
-            </button>
-
-            <button mat-raised-button color="primary" (click)="agregarSubrecetaExistente()">
-              <mat-icon>library_add</mat-icon>
-              Agregar Subreceta Existente
-            </button>
-          </div>
-
-          <div *ngIf="mostrarFormNuevaSubreceta" class="nueva-subreceta-form">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Nombre de la nueva subreceta</mat-label>
-              <input matInput [(ngModel)]="nuevaSubrecetaNombre">
-            </mat-form-field>
-            <div class="form-actions">
-              <button mat-button (click)="mostrarFormNuevaSubreceta = false">Cancelar</button>
-              <button mat-raised-button color="primary" (click)="crearNuevaSubreceta()">Crear</button>
+            <div *ngIf="mostrarFormNuevaSubreceta" class="nueva-subreceta-form">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Nombre de la nueva subreceta</mat-label>
+                <input matInput [(ngModel)]="nuevaSubrecetaNombre">
+              </mat-form-field>
+              <div class="form-actions">
+                <button mat-button (click)="mostrarFormNuevaSubreceta = false">Cancelar</button>
+                <button mat-raised-button color="primary" (click)="crearNuevaSubreceta()">Crear</button>
+              </div>
             </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Columna derecha: Resumen del presupuesto -->
+      <div class="summary-column" *ngIf="tortaSeleccionada">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Resumen del Presupuesto</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="resumen-item">
+              <span>Costo ingredientes:</span>
+              <span>{{calcularCostoTotal() | number:'1.2-2'}}€</span>
+            </div>
+
+            <div class="resumen-item">
+              <span>Gastos ({{configuracion.porcentajeGastos}}%):</span>
+              <span>{{calcularCostoConGastos() - calcularCostoTotal() | number:'1.2-2'}}€</span>
+            </div>
+
+            <div class="resumen-item total">
+              <span>Costo total:</span>
+              <span>{{calcularCostoConGastos() | number:'1.2-2'}}€</span>
+            </div>
+
+            <div class="resumen-item">
+              <span>Ganancia ({{configuracion.porcentajeGanancia}}%):</span>
+              <span>{{calcularPrecioVenta() - calcularCostoConGastos() | number:'1.2-2'}}€</span>
+            </div>
+
+            <div class="resumen-item final">
+              <span>Precio de venta:</span>
+              <span>{{calcularPrecioVenta() | number:'1.2-2'}}€</span>
+            </div>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary" (click)="guardarPresupuesto()">
+              <mat-icon>save</mat-icon>
+              Guardar Presupuesto
+            </button>
+            <button mat-raised-button color="accent" (click)="imprimirPresupuesto()">
+              <mat-icon>print</mat-icon>
+              Imprimir
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
     </div>
 
-    <!-- Columna derecha: Resumen del presupuesto -->
-    <div class="summary-column" *ngIf="tortaSeleccionada">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>Resumen del Presupuesto</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="resumen-item">
-            <span>Costo ingredientes:</span>
-            <span>{{calcularCostoTotal() | number:'1.2-2'}}€</span>
-          </div>
+    <!-- Selector de ingredientes modal -->
+    <div *ngIf="mostrarSelectorIngredientes" class="modal-backdrop">
+      <div class="modal-content">
+        <h3>Agregar Ingrediente</h3>
 
-          <div class="resumen-item">
-            <span>Gastos ({{configuracion.porcentajeGastos}}%):</span>
-            <span>{{calcularCostoConGastos() - calcularCostoTotal() | number:'1.2-2'}}€</span>
-          </div>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Buscar Ingrediente</mat-label>
+          <input type="text" matInput [formControl]="ingredienteSearchControl" [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayIngrediente" (optionSelected)="onIngredienteSelected($event)">
+            <mat-option *ngFor="let ingrediente of filteredIngredientes | async" [value]="ingrediente">
+              {{ingrediente.nombre}} ({{ingrediente.unidad}})
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
 
-          <div class="resumen-item total">
-            <span>Costo total:</span>
-            <span>{{calcularCostoConGastos() | number:'1.2-2'}}€</span>
-          </div>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Cantidad</mat-label>
+          <input matInput type="number" [(ngModel)]="cantidadIngrediente" min="0" step="0.01">
+        </mat-form-field>
 
-          <div class="resumen-item">
-            <span>Ganancia ({{configuracion.porcentajeGanancia}}%):</span>
-            <span>{{calcularPrecioVenta() - calcularCostoConGastos() | number:'1.2-2'}}€</span>
-          </div>
-
-          <div class="resumen-item final">
-            <span>Precio de venta:</span>
-            <span>{{calcularPrecioVenta() | number:'1.2-2'}}€</span>
-          </div>
-        </mat-card-content>
-        <mat-card-actions>
-          <button mat-raised-button color="primary" (click)="guardarPresupuesto()">
-            <mat-icon>save</mat-icon>
-            Guardar Presupuesto
-          </button>
-          <button mat-raised-button color="accent" (click)="imprimirPresupuesto()">
-            <mat-icon>print</mat-icon>
-            Imprimir
-          </button>
-        </mat-card-actions>
-      </mat-card>
-    </div>
-  </div>
-
-  <!-- Selector de ingredientes modal -->
-  <div *ngIf="mostrarSelectorIngredientes" class="modal-backdrop">
-    <div class="modal-content">
-      <h3>Agregar Ingrediente</h3>
-
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Buscar Ingrediente</mat-label>
-        <input type="text" matInput [formControl]="ingredienteSearchControl" [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayIngrediente" (optionSelected)="onIngredienteSelected($event)">
-          <mat-option *ngFor="let ingrediente of filteredIngredientes | async" [value]="ingrediente">
-            {{ingrediente.nombre}} ({{ingrediente.unidad}})
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Cantidad</mat-label>
-        <input matInput type="number" [(ngModel)]="cantidadIngrediente" min="0" step="0.01">
-      </mat-form-field>
-
-      <div class="modal-actions">
-        <button mat-button (click)="cerrarSelectorIngredientes()">Cancelar</button>
-        <button mat-raised-button color="primary" (click)="agregarIngredienteASubreceta()">Agregar</button>
+        <div class="modal-actions">
+          <button mat-button (click)="cerrarSelectorIngredientes()">Cancelar</button>
+          <button mat-raised-button color="primary" (click)="agregarIngredienteASubreceta()">Agregar</button>
+        </div>
       </div>
     </div>
   </div>

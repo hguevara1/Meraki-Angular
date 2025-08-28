@@ -1,15 +1,16 @@
 # **Meraki - MEAN Stack Application**
 
-Aplicación web para la gestión de recetas y costos, desarrollada con el stack **MEAN** (MongoDB, Express.js, Angular, Node.js). Incluye integración con **Google OAuth 2.0** para autenticación y un flujo seguro de inicio de sesión.
+Aplicación web completa para la gestión de pastelería, desarrollada con el stack **MEAN** (MongoDB, Express.js, Angular, Node.js). Incluye integración con **Google OAuth 2.0** para autenticación y un sistema completo de gestión de ingredientes, subrecetas, tortas y presupuestos.
 
 ---
 
 ## 🚀 **Tecnologías**
 
-* **Frontend:** Angular 18+ (standalone components)
+* **Frontend:** Angular 18+ (standalone components) + Angular Material
 * **Backend:** Node.js + Express.js
 * **Base de datos:** MongoDB Atlas (cloud)
 * **Autenticación:** Google OAuth 2.0 + JWT
+* **UI/UX:** Diseño responsive con componentes reutilizables
 * **Contenedores:** Docker + Docker Compose
 * **Entorno:** Desarrollo containerizado
 
@@ -20,18 +21,45 @@ Aplicación web para la gestión de recetas y costos, desarrollada con el stack 
 * ✅ **Login tradicional (email/contraseña)**
 * ✅ **Autenticación con Google OAuth 2.0** (`passport-google-oauth20`)
 * ✅ **Protección de rutas con `AuthGuard` en Angular**
-* ✅ **Gestión reactiva del estado de sesión con `BehaviorSubject` en `AuthService`**
+* ✅ **Gestión reactiva del estado de sesión con `BehaviorSubject`**
 * ✅ **Verificación automática de expiración del token JWT**
 * ✅ **Redirección segura mediante `APP_INITIALIZER`**
+* ✅ **Dashboard unificado con métricas y navegación**
+* ✅ **Sistema completo de gestión de ingredientes**
+* ✅ **Creación y edición de subrecetas con costos automáticos**
+* ✅ **Constructor de tortas con múltiples subrecetas**
+* ✅ **Generador de presupuestos con márgenes configurables**
+* ✅ **Interfaz responsive y consistente en todas las vistas**
+* ✅ **Componente de encabezado reutilizable con cierre de sesión**
 
 ---
 
-## 📋 **Requisitos**
+## 📋 **Módulos de la Aplicación**
 
-* **Docker:** 20.10+
-* **Docker Compose:** 2.0+
-* **Node.js:** 18+ (solo para desarrollo local)
-* Cuenta de **Google Cloud** para credenciales OAuth (Client ID y Secret)
+### **Dashboard**
+- Vista principal con métricas resumidas
+- Accesos rápidos a todas las funcionalidades
+- Navegación lateral organizada por categorías
+
+### **Gestión de Ingredientes**
+- CRUD completo de ingredientes
+- Campos: nombre, precio, medida, unidad
+- Validación de datos y cálculos automáticos
+
+### **Subrecetas**
+- Creación de preparaciones con múltiples ingredientes
+- Cálculo automático de costos
+- Factor de multiplicación ajustable
+
+### **Tortas**
+- Constructor de tortas con subrecetas
+- Sistema de presupuestos con márgenes configurables
+- Vista previa de costos y precios de venta
+
+### **Presupuestos**
+- Generador de presupuestos detallados
+- Configuración de porcentajes de gastos y ganancia
+- Impresión y exportación de presupuestos
 
 ---
 
@@ -123,6 +151,25 @@ sequenceDiagram
 
 ---
 
+## 🎨 **Interfaz de Usuario**
+
+### **Características de UI/UX**
+- **Diseño consistente** en todas las vistas
+- **Encabezado reutilizable** con botón de cierre de sesión
+- **Navegación intuitiva** con breadcrumbs y botones de retroceso
+- **Tablas responsivas** con scroll interno y headers fijos
+- **Formularios validados** con mensajes de error claros
+- **Estados vacíos** informativos con llamadas a la acción
+- **Temas claros/oscuros** con toggle de tema
+
+### **Componentes Reutilizables**
+- `HeaderComponent` - Encabezado con logo, usuario y cierre de sesión
+- `ThemeToggleComponent` - Selector de tema claro/oscuro
+- Tablas responsivas con paginación y ordenamiento
+- Formularios con validación y mensajes de error
+
+---
+
 ## 📁 **Estructura del Proyecto**
 
 ```
@@ -130,16 +177,42 @@ Meraki-Angular/
 ├── app/
 │   ├── backend/
 │   │   ├── routes/
+│   │   │   ├── auth.js
+│   │   │   ├── ingredientes.js
+│   │   │   ├── subrecetas.js
+│   │   │   ├── tortas.js
+│   │   │   └── presupuestos.js
 │   │   ├── config/
+│   │   │   ├── database.js
+│   │   │   └── passport.js
+│   │   ├── models/
+│   │   │   ├── User.js
+│   │   │   ├── Ingrediente.js
+│   │   │   ├── Subreceta.js
+│   │   │   ├── Torta.js
+│   │   │   └── Presupuesto.js
 │   │   ├── package.json
 │   │   └── Dockerfile
 │   ├── frontend/
 │   │   ├── src/
 │   │   │   ├── app/
-│   │   │   │   ├── services/auth.service.ts
-│   │   │   │   ├── guards/auth.guard.ts
-│   │   │   │   ├── pages/auth-callback/
-│   │   │   │   └── pages/login/
+│   │   │   │   ├── services/
+│   │   │   │   │   ├── auth.service.ts
+│   │   │   │   │   └── api.service.ts
+│   │   │   │   ├── guards/
+│   │   │   │   │   └── auth.guard.ts
+│   │   │   │   ├── components/
+│   │   │   │   │   ├── header/
+│   │   │   │   │   └── theme-toggle/
+│   │   │   │   ├── pages/
+│   │   │   │   │   ├── dashboard/
+│   │   │   │   │   ├── login/
+│   │   │   │   │   ├── auth-callback/
+│   │   │   │   │   ├── ingredientes/
+│   │   │   │   │   ├── subrecetas/
+│   │   │   │   │   ├── tortas/
+│   │   │   │   │   └── presupuestos/
+│   │   │   │   └── app.config.ts
 │   │   ├── package.json
 │   │   └── angular.json
 │   └── Dockerfile
@@ -164,5 +237,73 @@ docker-compose build
 
 # Ejecutar comando dentro del backend
 docker-compose exec backend npm test
+
+# Reiniciar contenedores específicos
+docker-compose restart frontend
 ```
 
+---
+
+## 📊 **Endpoints de la API**
+
+### **Autenticación**
+- `GET /api/auth/google` - Iniciar autenticación Google
+- `GET /api/auth/google/callback` - Callback de Google OAuth
+- `GET /api/auth/logout` - Cerrar sesión
+- `GET /api/auth/status` - Verificar estado de autenticación
+
+### **Ingredientes**
+- `GET /api/ingredientes` - Listar todos los ingredientes
+- `POST /api/ingredientes` - Crear nuevo ingrediente
+- `PUT /api/ingredientes/:id` - Actualizar ingrediente
+- `DELETE /api/ingredientes/:id` - Eliminar ingrediente
+
+### **Subrecetas**
+- `GET /api/subrecetas` - Listar todas las subrecetas
+- `POST /api/subrecetas` - Crear nueva subreceta
+- `PUT /api/subrecetas/:id` - Actualizar subreceta
+- `DELETE /api/subrecetas/:id` - Eliminar subreceta
+
+### **Tortas**
+- `GET /api/tortas` - Listar todas las tortas
+- `POST /api/tortas` - Crear nueva torta
+- `PUT /api/tortas/:id` - Actualizar torta
+- `DELETE /api/tortas/:id` - Eliminar torta
+
+### **Presupuestos**
+- `GET /api/presupuestos` - Listar presupuestos
+- `POST /api/presupuestos` - Crear nuevo presupuesto
+- `GET /api/presupuestos/:id` - Obtener presupuesto específico
+
+---
+
+## 🚀 **Próximas Características**
+
+- [ ] Exportación de presupuestos a PDF
+- [ ] Inventario y control de stock
+- [ ] Historial de precios de ingredientes
+- [ ] Múltiples usuarios y permisos
+- [ ] Modo offline con sincronización
+- [ ] App móvil con Ionic/Capacitor
+
+---
+
+## 📝 **Licencia**
+
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+
+---
+
+## 🤝 **Contribución**
+
+Las contribuciones son bienvenidas. Por favor, lee las guías de contribución antes de enviar un pull request.
+
+---
+
+## 📞 **Soporte**
+
+Si tienes preguntas o problemas, por favor abre un issue en el repositorio o contacta al equipo de desarrollo.
+
+---
+
+**Meraki** - Hecho con 💙 para pasteleros y reposteros

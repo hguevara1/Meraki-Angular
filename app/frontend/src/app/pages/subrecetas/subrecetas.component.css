@@ -1,16 +1,20 @@
 .subrecetas-container {
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+  padding: 0; /* Eliminamos el padding para que el header ocupe todo el ancho */
+  max-width: 100%;
+  min-height: 100vh;
+  background-color: #f5f5f5;
 }
 
-.header {
+.sub-header {
+  padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
   flex-wrap: wrap;
   gap: 1rem;
+  background-color: white;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .header-left {
@@ -28,7 +32,7 @@
   background-color: #e0e0e0 !important;
 }
 
-.header h1 {
+.sub-header h1 {
   margin: 0;
   color: #333;
 }
@@ -45,6 +49,12 @@
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-weight: 500;
+}
+
+.content-container {
+  padding: 0 2rem 2rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .loading {
@@ -148,7 +158,11 @@ table {
 
 /* Responsive */
 @media (max-width: 768px) {
-  .subrecetas-container {
+  .content-container {
+    padding: 0 1rem 1rem 1rem;
+  }
+
+  .sub-header {
     padding: 1rem;
   }
 
@@ -176,7 +190,7 @@ table {
 }
 
 @media (max-width: 480px) {
-  .header {
+  .sub-header {
     flex-direction: column;
     align-items: flex-start;
   }

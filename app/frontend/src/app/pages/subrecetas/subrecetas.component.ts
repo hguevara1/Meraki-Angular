@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { HeaderComponent } from '../header/header.component'
 
 // Angular Material
 import { MatTableModule } from '@angular/material/table';
@@ -45,7 +46,8 @@ export interface Subreceta {
     MatIconModule,
     MatDialogModule,
     MatSnackBarModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    HeaderComponent
   ],
   templateUrl: './subrecetas.component.html',
   styleUrls: ['./subrecetas.component.css']

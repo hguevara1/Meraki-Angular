@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { HeaderComponent } from '../header/header.component'
 
 // Angular Material
 import { MatCardModule } from '@angular/material/card';
@@ -24,7 +25,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    HeaderComponent
   ],
   templateUrl: './editar-ingrediente.component.html',
   styleUrls: ['./editar-ingrediente.component.css']

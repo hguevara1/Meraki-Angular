@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { HeaderComponent } from '../header/header.component'
 
 // Angular Material
 import { MatTableModule } from '@angular/material/table';
@@ -26,7 +27,8 @@ export interface Torta {
     MatTableModule,
     MatButtonModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    HeaderComponent
   ],
   templateUrl: './tortas.component.html',
   styleUrls: ['./tortas.component.css']
