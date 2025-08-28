@@ -32,7 +32,7 @@ export interface Torta {
     MatIconModule,
     MatProgressSpinnerModule,
     HeaderComponent,
-    VideoModalComponent
+    VideoModalComponent,
   ],
   templateUrl: './tortas.component.html',
   styleUrls: ['./tortas.component.css']

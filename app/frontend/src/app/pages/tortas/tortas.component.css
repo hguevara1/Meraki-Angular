@@ -1,8 +1,9 @@
 .tortas-container {
-  padding: 0; /* Eliminamos el padding para que el header ocupe todo el ancho */
+  padding: 0;
   max-width: 100%;
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--background);
+  color: var(--on-background);
 }
 
 .torta-preview {
@@ -48,17 +49,19 @@
   justify-content: center;
   width: 80px;
   height: 60px;
-  background-color: #f5f5f5;
+  background-color: var(--secondary-light);
   border-radius: 4px;
-  color: #999;
+  color: var(--on-surface);
 }
 
 .no-preview mat-icon {
   margin-bottom: 4px;
+  color: var(--on-surface);
 }
 
 .no-preview span {
   font-size: 10px;
+  color: var(--on-surface);
 }
 
 .sub-header {
@@ -69,8 +72,8 @@
   margin-bottom: 2rem;
   flex-wrap: wrap;
   gap: 1rem;
-  background-color: white;
-  border-bottom: 1px solid #e0e0e0;
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .header-left {
@@ -80,17 +83,19 @@
 }
 
 .back-button {
-  background-color: #f5f5f5 !important;
-  border: 1px solid #ddd !important;
+  background-color: var(--surface) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--on-surface) !important;
 }
 
 .back-button:hover {
-  background-color: #e0e0e0 !important;
+  background-color: var(--primary-light) !important;
+  color: var(--text-on-primary) !important;
 }
 
 .sub-header h1 {
   margin: 0;
-  color: #333;
+  color: var(--on-surface);
 }
 
 .header-actions {
@@ -100,8 +105,8 @@
 }
 
 .total-badge {
-  background: #e3f2fd;
-  color: #1976d2;
+  background: var(--primary-light);
+  color: var(--text-on-primary);
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-weight: 500;
@@ -119,7 +124,7 @@
   align-items: center;
   justify-content: center;
   padding: 3rem;
-  color: #666;
+  color: var(--on-background);
 }
 
 .loading p {
@@ -128,11 +133,11 @@
 
 /* CONTENEDOR DE TABLA CON SCROLL INTERNO */
 .table-container {
-  background: white;
+  background: var(--surface);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  max-height: 600px; /* Altura máxima */
+  max-height: 600px;
   display: flex;
   flex-direction: column;
 }
@@ -141,12 +146,13 @@
 table {
   width: 100%;
   border-collapse: collapse;
+  background-color: var(--surface);
 }
 
 /* Contenedor interno para el scroll */
 .table-scroll-container {
   overflow-y: auto;
-  max-height: 500px; /* Altura para el scroll */
+  max-height: 500px;
   flex: 1;
 }
 
@@ -154,15 +160,27 @@ table {
 .mat-header-row {
   position: sticky;
   top: 0;
-  background: white;
+  background: var(--surface) !important;
   z-index: 10;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Estilos para celdas de la tabla */
+th, td {
+  color: var(--on-surface) !important;
+  background-color: var(--surface) !important;
+}
+
+th {
+  background-color: var(--surface) !important;
+  color: var(--on-surface) !important;
+  font-weight: 600;
 }
 
 .empty-state {
   text-align: center;
   padding: 3rem;
-  color: #666;
+  color: var(--on-surface);
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -175,16 +193,17 @@ table {
   width: 4rem;
   height: 4rem;
   margin-bottom: 1rem;
-  color: #ccc;
+  color: var(--secondary-dark);
 }
 
 .empty-state h3 {
   margin: 0 0 0.5rem 0;
-  color: #333;
+  color: var(--on-surface);
 }
 
 .empty-state p {
   margin: 0 0 2rem 0;
+  color: var(--on-surface);
 }
 
 /* Botón de volver al final */
@@ -199,17 +218,26 @@ table {
 }
 
 .table-scroll-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--secondary-light);
   border-radius: 4px;
 }
 
 .table-scroll-container::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+  background: var(--secondary-dark);
   border-radius: 4px;
 }
 
 .table-scroll-container::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: var(--primary-color);
+}
+
+/* Estilos para los botones de acciones */
+button[mat-icon-button] {
+  color: var(--on-surface);
+}
+
+button[mat-icon-button]:hover {
+  color: var(--primary-color);
 }
 
 /* Responsive */
@@ -260,4 +288,13 @@ table {
   .total-badge {
     align-self: flex-start;
   }
+}
+
+/* Asegurar que los textos de Material usen las variables */
+.mat-cell, .mat-header-cell {
+  color: var(--on-surface) !important;
+}
+
+.mat-table {
+  background-color: var(--surface) !important;
 }

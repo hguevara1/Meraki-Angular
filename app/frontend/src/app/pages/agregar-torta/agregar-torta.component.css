@@ -1,8 +1,9 @@
 .agregar-torta-container {
-  padding: 0; /* Eliminamos el padding para que el header ocupe todo el ancho */
+  padding: 0;
   max-width: 100%;
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--background);
+  color: var(--on-background);
 }
 
 .sub-header {
@@ -11,24 +12,26 @@
   align-items: center;
   margin-bottom: 24px;
   gap: 16px;
-  background-color: white;
-  border-bottom: 1px solid #e0e0e0;
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .sub-header h1 {
   margin: 0;
-  color: #333;
+  color: var(--on-surface);
   font-size: 28px;
   font-weight: 600;
 }
 
 .back-button {
-  background-color: #f5f5f5 !important;
-  border: 1px solid #ddd !important;
+  background-color: var(--surface) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--on-surface) !important;
 }
 
 .back-button:hover {
-  background-color: #e0e0e0 !important;
+  background-color: var(--primary-light) !important;
+  color: var(--text-on-primary) !important;
 }
 
 .content-container {
@@ -37,15 +40,28 @@
   margin: 0 auto;
 }
 
-/* El resto del CSS se mantiene igual */
+/* Estilos de las tarjetas */
 mat-card {
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-color);
+  background-color: var(--surface) !important;
+  color: var(--on-surface) !important;
 }
 
 mat-card-content {
   padding: 24px !important;
+  background-color: var(--surface) !important;
+  color: var(--on-surface) !important;
+}
+
+mat-card-header {
+  background-color: var(--surface) !important;
+  color: var(--on-surface) !important;
+}
+
+mat-card-title {
+  color: var(--on-surface) !important;
 }
 
 /* Layout principal */
@@ -61,4 +77,245 @@ mat-card-content {
   flex-direction: column;
 }
 
-/* ... resto del CSS sin cambios ... */
+/* Formulario */
+.form-section {
+  margin-bottom: 24px;
+}
+
+.form-section h3 {
+  color: var(--on-surface);
+  margin-bottom: 16px;
+  font-weight: 500;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 8px;
+}
+
+/* Campos de formulario */
+mat-form-field {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+mat-label {
+  color: var(--on-surface) !important;
+}
+
+input, textarea {
+  color: var(--on-surface) !important;
+}
+
+.mat-input-element {
+  color: var(--on-surface) !important;
+}
+
+/* Preview */
+.preview-section {
+  background: var(--surface);
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px dashed var(--border-color);
+  min-height: 200px;
+}
+
+.preview-section h3 {
+  color: var(--on-surface);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.preview-content {
+  color: var(--on-surface);
+}
+
+/* Tabla de subrecetas */
+.table-section {
+  background: var(--surface);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table-header {
+  background: var(--surface);
+  color: var(--on-surface);
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-header h3 {
+  margin: 0;
+  font-weight: 500;
+}
+
+.table-content {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+table {
+  width: 100%;
+  background: var(--surface);
+}
+
+th {
+  background-color: var(--surface) !important;
+  color: var(--on-surface) !important;
+  font-weight: 600;
+}
+
+td {
+  background-color: var(--surface) !important;
+  color: var(--on-surface) !important;
+}
+
+.mat-row:hover {
+  background-color: var(--secondary-light) !important;
+}
+
+/* Botones de acción */
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  justify-content: flex-end;
+}
+
+button[mat-raised-button] {
+  min-width: 120px;
+}
+
+/* Mensajes de error y loading */
+.error-message {
+  color: var(--primary-dark);
+  background-color: var(--secondary-light);
+  padding: 12px;
+  border-radius: 6px;
+  margin: 16px 0;
+  border-left: 4px solid var(--primary-dark);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  color: var(--on-surface);
+}
+
+/* Selectores y chips */
+mat-select {
+  color: var(--on-surface) !important;
+}
+
+mat-option {
+  background-color: var(--surface) !important;
+  color: var(--on-surface) !important;
+}
+
+mat-option:hover {
+  background-color: var(--primary-light) !important;
+  color: var(--text-on-primary) !important;
+}
+
+mat-chip {
+  background-color: var(--primary-light) !important;
+  color: var(--text-on-primary) !important;
+}
+
+/* Scrollbar personalizado */
+.table-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table-content::-webkit-scrollbar-track {
+  background: var(--secondary-light);
+  border-radius: 4px;
+}
+
+.table-content::-webkit-scrollbar-thumb {
+  background: var(--secondary-dark);
+  border-radius: 4px;
+}
+
+.table-content::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .main-layout {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .table-column {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .content-container {
+    padding: 0 1rem 1rem 1rem;
+  }
+
+  .sub-header {
+    padding: 1rem;
+  }
+
+  .main-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .table-column {
+    grid-column: span 1;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  button[mat-raised-button] {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .sub-header h1 {
+    font-size: 24px;
+  }
+
+  .table-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+}
+
+/* Asegurar que los textos de Material usen las variables */
+.mat-cell, .mat-header-cell {
+  color: var(--on-surface) !important;
+}
+
+.mat-table {
+  background-color: var(--surface) !important;
+}
+
+.mat-paginator {
+  background-color: var(--surface) !important;
+  color: var(--on-surface) !important;
+}
+
+/* Placeholders */
+::placeholder {
+  color: var(--secondary-dark) !important;
+  opacity: 0.7;
+}
+
+:-ms-input-placeholder {
+  color: var(--secondary-dark) !important;
+}
+
+::-ms-input-placeholder {
+  color: var(--secondary-dark) !important;
+}
