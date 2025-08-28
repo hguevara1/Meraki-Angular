@@ -46,6 +46,7 @@ interface Torta {
   _id?: string;
   nombre: string;
   subrecetas: string[];
+  videoUrl?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -77,7 +78,8 @@ interface Torta {
 export class AgregarTortaComponent implements OnInit {
   torta: Torta = {
     nombre: '',
-    subrecetas: []
+    subrecetas: [],
+    videoUrl: ''
   };
 
   subrecetasDisponibles: Subreceta[] = [];

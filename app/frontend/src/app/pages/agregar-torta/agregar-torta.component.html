@@ -24,6 +24,14 @@
             </mat-form-field>
           </div>
 
+          <!-- Campo para URL de Video de YouTube -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>URL de Video (YouTube)</mat-label>
+            <input matInput [(ngModel)]="torta.videoUrl" name="videoUrl"
+                   placeholder="https://www.youtube.com/watch?v=...">
+            <mat-hint>Opcional: enlace a video de YouTube de la torta</mat-hint>
+          </mat-form-field>
+
           <!-- Layout principal: formulario izquierda, preview centro, lista derecha -->
           <div class="main-layout">
             <!-- Columna izquierda: Formulario para agregar subrecetas -->

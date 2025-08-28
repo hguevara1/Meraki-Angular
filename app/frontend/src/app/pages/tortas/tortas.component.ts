@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { HeaderComponent } from '../header/header.component'
+import { MatDialog } from '@angular/material/dialog';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { VideoModalComponent } from '../video-modal/video-modal.component';
 
 // Angular Material
 import { MatTableModule } from '@angular/material/table';
@@ -28,7 +31,8 @@ export interface Torta {
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    HeaderComponent
+    HeaderComponent,
+    VideoModalComponent
   ],
   templateUrl: './tortas.component.html',
   styleUrls: ['./tortas.component.css']
@@ -39,7 +43,53 @@ export class TortasComponent implements OnInit {
   isLoading: boolean = true;
   totalTortas: number = 0;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,
+    private sanitizer: DomSanitizer,
+    private dialog: MatDialog) {}
+
+  // Método para obtener el thumbnail de YouTube
+    getYouTubeThumbnail(videoUrl: string): string {
+      if (!videoUrl) return '';
+
+      const videoId = this.extractYouTubeId(videoUrl);
+      if (videoId) {
+        return `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+      }
+      return '';
+    }
+
+    // Método para extraer ID de YouTube
+    private extractYouTubeId(url: string): string | null {
+      const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[7].length === 11) ? match[7] : null;
+    }
+
+    // Abrir video en modal o nueva pestaña
+    openVideo(videoUrl: string) {
+      const videoId = this.extractYouTubeId(videoUrl);
+      if (videoId) {
+        // Abrir en nueva pestaña
+        window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank');
+
+        // O alternativa: abrir en modal
+        // this.openVideoModal(videoId);
+      }
+    }
+
+    // Opcional: Método para abrir modal con el video
+    openVideoModal(videoId: string) {
+      const videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+        `https://www.youtube.com/embed/${videoId}?autoplay=1`
+      );
+
+      this.dialog.open(VideoModalComponent, {
+        data: { videoUrl },
+        width: '80%',
+        height: '80%'
+      });
+    }
+
 
   ngOnInit() {
     this.cargarTortas();
