@@ -1,22 +1,42 @@
-import { HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
+// app/frontend/src/app/interceptors/auth.interceptor.ts
+import { Injectable } from '@angular/core';
+import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 
-export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService);
+@Injectable()
+export class AuthInterceptor implements HttpInterceptor {
 
-  // Solo agregar token a requests del backend
-  if (req.url.includes('localhost:5000')) {
-    const token = authService.getToken();
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    // Obtener el token del servicio de autenticación
+    const token = this.authService.getToken();
+
+    // Clonar la request y agregar el header Authorization si existe el token
     if (token) {
-      const authReq = req.clone({
+      request = request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`
         }
       });
-      return next(authReq);
     }
-  }
 
-  return next(req);
-};
+    // Manejar la request y capturar errores de autenticación
+    return next.handle(request).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401) {
+          // Token inválido o expirado - cerrar sesión
+          this.authService.logout();
+          this.router.navigate(['/login']);
+        }
+        return throwError(() => error);
+      })
+    );
+  }
+}

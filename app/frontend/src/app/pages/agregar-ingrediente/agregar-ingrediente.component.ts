@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { HeaderComponent } from '../header/header.component'
+import { HeaderComponent } from '../header/header.component';
 
 // Angular Material
 import { MatCardModule } from '@angular/material/card';

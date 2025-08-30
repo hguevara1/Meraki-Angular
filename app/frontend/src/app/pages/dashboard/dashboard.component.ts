@@ -1,13 +1,12 @@
+// app/frontend/src/app/pages/dashboard/dashboard.component.ts
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Subscription } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
 import { HeaderComponent } from '../header/header.component';
-
-// Angular Material imports
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -43,13 +42,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     console.log('🔵 DashboardComponent iniciado');
-    this.loadUserData();
-    this.loadCounts();
+
     if (!this.authService.isAuthenticated()) {
       this.router.navigate(['/login']);
       return;
     }
+
     this.loadUserData();
+    this.loadCounts();
   }
 
   private loadUserData() {
@@ -62,8 +62,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.currentUser = user;
         this.userEmail = user?.email || 'Usuario';
       },
-      error: (error) => {
+      error: (error: HttpErrorResponse) => {
         console.error('Error obteniendo usuario:', error);
+        if (error.status === 401) {
+          this.authService.logout();
+        }
         const userData = this.authService.getUserData();
         if (userData) {
           this.currentUser = userData;
@@ -85,12 +88,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
         next: (ingredientes) => {
           this.totalIngredientes = ingredientes.length;
         },
-        error: (error) => {
+        error: (error: HttpErrorResponse) => {
           console.error('Error cargando ingredientes:', error);
           this.totalIngredientes = 0;
-        },
-        complete: () => {
-          console.log('🏁 Carga de ingredientes completada');
+          if (error.status === 401) {
+            this.authService.logout();
+          }
         }
       });
   }
@@ -101,12 +104,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
         next: (subrecetas) => {
           this.totalSubrecetas = subrecetas.length;
         },
-        error: (error) => {
+        error: (error: HttpErrorResponse) => {
           console.error('Error cargando subrecetas:', error);
           this.totalSubrecetas = 0;
-        },
-        complete: () => {
-          console.log('🏁 Carga de subrecetas completada');
+          if (error.status === 401) {
+            this.authService.logout();
+          }
         }
       });
   }
@@ -117,12 +120,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
         next: (tortas) => {
           this.totalTortas = tortas.length;
         },
-        error: (error) => {
+        error: (error: HttpErrorResponse) => {
           console.error('Error cargando tortas:', error);
           this.totalTortas = 0;
-        },
-        complete: () => {
-          console.log('🏁 Carga de tortas completada');
+          if (error.status === 401) {
+            this.authService.logout();
+          }
         }
       });
   }

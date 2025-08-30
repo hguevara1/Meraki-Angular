@@ -2,11 +2,12 @@ import { ApplicationConfig, provideZoneChangeDetection, APP_INITIALIZER } from '
 import { provideRouter, withHashLocation } from '@angular/router';
 import { routes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatIconRegistry } from '@angular/material/icon';
+import { AuthInterceptor } from './interceptors/auth.interceptor'; // ✅ Importar el interceptor
 
 /**
  * APP_INITIALIZER: se ejecuta antes de que Angular arranque y antes de que el router
@@ -71,7 +72,9 @@ export function authInitializer() {
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideHttpClient(),
+    // ✅ HttpClient con interceptors
+    provideHttpClient(withInterceptorsFromDi()),
+
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withHashLocation()),
     provideAnimationsAsync(),
@@ -85,10 +88,16 @@ export const appConfig: ApplicationConfig = {
         suffix: '.json'
       })
     }),
-    // Registrar APP_INITIALIZER
+    // ✅ Registrar APP_INITIALIZER
     {
       provide: APP_INITIALIZER,
       useFactory: authInitializer,
+      multi: true
+    },
+    // ✅ Registrar AuthInterceptor
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
       multi: true
     }
   ]

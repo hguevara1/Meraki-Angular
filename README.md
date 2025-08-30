@@ -12,6 +12,7 @@ Aplicación web completa para la gestión de pastelería, desarrollada con el st
 * **Autenticación:** Google OAuth 2.0 + JWT
 * **UI/UX:** Diseño responsive con componentes reutilizables
 * **Contenedores:** Docker + Docker Compose
+* **Testing:** Jasmine + Karma + GitHub Actions CI/CD
 * **Entorno:** Desarrollo containerizado
 
 ---
@@ -31,6 +32,8 @@ Aplicación web completa para la gestión de pastelería, desarrollada con el st
 * ✅ **Generador de presupuestos con márgenes configurables**
 * ✅ **Interfaz responsive y consistente en todas las vistas**
 * ✅ **Componente de encabezado reutilizable con cierre de sesión**
+* ✅ **Sistema completo de testing con 191+ pruebas automatizadas**
+* ✅ **CI/CD integrado con GitHub Actions**
 
 ---
 
@@ -60,6 +63,29 @@ Aplicación web completa para la gestión de pastelería, desarrollada con el st
 - Generador de presupuestos detallados
 - Configuración de porcentajes de gastos y ganancia
 - Impresión y exportación de presupuestos
+
+---
+
+## 🧪 **Sistema de Testing**
+
+### **Cobertura de Tests**
+- **✅ 198 pruebas automatizadas** ejecutándose en CI/CD
+- **✅ 0 fallos** - Todas las pruebas pasan correctamente
+- **✅ Cobertura completa** de servicios y componentes críticos
+
+### **Servicios Testeados**
+- **AuthService** - Autenticación, tokens, gestión de sesión
+- **LanguageService** - Internacionalización y manejo de idiomas
+- **ThemeService** - Sistema de temas claro/oscuro
+- **VideoModalComponent** - Componente de modal para videos
+
+### **Características de Testing**
+- ✅ Tests unitarios y de integración
+- ✅ Mocks de servicios y dependencias
+- ✅ Pruebas de autenticación y autorización
+- ✅ Validación de formularios y comportamientos UI
+- ✅ CI/CD integrado con GitHub Actions
+- ✅ Ejecución en entorno headless para CI
 
 ---
 
@@ -122,6 +148,35 @@ docker-compose up --build
 ```bash
 docker-compose up -d
 ```
+
+---
+
+## 🧪 **Ejecución de Tests**
+
+### **Ejecutar todos los tests**
+```bash
+cd app/frontend
+npm test
+```
+
+### **Ejecutar tests específicos**
+```bash
+# Solo tests de servicios
+npm run test -- --include='**/*.service.spec.ts'
+
+# Tests de AuthService
+npm run test -- --include='**/auth.service.spec.ts'
+
+# Tests con cobertura
+npm run test:ci
+```
+
+### **Tests en CI/CD**
+Los tests se ejecutan automáticamente en cada push y pull request mediante GitHub Actions, incluyendo:
+- ✅ Tests del backend en contenedor Docker
+- ✅ Tests del frontend con ChromeHeadless
+- ✅ Verificación de conectividad entre servicios
+- ✅ Generación de reportes de cobertura
 
 ---
 
@@ -216,6 +271,8 @@ Meraki-Angular/
 │   │   ├── package.json
 │   │   └── angular.json
 │   └── Dockerfile
+├── .github/workflows/
+│   └── docker-test.yml          # CI/CD con GitHub Actions
 ├── docker-compose.yml
 ├── .env.example
 └── README.md
@@ -285,6 +342,7 @@ docker-compose restart frontend
 - [ ] Múltiples usuarios y permisos
 - [ ] Modo offline con sincronización
 - [ ] App móvil con Ionic/Capacitor
+- [ ] Más pruebas de integración y E2E
 
 ---
 
