@@ -101,7 +101,7 @@
               </div>
             </div>
 
-            <!-- Columna derecha: Lista de subrecetas -->
+            <!-- Columna derecha: Lista de subrecetas (CORREGIDO - sin chips) -->
             <div class="table-column">
               <div class="subrecetas-list">
                 <div class="table-header">
@@ -111,14 +111,38 @@
                   </span>
                 </div>
 
-                <div class="chips-container" *ngIf="torta.subrecetas.length > 0">
-                  <mat-chip-listbox>
-                    <mat-chip *ngFor="let subrecetaId of torta.subrecetas; let i = index"
-                              [removable]="true" (removed)="eliminarSubreceta(i)">
-                      {{ getNombreSubreceta(subrecetaId) }}
-                      <mat-icon matChipRemove>cancel</mat-icon>
-                    </mat-chip>
-                  </mat-chip-listbox>
+                <!-- LISTA EN TABLA (reemplaza los chips) -->
+                <div class="subrecetas-table" *ngIf="torta.subrecetas.length > 0">
+                  <table mat-table [dataSource]="torta.subrecetas" class="mat-elevation-z2">
+                    <!-- Columna Nombre -->
+                    <ng-container matColumnDef="nombre">
+                      <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                      <td mat-cell *matCellDef="let subrecetaId">
+                        {{ getNombreSubreceta(subrecetaId) }}
+                      </td>
+                    </ng-container>
+
+                    <!-- Columna Costo -->
+                    <ng-container matColumnDef="costo">
+                      <th mat-header-cell *matHeaderCellDef>Costo</th>
+                      <td mat-cell *matCellDef="let subrecetaId">
+                        {{ getSubrecetaById(subrecetaId)?.costoTotal | number:'1.2-2' }}€
+                      </td>
+                    </ng-container>
+
+                    <!-- Columna Acciones -->
+                    <ng-container matColumnDef="acciones">
+                      <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                      <td mat-cell *matCellDef="let subrecetaId; let i = index" class="actions-cell">
+                        <button mat-icon-button color="warn" (click)="eliminarSubreceta(i)">
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="['nombre', 'costo', 'acciones']"></tr>
+                    <tr mat-row *matRowDef="let row; columns: ['nombre', 'costo', 'acciones'];"></tr>
+                  </table>
                 </div>
 
                 <!-- Mensaje cuando no hay subrecetas -->

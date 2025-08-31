@@ -1,4 +1,9 @@
 // index.js
+// ✅ FORZAR IPv4 - Agregar esto AL PRINCIPIO
+import dns from 'dns';
+dns.setDefaultResultOrder('ipv4first');
+console.log('✅ Configurado para usar IPv4 preferentemente');
+
 import app from "./server.js";
 import dotenv from "dotenv";
 

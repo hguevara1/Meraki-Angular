@@ -4,8 +4,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "node index.js",
+    "dev": "node --dns-result-order=ipv4first index.js",
+    "start": "node --dns-result-order=ipv4first index.js",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --testTimeout=30000 --runInBand --detectOpenHandles --forceExit",
     "test:ci": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --testTimeout=60000 --runInBand --detectOpenHandles --forceExit"
   },
