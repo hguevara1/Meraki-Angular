@@ -16,14 +16,33 @@ import { authenticateToken } from "./middleware/auth.js";
 // Cargar variables de entorno PRIMERO
 dotenv.config();
 
+console.log('🔍 Variables de entorno:');
+console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
+console.log('BACKEND_URL:', process.env.BACKEND_URL);
+console.log('NODE_ENV:', process.env.NODE_ENV);
+
 // Conectar a la base de datos
 connectDB();
 
 const app = express();
 
+const allowedOrigins = [
+  'http://localhost:4200',
+  'https://meraki-sabores-de-amor.web.app',
+  'https://meraki-sabores-de-amor.firebaseapp.com'
+];
+
 // ✅ Configuración de CORS
 app.use(cors({
-  origin: 'http://localhost:4200',
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
+    } else {
+      console.log('🚫 Origen no permitido por CORS:', origin);
+      return callback(new Error('Not allowed by CORS'), false);
+    }
+  },
   credentials: true
 }));
 

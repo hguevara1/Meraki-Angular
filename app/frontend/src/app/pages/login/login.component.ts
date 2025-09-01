@@ -10,6 +10,7 @@ import { TranslateService, TranslatePipe  } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -58,8 +59,7 @@ export class LoginComponent {
       email: this.loginForm.value.email,
       password: this.loginForm.value.password
     };
-
-    this.http.post('http://localhost:5000/api/users/login', loginData)
+    this.http.post('${environment.apiUrl}/users/login', loginData)
       .subscribe({
         next: (response: any) => {
           this.isLoading = false;
@@ -82,7 +82,7 @@ export class LoginComponent {
 
   loginWithGoogle() {
     this.isLoading = true;
-    window.location.href = 'http://localhost:5000/api/auth/google';
+    window.location.href = '${environment.apiUrl}/auth/google';
   }
 
   ngOnInit() {

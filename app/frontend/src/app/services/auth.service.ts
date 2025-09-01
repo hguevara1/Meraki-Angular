@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 interface UserData {
   _id: string;
@@ -16,16 +17,30 @@ interface UserData {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:5000/api';
+  private apiUrl = environment.apiUrl;
   private currentUserSubject = new BehaviorSubject<UserData | null>(null);
-  public authStatus$ = this.currentUserSubject.asObservable(); // Para que otros componentes se suscriban
+  public authStatus$ = this.currentUserSubject.asObservable();
 
   constructor(
     private http: HttpClient,
     private router: Router
   ) {
     console.log('✅ AuthService instanciado');
+    this.cleanInvalidTokens();
     this.loadUserFromStorage();
+  }
+
+  /**
+   * Limpia tokens inválidos del localStorage
+   */
+  private cleanInvalidTokens(): void {
+    const token = localStorage.getItem('authToken');
+
+    if (token && (token === 'undefined' || token === 'null' || token.trim() === '')) {
+      console.log('🧹 Limpiando token inválido');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userData');
+    }
   }
 
   /**
@@ -132,9 +147,23 @@ export class AuthService {
    * Verifica si el token JWT ha expirado.
    */
   private isTokenExpired(token: string): boolean {
+    // Verificar que el token exista y tenga el formato correcto
+    if (!token || typeof token !== 'string') {
+      console.warn('Token no válido o ausente');
+      return true;
+    }
+
+    // Verificar que tenga el formato JWT (tres partes separadas por puntos)
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      console.warn('Token no tiene formato JWT válido');
+      return true;
+    }
+
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
+      const payload = JSON.parse(atob(parts[1]));
       if (!payload.exp) return false;
+
       const now = Math.floor(Date.now() / 1000);
       return payload.exp < now;
     } catch (error) {

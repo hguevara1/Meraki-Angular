@@ -13,19 +13,24 @@ export class AuthGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     console.log('🛡️ AuthGuard ejecutándose... state.url=', state.url);
 
-    // Permitir siempre la ruta de callback (evita bucles y la condición de carrera)
-    if (state.url && state.url.includes('auth-callback')) {
-      console.log('🔓 Acceso permitido: ruta de callback');
+    // Permitir siempre la ruta de callback y login
+    if (state.url.includes('auth-callback') || state.url.includes('login')) {
+      console.log('🔓 Acceso permitido: ruta pública');
       return true;
     }
 
     const token = localStorage.getItem('authToken');
-    console.log('Token en localStorage:', token ? 'PRESENTE' : 'AUSENTE');
-    const isAuthenticated = !!token;
-    console.log('¿Autenticado?', isAuthenticated);
 
-    if (!isAuthenticated) {
-      console.error('❌ Acceso denegado - Redirigiendo a login');
+    // Verificar que el token exista y sea válido
+    if (!token || token === 'undefined' || token === 'null') {
+      console.error('❌ Acceso denegado - Token no válido');
+      this.router.navigate(['/login']);
+      return false;
+    }
+
+    // Verificar formato básico del token
+    if (token.split('.').length !== 3) {
+      console.error('❌ Acceso denegado - Token con formato incorrecto');
       this.router.navigate(['/login']);
       return false;
     }
