@@ -3,22 +3,27 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User from "../models/user.model.js";
 
-// Función para configurar la estrategia de Google
 const configurePassport = () => {
-  // Verificar que las variables de entorno estén cargadas
+  // ✅ Define isProduction aquí mismo
+  const isProduction = process.env.NODE_ENV === 'production';
+  console.log('🎯 Passport en entorno:', isProduction ? 'PRODUCCIÓN' : 'DESARROLLO');
+
   if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
     throw new Error('❌ Google OAuth credentials not found in environment variables');
   }
 
- const callbackURL = isProduction
-   ? `${process.env.BACKEND_URL}/api/auth/google/callback`
-   : 'http://localhost:5000/api/auth/google/callback';
+  // ✅ Configuración dinámica de callback URL
+  const callbackURL = isProduction
+    ? `${process.env.BACKEND_URL}/api/auth/google/callback`
+    : 'http://localhost:5000/api/auth/google/callback';
 
- passport.use(new GoogleStrategy({
-   clientID: process.env.GOOGLE_CLIENT_ID,
-   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-   callbackURL: callbackURL
- }, async (accessToken, refreshToken, profile, done) => {
+  console.log('🌐 Google Callback URL:', callbackURL);
+
+  passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: callbackURL
+  }, async (accessToken, refreshToken, profile, done) => {
     try {
       console.log('📨 Perfil de Google recibido:', profile.emails[0].value);
 

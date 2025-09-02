@@ -33,6 +33,7 @@ export class LoginComponent {
   loginForm: FormGroup;
   errorMessage: string = '';
   isLoading: boolean = false;
+  private apiUrl = environment.apiUrl;
 
   constructor(
     private fb: FormBuilder,
@@ -44,6 +45,7 @@ export class LoginComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
     });
+    console.log('🌐 URL del API:', this.apiUrl);
   }
 
   onSubmit() {
@@ -59,7 +61,7 @@ export class LoginComponent {
       email: this.loginForm.value.email,
       password: this.loginForm.value.password
     };
-    this.http.post('${environment.apiUrl}/users/login', loginData)
+    this.http.post(`${environment.apiUrl}/users/login`, loginData)
       .subscribe({
         next: (response: any) => {
           this.isLoading = false;
@@ -82,7 +84,7 @@ export class LoginComponent {
 
   loginWithGoogle() {
     this.isLoading = true;
-    window.location.href = '${environment.apiUrl}/auth/google';
+    window.location.href = `${environment.apiUrl}/auth/google`;
   }
 
   ngOnInit() {

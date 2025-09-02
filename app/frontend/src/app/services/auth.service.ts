@@ -117,9 +117,8 @@ export class AuthService {
    * Devuelve true si hay token y no está expirado.
    */
   isAuthenticated(): boolean {
-    const token = localStorage.getItem('authToken');
+    const token = this.getToken();
     const isAuth = !!token && !this.isTokenExpired(token);
-    console.log('🔐 isAuthenticated():', isAuth);
     return isAuth;
   }
 
@@ -140,7 +139,8 @@ export class AuthService {
    * Devuelve el token.
    */
   getToken(): string | null {
-    return localStorage.getItem('authToken');
+    const token = localStorage.getItem('authToken');
+    return token;
   }
 
   /**

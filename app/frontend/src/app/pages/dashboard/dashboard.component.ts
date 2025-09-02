@@ -10,6 +10,7 @@ import { HeaderComponent } from '../header/header.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-dashboard',
@@ -33,6 +34,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   totalSubrecetas: number = 0;
   totalTortas: number = 0;
   private authSubscription!: Subscription;
+
+  private apiUrl = environment.apiUrl;
 
   constructor(
     private authService: AuthService,
@@ -83,7 +86,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private loadIngredientesCount() {
-    this.http.get<any[]>('http://localhost:5000/api/ingredientes')
+    this.http.get<any[]>(`${environment.apiUrl}/ingredientes`)
       .subscribe({
         next: (ingredientes) => {
           this.totalIngredientes = ingredientes.length;
@@ -99,7 +102,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private loadSubrecetasCount() {
-    this.http.get<any[]>('http://localhost:5000/api/subrecetas')
+    this.http.get<any[]>(`${environment.apiUrl}/subrecetas`)
       .subscribe({
         next: (subrecetas) => {
           this.totalSubrecetas = subrecetas.length;
@@ -115,7 +118,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private loadTortasCount() {
-    this.http.get<any[]>('http://localhost:5000/api/tortas')
+    this.http.get<any[]>(`${environment.apiUrl}/tortas`)
       .subscribe({
         next: (tortas) => {
           this.totalTortas = tortas.length;

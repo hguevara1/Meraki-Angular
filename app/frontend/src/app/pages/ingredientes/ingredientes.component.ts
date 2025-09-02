@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from '../header/header.component';
+import { environment } from '../../../environments/environment';
 
 // Angular Material
 import { MatTableModule } from '@angular/material/table';
@@ -47,6 +48,7 @@ export class IngredientesComponent implements OnInit {
   displayedColumns: string[] = ['nombre', 'precio', 'medida', 'unidad', 'acciones'];
   isLoading: boolean = true;
   totalIngredientes: number = 0;
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
@@ -56,7 +58,7 @@ export class IngredientesComponent implements OnInit {
 
   cargarIngredientes() {
     this.isLoading = true;
-    this.http.get<Ingrediente[]>('http://localhost:5000/api/ingredientes')
+    this.http.get<Ingrediente[]>(`${environment.apiUrl}/ingredientes`)
       .subscribe({
         next: (data) => {
           this.ingredientes = data;
@@ -72,7 +74,7 @@ export class IngredientesComponent implements OnInit {
 
   eliminarIngrediente(id: string) {
     if (confirm('¿Estás seguro de eliminar este ingrediente?')) {
-      this.http.delete(`http://localhost:5000/api/ingredientes/${id}`)
+      this.http.delete(`${environment.apiUrl}/ingredientes/${id}`)
         .subscribe({
           next: () => {
             this.cargarIngredientes(); // Recargar la lista

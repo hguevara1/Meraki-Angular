@@ -6,7 +6,8 @@ import { HttpClient } from '@angular/common/http';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { HeaderComponent } from '../header/header.component'
+import { HeaderComponent } from '../header/header.component';
+import { environment } from '../../../environments/environment';
 
 // Angular Material
 import { MatButtonModule } from '@angular/material/button';
@@ -68,6 +69,7 @@ export class AgregarSubrecetaComponent implements OnInit {
     nombre: '',
     ingredientes: [] as IngredienteEditable[]
   };
+  private apiUrl = environment.apiUrl;
 
   ingredientesDisponibles: Ingrediente[] = [];
   filteredIngredientes!: Observable<Ingrediente[]>;
@@ -124,7 +126,7 @@ export class AgregarSubrecetaComponent implements OnInit {
   }
 
   cargarIngredientes() {
-    this.http.get<Ingrediente[]>('http://localhost:5000/api/ingredientes')
+    this.http.get<Ingrediente[]>(`${this.apiUrl}/ingredientes/ingredientes`)
       .subscribe({
         next: (data) => {
           this.ingredientesDisponibles = data;
@@ -138,7 +140,7 @@ export class AgregarSubrecetaComponent implements OnInit {
   }
 
   cargarSubreceta(id: string) {
-    this.http.get<any>(`http://localhost:5000/api/subrecetas/${id}`)
+    this.http.get<any>(`${this.apiUrl}/ingredientes/subrecetas/${id}`)
       .subscribe({
         next: (data) => {
           this.subreceta = data;
@@ -283,7 +285,7 @@ export class AgregarSubrecetaComponent implements OnInit {
 
   guardarSubreceta() {
     if (this.isEditMode) {
-      this.http.put(`http://localhost:5000/api/subrecetas/${this.subreceta._id}`, this.subreceta)
+      this.http.put(`${this.apiUrl}/ingredientes/subrecetas/${this.subreceta._id}`, this.subreceta)
         .subscribe({
           next: () => {
             this.router.navigate(['/subrecetas']);
@@ -293,7 +295,7 @@ export class AgregarSubrecetaComponent implements OnInit {
           }
         });
     } else {
-      this.http.post('http://localhost:5000/api/subrecetas', this.subreceta)
+      this.http.post(`${this.apiUrl}/ingredientes/subrecetas`, this.subreceta)
         .subscribe({
           next: () => {
             this.router.navigate(['/subrecetas']);

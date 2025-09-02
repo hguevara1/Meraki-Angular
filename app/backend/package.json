@@ -18,6 +18,7 @@
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
+    "dotenv-flow": "^4.1.0",
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
     "helmet": "^8.1.0",
@@ -41,7 +42,9 @@
   "jest": {
     "testEnvironment": "node",
     "testTimeout": 30000,
-    "setupFilesAfterEnv": ["<rootDir>/test/setup.js"],
+    "setupFilesAfterEnv": [
+      "<rootDir>/test/setup.js"
+    ],
     "transform": {}
   }
 }

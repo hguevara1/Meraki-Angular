@@ -6,7 +6,9 @@ import { HttpClient } from '@angular/common/http';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { HeaderComponent } from '../header/header.component'
+import { HeaderComponent } from '../header/header.component';
+
+import { environment } from '../../../environments/environment';
 
 // Angular Material
 import { MatButtonModule } from '@angular/material/button';
@@ -91,6 +93,7 @@ interface PresupuestoConfig {
 export class PresupuestoTortaComponent implements OnInit {
   tortasDisponibles: Torta[] = [];
   tortaSeleccionada: Torta | null = null;
+  private apiUrl = environment.apiUrl;
   configuracion: PresupuestoConfig = {
     porcentajeGastos: 20,
     porcentajeGanancia: 100
@@ -162,7 +165,7 @@ export class PresupuestoTortaComponent implements OnInit {
   }
 
   cargarTortas() {
-    this.http.get<Torta[]>('http://localhost:5000/api/tortas')
+    this.http.get<Torta[]>(`${environment.apiUrl}/tortas`)
       .subscribe({
         next: (data) => {
           this.tortasDisponibles = data.map(torta => ({
@@ -185,7 +188,7 @@ export class PresupuestoTortaComponent implements OnInit {
   }
 
   cargarIngredientes() {
-    this.http.get<Ingrediente[]>('http://localhost:5000/api/ingredientes')
+    this.http.get<Ingrediente[]>(`${environment.apiUrl}/ingredientes`)
       .subscribe({
         next: (data) => {
           this.ingredientesDisponibles = data;

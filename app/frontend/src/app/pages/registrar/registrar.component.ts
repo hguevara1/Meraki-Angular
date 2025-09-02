@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-registrar',
@@ -29,6 +30,7 @@ export class RegistrarComponent {
   registerForm: FormGroup;
   errorMessage: string = '';
   successMessage: string = '';
+  private apiUrl = environment.apiUrl;
 
   constructor(private fb: FormBuilder, private http: HttpClient) {
     this.registerForm = this.fb.group({
@@ -53,7 +55,7 @@ export class RegistrarComponent {
       return;
     }
 
-    this.http.post('http://localhost:5000/api/users/register', this.registerForm.value)
+    this.http.post(`${environment.apiUrl}/users/register`, this.registerForm.value)
       .subscribe({
         next: (res: any) => {
           this.successMessage = 'Usuario registrado correctamente 🎉';

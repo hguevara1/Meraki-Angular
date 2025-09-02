@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { HeaderComponent } from '../header/header.component'
+import { HeaderComponent } from '../header/header.component';
+import { environment } from '../../../environments/environment';
 
 // Angular Material
 import { MatTableModule } from '@angular/material/table';
@@ -57,6 +58,7 @@ export class SubrecetasComponent implements OnInit {
   displayedColumns: string[] = ['nombre', 'ingredientesCount', 'costoTotal', 'acciones'];
   isLoading: boolean = true;
   totalSubrecetas: number = 0;
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
@@ -66,7 +68,7 @@ export class SubrecetasComponent implements OnInit {
 
   cargarSubrecetas() {
     this.isLoading = true;
-    this.http.get<Subreceta[]>('http://localhost:5000/api/subrecetas')
+    this.http.get<Subreceta[]>(`${environment.apiUrl}/subrecetas`)
       .subscribe({
         next: (data) => {
           this.subrecetas = data;
@@ -88,7 +90,7 @@ export class SubrecetasComponent implements OnInit {
 
   eliminarSubreceta(id: string) {
     if (confirm('¿Estás seguro de eliminar esta subreceta?')) {
-      this.http.delete(`http://localhost:5000/api/subrecetas/${id}`)
+      this.http.delete(`${environment.apiUrl}/subrecetas/${id}`)
         .subscribe({
           next: () => {
             this.cargarSubrecetas(); // Recargar la lista

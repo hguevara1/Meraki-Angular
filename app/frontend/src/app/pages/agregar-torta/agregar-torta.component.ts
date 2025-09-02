@@ -6,7 +6,9 @@ import { HttpClient } from '@angular/common/http';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { HeaderComponent } from '../header/header.component'
+import { HeaderComponent } from '../header/header.component';
+
+import { environment } from '../../../environments/environment';
 
 // Angular Material
 import { MatButtonModule } from '@angular/material/button';
@@ -81,6 +83,7 @@ export class AgregarTortaComponent implements OnInit {
     subrecetas: [],
     videoUrl: ''
   };
+  private apiUrl = environment.apiUrl;
 
   subrecetasDisponibles: Subreceta[] = [];
   filteredSubrecetas!: Observable<Subreceta[]>;
@@ -154,7 +157,7 @@ export class AgregarTortaComponent implements OnInit {
 
   cargarSubrecetas() {
     console.log('🔄 Cargando subrecetas desde API...');
-    this.http.get<Subreceta[]>('http://localhost:5000/api/subrecetas')
+    this.http.get<Subreceta[]>(`${environment.apiUrl}/subrecetas`)
       .subscribe({
         next: (data) => {
           console.log('✅ Subrecetas cargadas correctamente:', data.length);
@@ -193,7 +196,7 @@ export class AgregarTortaComponent implements OnInit {
 
   cargarTorta(id: string) {
     console.log(`🔄 Cargando torta con ID: ${id}`);
-    this.http.get<Torta>(`http://localhost:5000/api/tortas/${id}`)
+    this.http.get<Torta>(`${environment.apiUrl}/tortas/${id}`)
       .subscribe({
         next: (data) => {
           console.log('✅ Torta cargada correctamente:', data);
@@ -308,7 +311,7 @@ export class AgregarTortaComponent implements OnInit {
 
     if (this.isEditMode) {
       console.log('📝 Actualizando torta existente');
-      this.http.put(`http://localhost:5000/api/tortas/${this.torta._id}`, this.torta)
+      this.http.put(`${environment.apiUrl}/tortas/${this.torta._id}`, this.torta)
         .subscribe({
           next: () => {
             console.log('✅ Torta actualizada correctamente');
@@ -320,7 +323,7 @@ export class AgregarTortaComponent implements OnInit {
         });
     } else {
       console.log('🆕 Creando nueva torta');
-      this.http.post('http://localhost:5000/api/tortas', this.torta)
+      this.http.post(`${environment.apiUrl}/tortas`, this.torta)
         .subscribe({
           next: () => {
             console.log('✅ Torta creada correctamente');

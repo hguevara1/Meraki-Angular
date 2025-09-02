@@ -38,12 +38,46 @@ export const loginUser = async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email: email.toLowerCase().trim() });
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user) {
       return res.status(400).json({ message: "Credenciales inválidas" });
     }
 
+    // ✅ USUARIO CON GOOGLE Y PASSWORD (tu caso)
+    if (user.googleId && user.password) {
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        return res.status(400).json({ message: "Credenciales inválidas" });
+      }
+    }
+    // ✅ USUARIO SOLO PASSWORD TRADICIONAL
+    else if (user.password) {
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        return res.status(400).json({ message: "Credenciales inválidas" });
+      }
+    }
+    // ✅ USUARIO SOLO GOOGLE (sin password)
+    else if (user.googleId && !user.password) {
+      return res.status(400).json({
+        message: "Este usuario solo puede acceder con Google Login"
+      });
+    }
+    // ❌ USUARIO SIN NINGÚN MÉTODO
+    else {
+      return res.status(400).json({
+        message: "Usuario sin método de autenticación válido"
+      });
+    }
+
+    // ✅ GENERAR TOKEN (login exitoso)
     const token = jwt.sign(
-      { userId: user._id, email: user.email },
+      {
+        userId: user._id,
+        email: user.email,
+        role: user.role,
+        nombre: user.nombre,
+        apellido: user.apellido
+      },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -56,7 +90,9 @@ export const loginUser = async (req, res) => {
         nombre: user.nombre,
         apellido: user.apellido,
         email: user.email,
-        telefono: user.telefono
+        telefono: user.telefono,
+        role: user.role,
+        avatar: user.avatar
       }
     });
 

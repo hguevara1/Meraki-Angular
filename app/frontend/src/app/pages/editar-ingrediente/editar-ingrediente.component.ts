@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { HeaderComponent } from '../header/header.component'
+import { HeaderComponent } from '../header/header.component';
+import { environment } from '../../../environments/environment';
 
 // Angular Material
 import { MatCardModule } from '@angular/material/card';
@@ -26,7 +27,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
-    HeaderComponent
+    HeaderComponent,
+    RouterModule
   ],
   templateUrl: './editar-ingrediente.component.html',
   styleUrls: ['./editar-ingrediente.component.css']
@@ -36,6 +38,7 @@ export class EditarIngredienteComponent implements OnInit {
   unidades: string[] = ['gr', 'ml', 'kg', 'lt', 'unidad', 'docena'];
   ingredienteId: string = '';
   isLoading: boolean = true;
+  private apiUrl = environment.apiUrl;
 
   constructor(
     private fb: FormBuilder,
@@ -58,7 +61,7 @@ export class EditarIngredienteComponent implements OnInit {
   }
 
   cargarIngrediente() {
-    this.http.get<any>(`http://localhost:5000/api/ingredientes/${this.ingredienteId}`)
+    this.http.get<any>(`${environment.apiUrl}/ingredientes/${this.ingredienteId}`)
       .subscribe({
         next: (ingrediente) => {
           this.ingredienteForm.patchValue(ingrediente);
@@ -85,7 +88,7 @@ export class EditarIngredienteComponent implements OnInit {
 
   onSubmit() {
     if (this.ingredienteForm.valid) {
-      this.http.put(`http://localhost:5000/api/ingredientes/${this.ingredienteId}`, this.ingredienteForm.value)
+      this.http.put(`${environment.apiUrl}/ingredientes/${this.ingredienteId}`, this.ingredienteForm.value)
         .subscribe({
           next: (response) => {
             this.snackBar.open('✅ Ingrediente actualizado correctamente', 'Cerrar', {

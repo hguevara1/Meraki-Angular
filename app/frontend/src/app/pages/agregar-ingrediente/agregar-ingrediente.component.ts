@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { HeaderComponent } from '../header/header.component';
+import { environment } from '../../../environments/environment';
 
 // Angular Material
 import { MatCardModule } from '@angular/material/card';
@@ -35,6 +36,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class AgregarIngredienteComponent {
   ingredienteForm: FormGroup;
   unidades: string[] = ['gr', 'ml', 'kg', 'lt', 'unidad', 'docena'];
+  private apiUrl = environment.apiUrl;
 
   constructor(
     private fb: FormBuilder,
@@ -52,7 +54,7 @@ export class AgregarIngredienteComponent {
 
   onSubmit() {
     if (this.ingredienteForm.valid) {
-      this.http.post('http://localhost:5000/api/ingredientes', this.ingredienteForm.value)
+      this.http.post(`${environment.apiUrl}/ingredientes`, this.ingredienteForm.value)
         .subscribe({
           next: (response) => {
             this.snackBar.open('✅ Ingrediente agregado correctamente', 'Cerrar', {

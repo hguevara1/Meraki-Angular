@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { VideoModalComponent } from '../video-modal/video-modal.component';
 import { Subscription } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 // Angular Material
 import { MatTableModule } from '@angular/material/table';
@@ -45,6 +46,7 @@ export class TortasComponent implements OnInit, OnDestroy {
   isLoading: boolean = true;
   totalTortas: number = 0;
   private subscriptions: Subscription = new Subscription();
+  private apiUrl = environment.apiUrl;
 
   constructor(
     private http: HttpClient,
@@ -72,7 +74,7 @@ export class TortasComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const tortasSubscription = this.http.get<Torta[]>('http://localhost:5000/api/tortas')
+    const tortasSubscription = this.http.get<Torta[]>(`${environment.apiUrl}/tortas`)
       .subscribe({
         next: (data) => {
           this.tortas = data;
@@ -102,7 +104,7 @@ export class TortasComponent implements OnInit, OnDestroy {
     }
 
     if (confirm('¿Estás seguro de eliminar esta torta?')) {
-      const deleteSubscription = this.http.delete(`http://localhost:5000/api/tortas/${id}`)
+      const deleteSubscription = this.http.delete(`${environment.apiUrl}/tortas/${id}`)
         .subscribe({
           next: () => {
             this.mostrarMensaje('Torta eliminada correctamente');

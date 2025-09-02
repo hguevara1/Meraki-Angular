@@ -1,6 +1,20 @@
 // server.js
+import dotenv from 'dotenv';
+import path from 'path';
+import fs from 'fs';
+
+// ✅ Cargar variables de entorno PRIMERO
+const envFile = fs.existsSync('.env.local') ? '.env.local' : '.env';
+dotenv.config({ path: path.resolve(process.cwd(), envFile) });
+
+console.log('📁 Cargando variables de:', envFile);
+console.log('🔍 Variables cargadas:');
+console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
+console.log('BACKEND_URL:', process.env.BACKEND_URL);
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID ? 'Cargado' : 'No encontrado');
+
 import express from "express";
-import dotenv from "dotenv";
 import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
@@ -13,26 +27,27 @@ import authRoutes from "./routes/authRoutes.js";
 import configurePassport from "./config/passport.js";
 import { authenticateToken } from "./middleware/auth.js";
 
-// Cargar variables de entorno PRIMERO
-dotenv.config();
-
-console.log('🔍 Variables de entorno:');
-console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
-console.log('BACKEND_URL:', process.env.BACKEND_URL);
-console.log('NODE_ENV:', process.env.NODE_ENV);
-
 // Conectar a la base de datos
 connectDB();
 
 const app = express();
 
-const allowedOrigins = [
-  'http://localhost:4200',
-  'https://meraki-sabores-de-amor.web.app',
-  'https://meraki-sabores-de-amor.firebaseapp.com'
-];
+// ✅ Configuración de CORS dinámica
+const isProduction = process.env.NODE_ENV === 'production';
+console.log('🎯 Entorno:', isProduction ? 'PRODUCCIÓN' : 'DESARROLLO');
 
-// ✅ Configuración de CORS
+const allowedOrigins = isProduction
+  ? [
+      'https://meraki-sabores-de-amor.web.app',
+      'https://meraki-sabores-de-amor.firebaseapp.com'
+    ]
+  : [
+      'http://localhost:4200',
+      'http://localhost:5000'
+    ];
+
+console.log('🌐 Orígenes permitidos:', allowedOrigins);
+
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
@@ -51,34 +66,15 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(helmet());
 
-// ✅ Configurar passport DESPUÉS de cargar las variables de entorno
+// ✅ Configurar passport
 const passport = configurePassport();
 app.use(passport.initialize());
-
-console.log("✅ Google Client ID:", process.env.GOOGLE_CLIENT_ID ? "Cargado" : "No encontrado");
-console.log("✅ Google Client Secret:", process.env.GOOGLE_CLIENT_SECRET ? "Cargado" : "No encontrado");
-const isProduction = process.env.NODE_ENV === 'production';
-
-console.log('🎯 Entorno:', isProduction ? 'PRODUCCIÓN' : 'DESARROLLO');
-
-// ✅ Configuración de CORS dinámica
-const allowedOrigins = isProduction
-  ? [
-      'https://meraki-sabores-de-amor.web.app',
-      'https://meraki-sabores-de-amor.firebaseapp.com'
-    ]
-  : [
-      'http://localhost:4200',
-      'http://localhost:3000'
-    ];
-
-console.log('🌐 Orígenes permitidos:', allowedOrigins);
 
 // Rutas
 app.get("/", (req, res) => res.send("API Meraki corriendo 🚀"));
 app.get("/api/test", (req, res) => res.status(200).json({ message: "Backend working!" }));
 
-// Rutas de usuario
+// Rutas protegidas
 app.use("/api/users", authenticateToken, userRoutes);
 app.use("/api/ingredientes", authenticateToken, ingredienteRoutes);
 app.use("/api/subrecetas", authenticateToken, subrecetaRoutes);
