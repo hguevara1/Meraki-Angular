@@ -1,10 +1,15 @@
 import express from "express";
 import passport from "passport";
 import jwt from "jsonwebtoken";
+import { registerUser, loginUser } from "../controllers/user.controller.js";
 
 const router = express.Router();
 
-// Iniciar autenticación Google
+// 🔓 Rutas públicas para login/register
+router.post("/register", registerUser);
+router.post("/login", loginUser);
+
+// 🔗 Google OAuth
 router.get("/google",
   passport.authenticate("google", {
     scope: ["profile", "email"],
@@ -35,11 +40,8 @@ router.get("/google/callback",
           process.env.JWT_SECRET,
           { expiresIn: '7d' }
         );
-        console.log('🔐 Token a enviar:', token);
-        console.log('🌐 URL de redirección:', `${process.env.FRONTEND_URL}/#/auth-callback?token=${token}&success=true`);
-        // ✅ SOLUCIÓN SIN INLINE SCRIPT - Redirigir con hash
-        res.redirect(`${process.env.FRONTEND_URL}/#/auth-callback?token=${token}&success=true`);
 
+        res.redirect(`${process.env.FRONTEND_URL}/#/auth-callback?token=${token}&success=true`);
       } catch (error) {
         console.error('❌ Error generating token:', error);
         res.redirect(process.env.FRONTEND_URL + '/login?error=token_error');
@@ -48,7 +50,7 @@ router.get("/google/callback",
   }
 );
 
-// Ruta para logout
+// Logout
 router.get("/logout", (req, res) => {
   req.logout();
   res.redirect(process.env.FRONTEND_URL);
