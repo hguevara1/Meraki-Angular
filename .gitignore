@@ -134,4 +134,11 @@ tmp/
 # DOCKER IGNORES (opcional, si no quieres subir imágenes)
 # ========================
 # *.tar
-# *.gz
+# *.gz.firebase/*.cache
+
+# ========================
+# Firebase Hosting cache
+# ========================
+.firebase/*.cache
+public/bootmgr
+

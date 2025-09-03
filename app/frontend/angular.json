@@ -23,7 +23,7 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
-                "glob": "**/*",
+                "glob": "/*",
                 "input": "public"
               },
               "src/assets"
@@ -36,6 +36,12 @@
           },
           "configurations": {
             "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",
@@ -54,21 +60,6 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
-            }
-          },
-          "defaultConfiguration": "production"
-        },
-        "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
-          "configurations": {
-            "production": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ],
-              "buildTarget": "frontend:build:production"
             },
             "docker": {
               "fileReplacements": [
@@ -77,9 +68,21 @@
                   "with": "src/environments/environment.docker.ts"
                 }
               ]
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "frontend:build:production"
             },
             "development": {
               "buildTarget": "frontend:build:development"
+            },
+            "docker": {
+              "buildTarget": "frontend:build:docker"
             }
           },
           "defaultConfiguration": "development"
@@ -98,7 +101,7 @@
             "tsConfig": "tsconfig.spec.json",
             "assets": [
               {
-                "glob": "**/*",
+                "glob": "/*",
                 "input": "public"
               }
             ],
