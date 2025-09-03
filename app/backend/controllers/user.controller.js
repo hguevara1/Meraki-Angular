@@ -42,31 +42,23 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ message: "Credenciales inválidas" });
     }
 
-    // ✅ USUARIO CON GOOGLE Y PASSWORD (tu caso)
-    if (user.googleId && user.password) {
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-        return res.status(400).json({ message: "Credenciales inválidas" });
-      }
-    }
-    // ✅ USUARIO SOLO PASSWORD TRADICIONAL
-    else if (user.password) {
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-        return res.status(400).json({ message: "Credenciales inválidas" });
-      }
-    }
-    // ✅ USUARIO SOLO GOOGLE (sin password)
-    else if (user.googleId && !user.password) {
+    // Verificar método de autenticación válido
+    if (user.googleId && !user.password) {
       return res.status(400).json({
         message: "Este usuario solo puede acceder con Google Login"
       });
     }
-    // ❌ USUARIO SIN NINGÚN MÉTODO
-    else {
+
+    if (!user.password) {
       return res.status(400).json({
         message: "Usuario sin método de autenticación válido"
       });
+    }
+
+    // Validar contraseña
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: "Credenciales inválidas" });
     }
 
     // ✅ GENERAR TOKEN (login exitoso)
