@@ -15,8 +15,13 @@ export class AuthInterceptor implements HttpInterceptor {
   ) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    // ✅ Agrega logs para debug
     console.log('🔐 AuthInterceptor ejecutándose para URL:', request.url);
+
+    // 👉 Excluir rutas públicas
+    if (request.url.includes('/login') || request.url.includes('/register')) {
+      console.log('🚫 Ruta pública, no se agrega token');
+      return next.handle(request);
+    }
 
     const token = this.authService.getToken();
     console.log('📋 Token disponible:', token ? 'SÍ' : 'NO');
@@ -32,17 +37,16 @@ export class AuthInterceptor implements HttpInterceptor {
       console.log('⚠️  No hay token - Request sin autorización');
     }
 
-    // Manejar la request y capturar errores de autenticación
     return next.handle(request).pipe(
-        catchError((error: HttpErrorResponse) => {
-          console.error('❌ Error HTTP:', error.status, error.url);
-          if (error.status === 401) {
-            console.log('🚨 Token inválido o expirado - Redirigiendo a login');
-            this.authService.logout();
-            this.router.navigate(['/login']);
-          }
-          return throwError(() => error);
-        })
-      );
-    }
+      catchError((error: HttpErrorResponse) => {
+        console.error('❌ Error HTTP:', error.status, error.url);
+        if (error.status === 401) {
+          console.log('🚨 Token inválido o expirado - Redirigiendo a login');
+          this.authService.logout();
+          this.router.navigate(['/login']);
+        }
+        return throwError(() => error);
+      })
+    );
+  }
 }
