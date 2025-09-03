@@ -1,5 +1,7 @@
 import express from "express";
 import {
+  registerUser,
+  loginUser,
   obtenerUsuarios,
   obtenerUsuario,
   actualizarUsuario,
@@ -9,7 +11,11 @@ import { authenticateToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
-// Todas las rutas aquí están protegidas con JWT
+// 🔓 Rutas públicas
+router.post("/register", registerUser);
+router.post("/login", loginUser);
+
+// 🔒 Rutas protegidas
 router.get("/", authenticateToken, obtenerUsuarios);
 router.get("/:id", authenticateToken, obtenerUsuario);
 router.put("/:id", authenticateToken, actualizarUsuario);

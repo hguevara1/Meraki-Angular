@@ -54,8 +54,9 @@ app.get("/api/test", (req, res) => res.status(200).json({ message: "Backend work
 // 🔓 Rutas públicas
 app.use("/api/auth", authRoutes);
 
-// 🔒 Rutas protegidas
-app.use("/api/users", authenticateToken, userRoutes);
+// Rutas de usuarios (login/register públicas, CRUD protegidas internamente)
+app.use("/api/users", userRoutes);
+
 app.use("/api/ingredientes", authenticateToken, ingredienteRoutes);
 app.use("/api/subrecetas", authenticateToken, subrecetaRoutes);
 app.use("/api/tortas", authenticateToken, tortaRoutes);

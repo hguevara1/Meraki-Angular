@@ -96,7 +96,7 @@ Aplicación web completa para la gestión de pastelería, desarrollada con el st
 ```bash
 git clone https://github.com/hguevara1/Meraki-Angular.git
 cd Meraki-Angular
-```
+````
 
 ### **2. Configurar variables de entorno**
 
@@ -154,12 +154,14 @@ docker-compose up -d
 ## 🧪 **Ejecución de Tests**
 
 ### **Ejecutar todos los tests**
+
 ```bash
 cd app/frontend
 npm test
 ```
 
 ### **Ejecutar tests específicos**
+
 ```bash
 # Solo tests de servicios
 npm run test -- --include='**/*.service.spec.ts'
@@ -172,36 +174,64 @@ npm run test:ci
 ```
 
 ### **Tests en CI/CD**
+
 Los tests se ejecutan automáticamente en cada push y pull request mediante GitHub Actions, incluyendo:
-- ✅ Tests del backend en contenedor Docker
-- ✅ Tests del frontend con ChromeHeadless
-- ✅ Verificación de conectividad entre servicios
-- ✅ Generación de reportes de cobertura
+
+* ✅ Tests del backend en contenedor Docker
+* ✅ Tests del frontend con ChromeHeadless
+* ✅ Verificación de conectividad entre servicios
+* ✅ Generación de reportes de cobertura
 
 ---
 
-## 🔐 **Flujo de Autenticación**
+## 🔐 **Flujo de Autenticación y Rutas**
 
-Este es el flujo implementado para **Google OAuth 2.0 + JWT + Angular Hash Location**:
+Este diagrama muestra **qué rutas son públicas y cuáles requieren token JWT**:
 
 ```mermaid
 sequenceDiagram
     participant U as Usuario
     participant FE as Frontend (Angular)
-    participant BE as Backend (Express + Passport)
+    participant BE as Backend (Express)
     participant G as Google OAuth
 
+    %% Login tradicional
+    U->>FE: POST /api/users/login (email/password)
+    FE->>BE: Enviar credenciales
+    BE-->>FE: 200 OK + JWT (si válido)
+    FE->>FE: Guardar token en localStorage
+    FE->>U: Usuario autenticado
+
+    %% Registro de usuario
+    U->>FE: POST /api/users/register
+    FE->>BE: Enviar datos registro
+    BE-->>FE: 201 Created + JWT
+    FE->>FE: Guardar token
+    FE->>U: Usuario registrado y autenticado
+
+    %% Google OAuth
     U->>FE: Click en "Login con Google"
     FE->>BE: GET /api/auth/google
     BE->>G: Redirige a Google OAuth
     G->>U: Solicita permisos y autenticación
-    U->>G: Proporciona credenciales Google
-    G->>BE: Devuelve datos del usuario (profile, email)
-    BE->>BE: Genera JWT con datos del usuario
-    BE->>FE: Redirige a http://localhost:4200/#/auth-callback?token=JWT&success=true
-    FE->>FE: APP_INITIALIZER guarda token y userData en localStorage
-    FE->>FE: AuthCallback navega a /dashboard
-    FE->>U: Usuario autenticado y en panel principal
+    U->>G: Proporciona credenciales
+    G->>BE: Devuelve profile/email
+    BE->>BE: Genera JWT
+    BE->>FE: Redirige a FE con token
+    FE->>FE: Guarda token y userData
+
+    %% Rutas protegidas (requieren JWT)
+    FE->>BE: GET /api/users (listar usuarios)
+    FE->>BE: GET /api/ingredientes
+    FE->>BE: GET /api/subrecetas
+    FE->>BE: GET /api/tortas
+    BE->>FE: Devuelve datos solo si token válido
+
+    %% Logout
+    U->>FE: Click Logout
+    FE->>FE: Borrar token/localStorage
+    FE->>BE: GET /api/auth/logout
+    BE->>FE: Sesión cerrada
 ```
 
 ---
@@ -209,19 +239,21 @@ sequenceDiagram
 ## 🎨 **Interfaz de Usuario**
 
 ### **Características de UI/UX**
-- **Diseño consistente** en todas las vistas
-- **Encabezado reutilizable** con botón de cierre de sesión
-- **Navegación intuitiva** con breadcrumbs y botones de retroceso
-- **Tablas responsivas** con scroll interno y headers fijos
-- **Formularios validados** con mensajes de error claros
-- **Estados vacíos** informativos con llamadas a la acción
-- **Temas claros/oscuros** con toggle de tema
+
+* **Diseño consistente** en todas las vistas
+* **Encabezado reutilizable** con botón de cierre de sesión
+* **Navegación intuitiva** con breadcrumbs y botones de retroceso
+* **Tablas responsivas** con scroll interno y headers fijos
+* **Formularios validados** con mensajes de error claros
+* **Estados vacíos** informativos con llamadas a la acción
+* **Temas claros/oscuros** con toggle de tema
 
 ### **Componentes Reutilizables**
-- `HeaderComponent` - Encabezado con logo, usuario y cierre de sesión
-- `ThemeToggleComponent` - Selector de tema claro/oscuro
-- Tablas responsivas con paginación y ordenamiento
-- Formularios con validación y mensajes de error
+
+* `HeaderComponent` - Encabezado con logo, usuario y cierre de sesión
+* `ThemeToggleComponent` - Selector de tema claro/oscuro
+* Tablas responsivas con paginación y ordenamiento
+* Formularios con validación y mensajes de error
 
 ---
 
@@ -304,45 +336,59 @@ docker-compose restart frontend
 ## 📊 **Endpoints de la API**
 
 ### **Autenticación**
-- `GET /api/auth/google` - Iniciar autenticación Google
-- `GET /api/auth/google/callback` - Callback de Google OAuth
-- `GET /api/auth/logout` - Cerrar sesión
-- `GET /api/auth/status` - Verificar estado de autenticación
+
+* `GET /api/auth/google` - Iniciar autenticación Google
+* `GET /api/auth/google/callback` - Callback de Google OAuth
+* `GET /api/auth/logout` - Cerrar sesión
+* `GET /api/auth/status` - Verificar estado de autenticación
+
+### **Usuarios**
+
+* `POST /api/users/register` - Crear usuario (pública)
+* `POST /api/users/login` - Login (pública)
+* `GET /api/users` - Listar usuarios (protegida)
+* `GET /api/users/:id` - Obtener usuario (protegida)
+* `PUT /api/users/:id` - Actualizar usuario (protegida)
+* `DELETE /api/users/:id` - Eliminar usuario (protegida)
 
 ### **Ingredientes**
-- `GET /api/ingredientes` - Listar todos los ingredientes
-- `POST /api/ingredientes` - Crear nuevo ingrediente
-- `PUT /api/ingredientes/:id` - Actualizar ingrediente
-- `DELETE /api/ingredientes/:id` - Eliminar ingrediente
+
+* `GET /api/ingredientes` - Listar todos los ingredientes
+* `POST /api/ingredientes` - Crear nuevo ingrediente
+* `PUT /api/ingredientes/:id` - Actualizar ingrediente
+* `DELETE /api/ingredientes/:id` - Eliminar ingrediente
 
 ### **Subrecetas**
-- `GET /api/subrecetas` - Listar todas las subrecetas
-- `POST /api/subrecetas` - Crear nueva subreceta
-- `PUT /api/subrecetas/:id` - Actualizar subreceta
-- `DELETE /api/subrecetas/:id` - Eliminar subreceta
+
+* `GET /api/subrecetas` - Listar todas las subrecetas
+* `POST /api/subrecetas` - Crear nueva subreceta
+* `PUT /api/subrecetas/:id` - Actualizar subreceta
+* `DELETE /api/subrecetas/:id` - Eliminar subreceta
 
 ### **Tortas**
-- `GET /api/tortas` - Listar todas las tortas
-- `POST /api/tortas` - Crear nueva torta
-- `PUT /api/tortas/:id` - Actualizar torta
-- `DELETE /api/tortas/:id` - Eliminar torta
+
+* `GET /api/tortas` - Listar todas las tortas
+* `POST /api/tortas` - Crear nueva torta
+* `PUT /api/tortas/:id` - Actualizar torta
+* `DELETE /api/tortas/:id` - Eliminar torta
 
 ### **Presupuestos**
-- `GET /api/presupuestos` - Listar presupuestos
-- `POST /api/presupuestos` - Crear nuevo presupuesto
-- `GET /api/presupuestos/:id` - Obtener presupuesto específico
+
+* `GET /api/presupuestos` - Listar presupuestos
+* `POST /api/presupuestos` - Crear nuevo presupuesto
+* `GET /api/presupuestos/:id` - Obtener presupuesto específico
 
 ---
 
 ## 🚀 **Próximas Características**
 
-- [ ] Exportación de presupuestos a PDF
-- [ ] Inventario y control de stock
-- [ ] Historial de precios de ingredientes
-- [ ] Múltiples usuarios y permisos
-- [ ] Modo offline con sincronización
-- [ ] App móvil con Ionic/Capacitor
-- [ ] Más pruebas de integración y E2E
+* [ ] Exportación de presupuestos a PDF
+* [ ] Inventario y control de stock
+* [ ] Historial de precios de ingredientes
+* [ ] Múltiples usuarios y permisos
+* [ ] Modo offline con sincronización
+* [ ] App móvil con Ionic/Capacitor
+* [ ] Más pruebas de integración y E2E
 
 ---
 
@@ -365,3 +411,5 @@ Si tienes preguntas o problemas, por favor abre un issue en el repositorio o con
 ---
 
 **Meraki** - Hecho con 💙 para pasteleros y reposteros
+
+```
