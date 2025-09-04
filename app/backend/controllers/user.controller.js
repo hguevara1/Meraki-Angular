@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 // Registrar usuario
+// user.controller.js - Modificar registerUser
 export const registerUser = async (req, res) => {
   try {
     const { nombre, apellido, email, telefono, password, confirmPassword } = req.body;
@@ -12,17 +13,25 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: "Las contraseñas no coinciden" });
     }
 
+    // Verificar si es el primer usuario (será admin)
+    const userCount = await User.countDocuments();
+    const role = userCount === 0 ? 'admin' : 'user';
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({
       nombre,
       apellido,
       email: email.toLowerCase().trim(),
       telefono,
-      password: hashedPassword
+      password: hashedPassword,
+      role // Asignar rol automáticamente
     });
 
     await user.save();
-    res.status(201).json({ message: "Usuario registrado exitosamente" });
+    res.status(201).json({
+      message: "Usuario registrado exitosamente",
+      role // Enviar el rol al frontend si es necesario
+    });
 
   } catch (error) {
     if (error.code === 11000) {

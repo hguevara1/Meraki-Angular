@@ -94,6 +94,12 @@
   flex: 1;
   padding: 2rem;
   background-color: #f8f9fa;
+  transition: all 0.3s ease;
+}
+
+.main-content.full-width {
+  margin-left: 0;
+  width: 100%;
 }
 
 .content-header {
@@ -165,6 +171,73 @@
   gap: 0.5rem;
 }
 
+/* User Dashboard Styles */
+.user-dashboard {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.welcome-card {
+  text-align: center;
+  padding: 2rem;
+}
+
+.user-content {
+  padding: 1rem;
+}
+
+.user-icon {
+  font-size: 4rem !important;
+  width: 4rem !important;
+  height: 4rem !important;
+  color: #4caf50;
+  margin-bottom: 1rem;
+}
+
+.user-content h3 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.user-content p {
+  color: #666;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.user-info {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  text-align: left;
+}
+
+.user-info p {
+  margin: 0.5rem 0;
+  display: flex;
+  justify-content: space-between;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.status-active {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.support-info {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #eee;
+}
+
+.support-info h4 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .dashboard-content {
@@ -178,6 +251,11 @@
 
   .main-content {
     order: 1;
+    padding: 1rem;
+  }
+
+  .main-content.full-width {
+    margin-left: 0;
   }
 
   .stats-cards {
@@ -187,4 +265,33 @@
   .action-buttons {
     flex-direction: column;
   }
+
+  .user-info p {
+    flex-direction: column;
+    text-align: center;
+  }
 }
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.user-dashboard {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.stat-card {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.2s; }
+.stat-card:nth-child(3) { animation-delay: 0.3s; }

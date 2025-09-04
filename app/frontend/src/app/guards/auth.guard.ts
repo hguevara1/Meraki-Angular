@@ -1,12 +1,17 @@
+// src/app/guards/auth.guard.ts
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {
     console.log('✅ AuthGuard instanciado');
   }
 
@@ -19,7 +24,7 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
-    const token = localStorage.getItem('authToken');
+    const token = this.authService.getToken();
 
     // Verificar que el token exista y sea válido
     if (!token || token === 'undefined' || token === 'null') {
@@ -31,6 +36,13 @@ export class AuthGuard implements CanActivate {
     // Verificar formato básico del token
     if (token.split('.').length !== 3) {
       console.error('❌ Acceso denegado - Token con formato incorrecto');
+      this.router.navigate(['/login']);
+      return false;
+    }
+
+    // Verificar autenticación usando el servicio
+    if (!this.authService.isAuthenticated()) {
+      console.error('❌ Acceso denegado - Usuario no autenticado');
       this.router.navigate(['/login']);
       return false;
     }

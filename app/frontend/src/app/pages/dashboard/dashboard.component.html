@@ -4,8 +4,9 @@
 
   <!-- Main Content -->
   <div class="dashboard-content">
-    <!-- Sidebar Navigation -->
-    <nav class="sidebar">
+
+    <!-- Sidebar Navigation - Solo para administradores -->
+    <nav class="sidebar" *ngIf="isAdmin">
       <div class="nav-section">
         <h3 class="nav-title">📦 Ingredientes</h3>
         <ul class="nav-list">
@@ -86,64 +87,109 @@
     </nav>
 
     <!-- Main Content Area -->
-    <main class="main-content">
-      <div class="content-header">
-        <h2>Panel de Control</h2>
-        <p>Gestiona tu pastelería desde un solo lugar</p>
-      </div>
+    <main class="main-content" [class.full-width]="!isAdmin">
 
-      <div class="stats-cards">
-        <mat-card class="stat-card">
-          <mat-card-header>
-            <mat-card-title>Ingredientes</mat-card-title>
-            <mat-icon mat-card-avatar>inventory</mat-icon>
-          </mat-card-header>
-          <mat-card-content>
-            <p class="stat-number">{{totalIngredientes}}</p>
-            <p class="stat-label">Total registrados</p>
-          </mat-card-content>
-        </mat-card>
+      <!-- Contenido para Administradores -->
+      <div *ngIf="isAdmin">
+        <div class="content-header">
+          <h2>Panel de Control - Administrador</h2>
+          <p>Gestiona tu pastelería desde un solo lugar</p>
+        </div>
 
-        <mat-card class="stat-card">
-          <mat-card-header>
-            <mat-card-title>Tortas</mat-card-title>
-            <mat-icon mat-card-avatar>cake</mat-icon>
-          </mat-card-header>
-          <mat-card-content>
-            <p class="stat-number">{{totalTortas}}</p>
-            <p class="stat-label">Recetas creadas</p>
-          </mat-card-content>
-        </mat-card>
+        <div class="stats-cards">
+          <mat-card class="stat-card">
+            <mat-card-header>
+              <mat-card-title>Ingredientes</mat-card-title>
+              <mat-icon mat-card-avatar>inventory</mat-icon>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="stat-number">{{totalIngredientes}}</p>
+              <p class="stat-label">Total registrados</p>
+            </mat-card-content>
+          </mat-card>
 
-        <mat-card class="stat-card">
-          <mat-card-header>
-            <mat-card-title>Subrecetas</mat-card-title>
-            <mat-icon mat-card-avatar>list_alt</mat-icon>
-          </mat-card-header>
-          <mat-card-content>
-            <p class="stat-number">{{totalSubrecetas}}</p>
-            <p class="stat-label">Preparaciones</p>
-          </mat-card-content>
-        </mat-card>
-      </div>
+          <mat-card class="stat-card">
+            <mat-card-header>
+              <mat-card-title>Tortas</mat-card-title>
+              <mat-icon mat-card-avatar>cake</mat-icon>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="stat-number">{{totalTortas}}</p>
+              <p class="stat-label">Recetas creadas</p>
+            </mat-card-content>
+          </mat-card>
 
-      <div class="quick-actions">
-        <h3>Acciones Rápidas</h3>
-        <div class="action-buttons">
-          <button mat-raised-button color="primary" routerLink="/tortas/nueva">
-            <mat-icon>add</mat-icon>
-            Crear Nueva Torta
-          </button>
-          <button mat-raised-button color="accent" routerLink="/ingredientes/agregar">
-            <mat-icon>inventory</mat-icon>
-            Agregar Ingrediente
-          </button>
-          <button mat-raised-button color="warn" routerLink="/subrecetas/agregar">
-            <mat-icon>list_alt</mat-icon>
-            Nueva Subreceta
-          </button>
+          <mat-card class="stat-card">
+            <mat-card-header>
+              <mat-card-title>Subrecetas</mat-card-title>
+              <mat-icon mat-card-avatar>list_alt</mat-icon>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="stat-number">{{totalSubrecetas}}</p>
+              <p class="stat-label">Preparaciones</p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <div class="quick-actions">
+          <h3>Acciones Rápidas</h3>
+          <div class="action-buttons">
+            <button mat-raised-button color="primary" routerLink="/tortas/nueva">
+              <mat-icon>add</mat-icon>
+              Crear Nueva Torta
+            </button>
+            <button mat-raised-button color="accent" routerLink="/ingredientes/agregar">
+              <mat-icon>inventory</mat-icon>
+              Agregar Ingrediente
+            </button>
+            <button mat-raised-button color="warn" routerLink="/subrecetas/agregar">
+              <mat-icon>list_alt</mat-icon>
+              Nueva Subreceta
+            </button>
+          </div>
         </div>
       </div>
+
+      <!-- Contenido para Usuarios Normales -->
+      <div *ngIf="!isAdmin" class="user-dashboard">
+        <div class="content-header">
+          <h2>Bienvenido a Meraki Pastelería</h2>
+          <p>Hola, {{userEmail}} - Tu cuenta está activa</p>
+        </div>
+
+        <mat-card class="welcome-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>check_circle</mat-icon>
+              Registro Exitoso
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="user-content">
+              <mat-icon class="user-icon">person</mat-icon>
+              <h3>Tu cuenta ha sido creada correctamente</h3>
+              <p>Actualmente tienes acceso como <strong>Usuario</strong></p>
+              <p>Para acceder a las funcionalidades completas del sistema, contacta al administrador.</p>
+
+              <div class="user-info">
+                <p><strong>Email:</strong> {{userEmail}}</p>
+                <p><strong>Rol:</strong> Usuario</p>
+                <p><strong>Estado:</strong> <span class="status-active">Activo</span></p>
+              </div>
+
+              <div class="support-info">
+                <h4>¿Necesitas ayuda?</h4>
+                <p>Contacta al administrador del sistema para solicitar permisos adicionales.</p>
+                <button mat-raised-button color="primary">
+                  <mat-icon>contact_support</mat-icon>
+                  Contactar Soporte
+                </button>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
     </main>
   </div>
 </div>

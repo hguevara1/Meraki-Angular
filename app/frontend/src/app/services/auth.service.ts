@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
@@ -18,7 +18,8 @@ interface UserData {
 })
 export class AuthService {
   private apiUrl = environment.apiUrl;
-  private currentUserSubject = new BehaviorSubject<UserData | null>(null);
+  // private currentUserSubject = new BehaviorSubject<UserData | null>(null);
+  private currentUserSubject = new ReplaySubject<UserData | null>(1);
   public authStatus$ = this.currentUserSubject.asObservable();
 
   constructor(
@@ -47,25 +48,17 @@ export class AuthService {
    * Carga usuario desde localStorage y valida expiración del token.
    */
   public loadUserFromStorage() {
-    const token = localStorage.getItem('authToken');
-    const userData = localStorage.getItem('userData');
+      const token = localStorage.getItem('authToken');
+      const userData = localStorage.getItem('userData');
 
-    console.log('🔍 Buscando datos en localStorage:');
-    console.log('Token:', token ? 'PRESENTE' : 'AUSENTE');
-    console.log('UserData:', userData ? 'PRESENTE' : 'AUSENTE');
-
-    if (token && userData) {
-      if (this.isTokenExpired(token)) {
-        console.warn('⚠️ Token expirado, cerrando sesión automáticamente');
-        this.logout(false);
-        return;
+      if (token && userData) {
+        if (this.isTokenExpired(token)) {
+          this.logout(false);
+          return;
+        }
+        const user = JSON.parse(userData);
+        this.currentUserSubject.next(user);
       }
-      console.log('✅ Datos de usuario válidos en localStorage');
-      this.currentUserSubject.next(JSON.parse(userData));
-    } else {
-      console.log('❌ No hay datos de autenticación en localStorage');
-      this.currentUserSubject.next(null);
-    }
   }
 
   /**
@@ -81,6 +74,17 @@ export class AuthService {
   getUserData(): UserData | null {
     const userData = localStorage.getItem('userData');
     return userData ? JSON.parse(userData) : null;
+  }
+
+  /**
+   * Verifica si el usuario es administrador
+   */
+  isAdmin(): boolean {
+    const userData = this.getUserData();
+    console.log('🛡️ Verificando si es admin - UserData:', userData);
+    const isAdmin = userData ? userData.role === 'admin' : false;
+    console.log('🛡️ Resultado isAdmin():', isAdmin);
+    return isAdmin;
   }
 
   /**
@@ -146,7 +150,7 @@ export class AuthService {
   /**
    * Verifica si el token JWT ha expirado.
    */
-  private isTokenExpired(token: string): boolean {
+  public isTokenExpired(token: string): boolean {
     // Verificar que el token exista y tenga el formato correcto
     if (!token || typeof token !== 'string') {
       console.warn('Token no válido o ausente');

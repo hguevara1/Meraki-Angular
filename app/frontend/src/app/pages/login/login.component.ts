@@ -61,15 +61,31 @@ export class LoginComponent {
       email: this.loginForm.value.email,
       password: this.loginForm.value.password
     };
+
+    console.log('📤 Enviando login data:', loginData);
+
     this.http.post(`${environment.apiUrl}/users/login`, loginData)
       .subscribe({
         next: (response: any) => {
+          console.log('✅ Login exitoso - Respuesta:', response);
           this.isLoading = false;
+
+          // Debug: verificar el contenido de la respuesta
+          console.log('🔍 Token recibido:', response.token ? 'PRESENTE' : 'AUSENTE');
+          console.log('🔍 User data recibido:', response.user);
+          console.log('🔍 Rol del usuario:', response.user?.role);
+
           localStorage.setItem('authToken', response.token);
           localStorage.setItem('userData', JSON.stringify(response.user));
+
+          // Verificar inmediatamente después de guardar
+          const storedUserData = localStorage.getItem('userData');
+          console.log('💾 UserData guardado en localStorage:', storedUserData);
+
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {
+          console.error('❌ Error en login:', error);
           this.isLoading = false;
           if (error.status === 400) {
             this.errorMessage = error.error?.message || this.translate.instant('LOGIN.INVALID_CREDENTIALS');
