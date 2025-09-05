@@ -6,7 +6,6 @@ import { DebugService } from '../../services/debug.service';
 import { Subscription } from 'rxjs';
 import { skip } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
 import { HeaderComponent } from '../header/header.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,7 +21,6 @@ import { environment } from '../../../environments/environment';
     MatIconModule,
     MatButtonModule,
     MatCardModule,
-    ThemeToggleComponent,
     HeaderComponent
   ],
   templateUrl: './dashboard.component.html',

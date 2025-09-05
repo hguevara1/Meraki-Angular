@@ -1,5 +1,5 @@
 // app.component.ts
-import { Component, signal, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core'; // ← Asegúrate de importar ChangeDetectorRef
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -37,7 +37,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     private languageService: LanguageService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef // ← INYECTA ChangeDetectorRef aquí
   ) {
     const lang = this.languageService.getPreferredLanguage();
     this.translate.setDefaultLang(lang);
@@ -51,10 +52,16 @@ export class AppComponent implements OnInit, OnDestroy {
   selectedLanguageLabel = 'Idioma';
 
   ngOnInit() {
+    // Verificar autenticación inicial inmediatamente
+    this.isAuthenticated = this.authService.isAuthenticated();
+    console.log('Auth inicial en AppComponent:', this.isAuthenticated);
+
     // Suscribirse al estado de autenticación
     this.authSubscription = this.authService.authStatus$.subscribe(
       (user) => {
         this.isAuthenticated = !!user;
+        console.log('Auth actualizado en AppComponent:', this.isAuthenticated);
+        this.cdr.detectChanges(); // ← Ahora cdr existe
       }
     );
 
@@ -64,11 +71,15 @@ export class AppComponent implements OnInit, OnDestroy {
     ).subscribe((event: NavigationEnd) => {
       const isAuthRoute = ['/login', '/registro'].includes(event.url);
 
-      if (!isAuthRoute && !this.authService.isAuthenticated()) {
+      // Actualizar estado de autenticación
+      this.isAuthenticated = this.authService.isAuthenticated();
+      this.cdr.detectChanges(); // ← Ahora cdr existe
+
+      if (!isAuthRoute && !this.isAuthenticated) {
         this.router.navigate(['/login']);
       }
 
-      if (isAuthRoute && this.authService.isAuthenticated()) {
+      if (isAuthRoute && this.isAuthenticated) {
         this.router.navigate(['/dashboard']);
       }
     });
@@ -83,7 +94,6 @@ export class AppComponent implements OnInit, OnDestroy {
   changeLanguage(lang: string) {
     this.languageService.changeLanguage(lang);
     console.log('Idioma cargado:', lang);
-    // Actualiza la etiqueta del idioma seleccionado
     switch(lang) {
       case 'es': this.selectedLanguageLabel = 'Español'; break;
       case 'pt': this.selectedLanguageLabel = 'Portugués'; break;
