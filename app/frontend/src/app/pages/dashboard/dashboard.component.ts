@@ -59,43 +59,39 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private loadUserData() {
+    // 1. Siempre usar localStorage primero
     const userData = this.authService.getUserData();
     if (userData) {
+      this.currentUser = userData;
       this.userEmail = userData.email;
       this.userRole = userData.role;
       this.isAdmin = userData.role === 'admin';
-      console.log('✅ isAdmin actualizado desde localStorage:', this.isAdmin);
+      console.log('✅ Datos cargados desde localStorage:', this.currentUser);
+
+      if (this.isAdmin) {
+        this.loadCounts();
+      }
     }
 
+    // 2. Escuchar cambios, pero ignorar null
     this.authSubscription = this.authService.getCurrentUser().subscribe({
       next: (user: any) => {
-        if (user) { // ← ¡IMPORTANTE! Solo actualizar si user no es null
+        if (user) {
           this.currentUser = user;
           this.userEmail = user.email;
           this.userRole = user.role;
           this.isAdmin = user.role === 'admin';
-          console.log('✅ isAdmin actualizado desde observable:', this.isAdmin);
+          console.log('✅ Datos actualizados desde observable:', this.currentUser);
 
-          // Solo cargar datos si es administrador
           if (this.isAdmin) {
             this.loadCounts();
           }
-        } else {
-          console.log('ℹ️ Observable emitió null, ignorando...');
         }
       },
       error: (error: HttpErrorResponse) => {
         console.error('Error obteniendo usuario:', error);
         if (error.status === 401) {
           this.authService.logout();
-        }
-        // Mantener los datos de localStorage si hay error
-        const userData = this.authService.getUserData();
-        if (userData) {
-          this.currentUser = userData;
-          this.userEmail = userData.email;
-          this.userRole = userData.role;
-          this.isAdmin = userData.role === 'admin';
         }
       }
     });
