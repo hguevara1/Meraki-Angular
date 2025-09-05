@@ -1,10 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { DebugService } from '../../services/debug.service';
 import { Subscription } from 'rxjs';
-import { skip } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { HeaderComponent } from '../header/header.component';
 import { MatIconModule } from '@angular/material/icon';
@@ -34,6 +33,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   totalSubrecetas: number = 0;
   totalTortas: number = 0;
   isAdmin: boolean = false;
+  sidebarOpen = false;
+  isMobile = false;
   private authSubscription!: Subscription;
 
   private apiUrl = environment.apiUrl;
@@ -46,18 +47,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-      console.log('🔵 DashboardComponent iniciado');
+    console.log('🔵 DashboardComponent iniciado');
 
-      if (!this.authService.isAuthenticated()) {
-        this.router.navigate(['/login']);
-        return;
-      }
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/login']);
+      return;
+    }
 
-      this.loadUserData();
+    this.checkMobile();
+    this.loadUserData();
   }
 
   private loadUserData() {
-    // 1. Siempre usar localStorage primero
     const userData = this.authService.getUserData();
     if (userData) {
       this.currentUser = userData;
@@ -71,7 +72,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     }
 
-    // 2. Escuchar cambios, pero ignorar null
     this.authSubscription = this.authService.getCurrentUser().subscribe({
       next: (user: any) => {
         if (user) {
@@ -93,6 +93,32 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
+
+  closeSidebar() {
+    this.sidebarOpen = false;
+  }
+
+  closeSidebarOnMobile() {
+    if (this.isMobile) {
+      this.sidebarOpen = false;
+    }
+  }
+
+  checkMobile() {
+    this.isMobile = window.innerWidth <= 768;
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.checkMobile();
+    if (!this.isMobile) {
+      this.sidebarOpen = false;
+    }
   }
 
   private loadCounts() {

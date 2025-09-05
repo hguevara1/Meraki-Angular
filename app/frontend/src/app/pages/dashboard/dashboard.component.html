@@ -1,23 +1,30 @@
 <div class="dashboard-container">
-  <!-- Header -->
+  <!-- Botón hamburguesa para móvil -->
+  <button class="menu-toggle" (click)="toggleSidebar()" *ngIf="isAdmin">
+    <mat-icon>{{sidebarOpen ? 'close' : 'menu'}}</mat-icon>
+  </button>
 
+  <!-- Overlay para cerrar sidebar al hacer click fuera -->
+  <div class="sidebar-overlay" [class.open]="sidebarOpen && isMobile"
+       (click)="closeSidebar()" *ngIf="isAdmin">
+  </div>
 
   <!-- Main Content -->
   <div class="dashboard-content">
 
     <!-- Sidebar Navigation - Solo para administradores -->
-    <nav class="sidebar" *ngIf="isAdmin">
+    <nav class="sidebar" [class.open]="sidebarOpen" *ngIf="isAdmin">
       <div class="nav-section">
         <h3 class="nav-title">📦 Ingredientes</h3>
         <ul class="nav-list">
           <li class="nav-item">
-            <a routerLink="/ingredientes/agregar" class="nav-link">
+            <a routerLink="/ingredientes/agregar" class="nav-link" (click)="closeSidebarOnMobile()">
               <mat-icon>add_circle</mat-icon>
               Agregar Ingrediente
             </a>
           </li>
           <li class="nav-item">
-            <a routerLink="/ingredientes" class="nav-link">
+            <a routerLink="/ingredientes" class="nav-link" (click)="closeSidebarOnMobile()">
               <mat-icon>list</mat-icon>
               Lista de Ingredientes
             </a>
@@ -29,19 +36,19 @@
         <h3 class="nav-title">🎂 Tortas</h3>
         <ul class="nav-list">
           <li class="nav-item">
-            <a routerLink="/tortas/nueva" class="nav-link">
+            <a routerLink="/tortas/nueva" class="nav-link" (click)="closeSidebarOnMobile()">
               <mat-icon>add_circle</mat-icon>
               Nueva Torta
             </a>
           </li>
           <li class="nav-item">
-            <a routerLink="/tortas" class="nav-link">
+            <a routerLink="/tortas" class="nav-link" (click)="closeSidebarOnMobile()">
               <mat-icon>cake</mat-icon>
               Tortas Disponibles
             </a>
           </li>
           <li class="nav-item">
-            <a routerLink="/tortas/presupuestos" class="nav-link">
+            <a routerLink="/tortas/presupuestos" class="nav-link" (click)="closeSidebarOnMobile()">
               <mat-icon>receipt</mat-icon>
               Presupuestos
             </a>
@@ -53,13 +60,13 @@
         <h3 class="nav-title">📋 Subrecetas</h3>
         <ul class="nav-list">
           <li class="nav-item">
-            <a routerLink="/subrecetas/agregar" class="nav-link">
+            <a routerLink="/subrecetas/agregar" class="nav-link" (click)="closeSidebarOnMobile()">
               <mat-icon>add_circle</mat-icon>
               Agregar Subreceta
             </a>
           </li>
           <li class="nav-item">
-            <a routerLink="/subrecetas" class="nav-link">
+            <a routerLink="/subrecetas" class="nav-link" (click)="closeSidebarOnMobile()">
               <mat-icon>format_list_bulleted</mat-icon>
               Lista de Subrecetas
             </a>
@@ -71,13 +78,13 @@
         <h3 class="nav-title">📞 Contacto</h3>
         <ul class="nav-list">
           <li class="nav-item">
-            <a routerLink="/contacto" class="nav-link">
+            <a routerLink="/contacto" class="nav-link" (click)="closeSidebarOnMobile()">
               <mat-icon>contact_support</mat-icon>
               Información de Contacto
             </a>
           </li>
           <li class="nav-item">
-            <a routerLink="/clientes" class="nav-link">
+            <a routerLink="/clientes" class="nav-link" (click)="closeSidebarOnMobile()">
               <mat-icon>people</mat-icon>
               Gestión de Clientes
             </a>
