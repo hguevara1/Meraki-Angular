@@ -1,13 +1,18 @@
-<app-theme-toggle></app-theme-toggle>
-<div style="position: fixed; top: 10px; right: 10px; z-index: 1000;">
+<!-- app.component.html -->
+<div class="app-container">
+  <!-- Controles globales (siempre visibles) -->
+  <div class="global-controls" *ngIf="!isAuthenticated">
+    <app-theme-toggle></app-theme-toggle>
     <button mat-button class="language-button" [matMenuTriggerFor]="menu">
-        <mat-icon>language</mat-icon>
-        {{ selectedLanguageLabel }}
+      <mat-icon>language</mat-icon>
+      {{ selectedLanguageLabel }}
     </button>
-</div>
+  </div>
 
+  <!-- Header completo (solo cuando está autenticado) -->
+  <app-header *ngIf="isAuthenticated"></app-header>
 
-<mat-menu #menu="matMenu" class="scrollable-language-menu">
+  <mat-menu #menu="matMenu" class="scrollable-language-menu">
     <button mat-menu-item (click)="changeLanguage('es')">Español</button>
     <button mat-menu-item (click)="changeLanguage('pt')">Portugués</button>
     <button mat-menu-item (click)="changeLanguage('it')">Italiano</button>
@@ -17,6 +22,9 @@
     <button mat-menu-item (click)="changeLanguage('ja')">Japonés</button>
     <button mat-menu-item (click)="changeLanguage('ru')">Ruso</button>
     <button mat-menu-item (click)="changeLanguage('zh')">Chino</button>
-</mat-menu>
+  </mat-menu>
 
-<router-outlet />
+  <main class="main-content">
+    <router-outlet />
+  </main>
+</div>

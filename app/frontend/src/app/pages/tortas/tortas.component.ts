@@ -10,10 +10,12 @@ import { Subscription } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 // Angular Material
-import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface Torta {
@@ -36,6 +38,8 @@ export interface Torta {
     MatProgressSpinnerModule,
     HeaderComponent,
     VideoModalComponent,
+    MatTooltipModule,
+    MatCardModule
   ],
   templateUrl: './tortas.component.html',
   styleUrls: ['./tortas.component.css']
