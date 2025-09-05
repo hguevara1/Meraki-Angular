@@ -126,7 +126,7 @@ export class AgregarSubrecetaComponent implements OnInit {
   }
 
   cargarIngredientes() {
-    this.http.get<Ingrediente[]>(`${this.apiUrl}/ingredientes/ingredientes`)
+    this.http.get<Ingrediente[]>(`${this.apiUrl}/ingredientes`)
       .subscribe({
         next: (data) => {
           this.ingredientesDisponibles = data;
@@ -140,15 +140,11 @@ export class AgregarSubrecetaComponent implements OnInit {
   }
 
   cargarSubreceta(id: string) {
-    this.http.get<any>(`${this.apiUrl}/ingredientes/subrecetas/${id}`)
+    this.http.get<any>(`${this.apiUrl}/subrecetas/${id}`)
       .subscribe({
         next: (data) => {
           this.subreceta = data;
-          // Asegurarse de que cada ingrediente tenga el formato correcto
-          this.subreceta.ingredientes = this.subreceta.ingredientes.map((ing: any) => ({
-            ...ing,
-            editing: false
-          }));
+          this.procesarIngredientesSubreceta(); // ← Llama al nuevo método
         },
         error: (error) => {
           console.error('Error cargando subreceta:', error);
@@ -285,7 +281,7 @@ export class AgregarSubrecetaComponent implements OnInit {
 
   guardarSubreceta() {
     if (this.isEditMode) {
-      this.http.put(`${this.apiUrl}/ingredientes/subrecetas/${this.subreceta._id}`, this.subreceta)
+      this.http.put(`${this.apiUrl}/subrecetas/${this.subreceta._id}`, this.subreceta)
         .subscribe({
           next: () => {
             this.router.navigate(['/subrecetas']);
@@ -295,7 +291,7 @@ export class AgregarSubrecetaComponent implements OnInit {
           }
         });
     } else {
-      this.http.post(`${this.apiUrl}/ingredientes/subrecetas`, this.subreceta)
+      this.http.post(`${this.apiUrl}/subrecetas`, this.subreceta)
         .subscribe({
           next: () => {
             this.router.navigate(['/subrecetas']);
@@ -362,4 +358,26 @@ export class AgregarSubrecetaComponent implements OnInit {
     );
     return ingrediente ? ingrediente.medida : 0;
   }
+
+  private procesarIngredientesSubreceta() {
+    if (this.subreceta.ingredientes && this.ingredientesDisponibles.length > 0) {
+      this.subreceta.ingredientes = this.subreceta.ingredientes.map((ing: any) => {
+        // Los ingredientes ya vienen populados desde el backend
+        // Solo asegúrate de que tengan el formato correcto
+        return {
+          ...ing,
+          editing: false,
+          _ingredienteData: ing.ingrediente ? {
+            nombre: ing.ingrediente.nombre,
+            unidad: ing.ingrediente.unidad
+          } : {
+            nombre: 'Ingrediente no disponible',
+            unidad: 'u'
+          }
+        };
+      });
+    }
+  }
+
+
 }
