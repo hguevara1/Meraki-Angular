@@ -72,6 +72,7 @@ mat-card-content {
 .agregar-ingrediente h3 {
   margin-top: 0;
   font-size: 18px;
+  color: #333;
 }
 
 .ingrediente-form.compact-form {
@@ -118,6 +119,7 @@ mat-card-content {
   margin-bottom: 16px;
   flex-wrap: wrap;
   gap: 12px;
+  color: #333;
 }
 
 .table-header h3 {

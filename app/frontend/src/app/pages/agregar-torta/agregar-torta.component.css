@@ -267,6 +267,7 @@ mat-form-field {
 
 /* Variables CSS para consistencia */
 :root {
+  /* Mantén tus variables existentes y añade estas */
   --primary-color: #3f51b5;
   --primary-light: #e8eaf6;
   --primary-dark: #303f9f;
@@ -281,3 +282,71 @@ mat-form-field {
   --text-on-primary: #ffffff;
   --border-color: #e0e0e0;
 }
+
+/* Variables específicas para modo oscuro */
+body.dark-mode {
+  --background: #1a1a1a;
+  --surface: #2d2d2d;
+  --on-background: #ffffff;
+  --on-surface: #ffffff;
+  --border-color: #444444;
+  --secondary-light: #333333;
+  --secondary-dark: #aaaaaa;
+}
+
+.agregar-torta-container .mat-mdc-form-field {
+  --mdc-filled-text-field-container-color: var(--surface) !important;
+  --mdc-filled-text-field-input-text-color: var(--on-surface) !important;
+  --mdc-filled-text-field-label-text-color: var(--on-surface) !important;
+  --mdc-filled-text-field-caret-color: var(--primary-color) !important;
+  --mdc-filled-text-field-focus-label-text-color: var(--primary-color) !important;
+}
+
+/* Asegurar que los inputs tengan contraste en modo oscuro */
+.agregar-torta-container .mat-mdc-input-element {
+  color: var(--on-surface) !important;
+}
+
+/* Placeholders visibles en modo oscuro */
+.agregar-torta-container .mat-mdc-form-field-label {
+  color: var(--on-surface) !important;
+}
+
+/* Borde de los inputs en modo oscuro */
+.agregar-torta-container .mdc-text-field--outlined {
+  --mdc-outlined-text-field-outline-color: var(--border-color) !important;
+}
+
+.agregar-torta-container .mdc-text-field--outlined:not(.mdc-text-field--disabled).mdc-text-field--focused {
+  --mdc-outlined-text-field-outline-color: var(--primary-color) !important;
+}
+
+/* Corrección específica para el modo oscuro */
+body.dark-mode .agregar-torta-container .mat-mdc-form-field {
+  --mdc-filled-text-field-input-text-color: #ffffff !important;
+}
+
+body.dark-mode .agregar-torta-container .mat-mdc-input-element {
+  color: #ffffff !important;
+}
+
+/* Asegurar que el texto dentro de los inputs sea visible */
+.agregar-torta-container input::placeholder {
+  color: var(--secondary-dark) !important;
+  opacity: 0.7;
+}
+
+/* Corrección para el autocomplete */
+.agregar-torta-container .mat-mdc-autocomplete-panel {
+  background-color: var(--surface) !important;
+  color: var(--on-surface) !important;
+}
+
+.agregar-torta-container .mat-mdc-option {
+  color: var(--on-surface) !important;
+}
+
+.agregar-torta-container .mat-mdc-option:hover:not(.mdc-list-item--disabled) {
+  background-color: var(--primary-light) !important;
+}
+

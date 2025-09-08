@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 
 import { UnderConstructionComponent } from './under-construction.component';
 
@@ -8,9 +10,18 @@ describe('UnderConstructionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UnderConstructionComponent]
-    })
-    .compileComponents();
+      imports: [UnderConstructionComponent],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            // Puedes simular parámetros, fragmentos, etc.
+            params: of({}),
+            snapshot: {},
+          }
+        }
+      ]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(UnderConstructionComponent);
     component = fixture.componentInstance;

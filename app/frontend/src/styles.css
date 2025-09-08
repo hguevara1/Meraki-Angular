@@ -201,6 +201,8 @@ mat-card-title {
     width: 35px !important;
     height: 35px !important;
   }
+}
+
 
 @media (max-width: 768px) {
   .theme-toggle {

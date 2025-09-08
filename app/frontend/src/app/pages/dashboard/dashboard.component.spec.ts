@@ -20,14 +20,16 @@ class MockAuthService {
     return {
       email: 'test@example.com',
       nombre: 'Test',
-      apellido: 'User'
+      apellido: 'User',
+      role: 'admin'
     };
   }
   getCurrentUser() {
     return of({
       email: 'test@example.com',
       nombre: 'Test',
-      apellido: 'User'
+      apellido: 'User',
+      role: 'admin'
     });
   }
   getToken() { return 'mock-jwt-token'; }
@@ -91,21 +93,33 @@ describe('DashboardComponent', () => {
   it('should load user data and counts on initialization', fakeAsync(() => {
     component.ngOnInit();
 
-    // ✅ Las peticiones ahora deberían tener el header Authorization
-    const req1 = httpMock.expectOne('http://localhost:5000/api/ingredientes');
-    expect(req1.request.headers.get('Authorization')).toBe('Bearer mock-jwt-token');
-    req1.flush([{ id: 1 }, { id: 2 }]);
+    // Ingredientes: se esperan 2 peticiones
+    const reqsIngredientes = httpMock.match('http://localhost:5000/api/ingredientes');
+    expect(reqsIngredientes.length).toBe(2);
+    reqsIngredientes.forEach(req => {
+      expect(req.request.headers.get('Authorization')).toBe('Bearer mock-jwt-token');
+      req.flush([{ id: 1 }, { id: 2 }]);
+    });
 
-    const req2 = httpMock.expectOne('http://localhost:5000/api/subrecetas');
-    expect(req2.request.headers.get('Authorization')).toBe('Bearer mock-jwt-token');
-    req2.flush([{ id: 1 }]);
+    // Subrecetas: se esperan 2 peticiones
+    const reqsSubrecetas = httpMock.match('http://localhost:5000/api/subrecetas');
+    expect(reqsSubrecetas.length).toBe(2);
+    reqsSubrecetas.forEach(req => {
+      expect(req.request.headers.get('Authorization')).toBe('Bearer mock-jwt-token');
+      req.flush([{ id: 1 }]);
+    });
 
-    const req3 = httpMock.expectOne('http://localhost:5000/api/tortas');
-    expect(req3.request.headers.get('Authorization')).toBe('Bearer mock-jwt-token');
-    req3.flush([{ id: 1 }, { id: 2 }, { id: 3 }]);
+    // Tortas: se esperan 2 peticiones
+    const reqsTortas = httpMock.match('http://localhost:5000/api/tortas');
+    expect(reqsTortas.length).toBe(2);
+    reqsTortas.forEach(req => {
+      expect(req.request.headers.get('Authorization')).toBe('Bearer mock-jwt-token');
+      req.flush([{ id: 1 }, { id: 2 }, { id: 3 }]);
+    });
 
     tick();
 
+    // Verificaciones finales
     expect(component.userEmail).toBe('test@example.com');
     expect(component.totalIngredientes).toBe(2);
     expect(component.totalSubrecetas).toBe(1);
@@ -116,14 +130,22 @@ describe('DashboardComponent', () => {
   it('should handle error when loading ingredientes', fakeAsync(() => {
     component.ngOnInit();
 
-    const req1 = httpMock.expectOne('http://localhost:5000/api/ingredientes');
-    req1.flush('Error', { status: 500, statusText: 'Server Error' });
+    // Ingredientes
+    const reqsIngredientes = httpMock.match('http://localhost:5000/api/ingredientes');
+    expect(reqsIngredientes.length).toBe(2);
+    reqsIngredientes.forEach(req =>
+      req.flush('Error', { status: 500, statusText: 'Server Error' })
+    );
 
-    const req2 = httpMock.expectOne('http://localhost:5000/api/subrecetas');
-    req2.flush([{ id: 1 }]);
+    // Subrecetas
+    const reqsSubrecetas = httpMock.match('http://localhost:5000/api/subrecetas');
+    expect(reqsSubrecetas.length).toBe(2);
+    reqsSubrecetas.forEach(req => req.flush([{ id: 1 }]));
 
-    const req3 = httpMock.expectOne('http://localhost:5000/api/tortas');
-    req3.flush([{ id: 1 }]);
+    // Tortas
+    const reqsTortas = httpMock.match('http://localhost:5000/api/tortas');
+    expect(reqsTortas.length).toBe(2);
+    reqsTortas.forEach(req => req.flush([{ id: 1 }]));
 
     tick();
 
@@ -143,14 +165,20 @@ describe('DashboardComponent', () => {
   it('should unsubscribe on destroy', fakeAsync(() => {
     component.ngOnInit();
 
-    const req1 = httpMock.expectOne('http://localhost:5000/api/ingredientes');
-    req1.flush([]);
+    // Ingredientes
+    const reqsIngredientes = httpMock.match('http://localhost:5000/api/ingredientes');
+    expect(reqsIngredientes.length).toBe(2);
+    reqsIngredientes.forEach(req => req.flush([]));
 
-    const req2 = httpMock.expectOne('http://localhost:5000/api/subrecetas');
-    req2.flush([]);
+    // Subrecetas
+    const reqsSubrecetas = httpMock.match('http://localhost:5000/api/subrecetas');
+    expect(reqsSubrecetas.length).toBe(2);
+    reqsSubrecetas.forEach(req => req.flush([]));
 
-    const req3 = httpMock.expectOne('http://localhost:5000/api/tortas');
-    req3.flush([]);
+    // Tortas
+    const reqsTortas = httpMock.match('http://localhost:5000/api/tortas');
+    expect(reqsTortas.length).toBe(2);
+    reqsTortas.forEach(req => req.flush([]));
 
     tick();
 
@@ -166,39 +194,64 @@ describe('DashboardComponent', () => {
   it('should handle 401 authentication error', fakeAsync(() => {
     component.ngOnInit();
 
-    const req1 = httpMock.expectOne('http://localhost:5000/api/ingredientes');
-    req1.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
+    // Ingredientes: se esperan 2 peticiones (una por getUserData y otra por getCurrentUser)
+    const reqsIngredientes = httpMock.match('http://localhost:5000/api/ingredientes');
+    expect(reqsIngredientes.length).toBe(2);
+    reqsIngredientes.forEach(req => {
+      req.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
+    });
 
-    const req2 = httpMock.expectOne('http://localhost:5000/api/subrecetas');
-    req2.flush([{ id: 1 }]);
+    // Subrecetas: también se esperan 2 peticiones
+    const reqsSubrecetas = httpMock.match('http://localhost:5000/api/subrecetas');
+    expect(reqsSubrecetas.length).toBe(2);
+    reqsSubrecetas.forEach(req => {
+      req.flush([{ id: 1 }]);
+    });
 
-    const req3 = httpMock.expectOne('http://localhost:5000/api/tortas');
-    req3.flush([{ id: 1 }]);
+    // Tortas: también se esperan 2 peticiones
+    const reqsTortas = httpMock.match('http://localhost:5000/api/tortas');
+    expect(reqsTortas.length).toBe(2);
+    reqsTortas.forEach(req => {
+      req.flush([{ id: 1 }]);
+    });
 
     tick();
 
+    // Como ambas peticiones a ingredientes fallaron con 401, el total debe ser 0
     expect(component.totalIngredientes).toBe(0);
-    expect(component.totalSubrecetas).toBe(1);
-    expect(component.totalTortas).toBe(1);
+    expect(component.totalSubrecetas).toBe(1); // se suman correctamente
+    expect(component.totalTortas).toBe(1);     // se suman correctamente
   }));
 
   it('should handle network errors', fakeAsync(() => {
     component.ngOnInit();
 
-    const req1 = httpMock.expectOne('http://localhost:5000/api/ingredientes');
-    req1.error(new ErrorEvent('Network error'));
+    // Ingredientes: se esperan 2 peticiones
+    const reqsIngredientes = httpMock.match('http://localhost:5000/api/ingredientes');
+    expect(reqsIngredientes.length).toBe(2);
+    reqsIngredientes.forEach(req => {
+      req.error(new ErrorEvent('Network error'));
+    });
 
-    // ✅ Responder a las otras 2 peticiones también
-    const req2 = httpMock.expectOne('http://localhost:5000/api/subrecetas');
-    req2.flush([{ id: 1 }]);
+    // Subrecetas: se esperan 2 peticiones
+    const reqsSubrecetas = httpMock.match('http://localhost:5000/api/subrecetas');
+    expect(reqsSubrecetas.length).toBe(2);
+    reqsSubrecetas.forEach(req => {
+      req.flush([{ id: 1 }]);
+    });
 
-    const req3 = httpMock.expectOne('http://localhost:5000/api/tortas');
-    req3.flush([{ id: 1 }]);
+    // Tortas: se esperan 2 peticiones
+    const reqsTortas = httpMock.match('http://localhost:5000/api/tortas');
+    expect(reqsTortas.length).toBe(2);
+    reqsTortas.forEach(req => {
+      req.flush([{ id: 1 }]);
+    });
 
     tick();
 
-    expect(component.totalIngredientes).toBe(0);
-    expect(component.totalSubrecetas).toBe(1); // ✅ Verificar las otras también
-    expect(component.totalTortas).toBe(1);     // ✅ Verificar las otras también
+    // Verificaciones
+    expect(component.totalIngredientes).toBe(0); // por error de red
+    expect(component.totalSubrecetas).toBe(1);   // se suman correctamente
+    expect(component.totalTortas).toBe(1);       // se suman correctamente
   }));
 });

@@ -10,7 +10,7 @@ import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
 
 // Mocks
 class MockAuthService {
-  getUserData = jasmine.createSpy('getUserData').and.returnValue(null);
+  getUserData = jasmine.createSpy('getUserData');
   logout = jasmine.createSpy('logout');
 }
 
@@ -25,8 +25,8 @@ describe('HeaderComponent', () => {
         RouterModule.forRoot([]),
         MatIconModule,
         MatButtonModule,
-        HeaderComponent, // Componente standalone
-        ThemeToggleComponent // Componente standalone
+        HeaderComponent,
+        ThemeToggleComponent
       ],
       providers: [
         { provide: AuthService, useClass: MockAuthService }
@@ -43,47 +43,43 @@ describe('HeaderComponent', () => {
     authService.logout.calls.reset();
   });
 
+
+
   it('debería crear el componente', () => {
     expect(component).toBeTruthy();
   });
 
-  it('debería inicializar userEmail con el email del usuario autenticado', () => {
-    // Configurar mock para devolver datos de usuario
-    const mockUserData = {
-      email: 'usuario@ejemplo.com',
-      _id: '123',
-      role: 'user',
-      nombre: 'Usuario',
-      apellido: 'Ejemplo'
-    };
-    authService.getUserData.and.returnValue(mockUserData);
+    it('debería inicializar userEmail con el email del usuario autenticado', () => {
+      const mockUserData = {
+        email: 'usuario@ejemplo.com',
+        _id: '123',
+        role: 'user',
+        nombre: 'Usuario',
+        apellido: 'Ejemplo'
+      };
 
-    // Recrear el componente para que ejecute el constructor nuevamente
-    fixture = TestBed.createComponent(HeaderComponent);
-    component = fixture.componentInstance;
+      authService.getUserData.and.returnValue(mockUserData);
 
-    expect(component.userEmail).toBe('usuario@ejemplo.com');
-    expect(authService.getUserData).toHaveBeenCalled();
-  });
+      fixture.detectChanges(); // Ejecuta ngOnInit
 
-  it('debería inicializar userEmail como vacío si no hay usuario autenticado', () => {
-    // Mock sin datos de usuario
-    authService.getUserData.and.returnValue(null);
+      expect(component.userEmail).toBe('usuario@ejemplo.com');
+      expect(authService.getUserData).toHaveBeenCalled();
+    });
 
-    // Recrear el componente para que ejecute el constructor nuevamente
-    fixture = TestBed.createComponent(HeaderComponent);
-    component = fixture.componentInstance;
+    it('debería inicializar userEmail como vacío si no hay usuario autenticado', () => {
+      authService.getUserData.and.returnValue(null);
 
-    expect(component.userEmail).toBe('');
-    expect(authService.getUserData).toHaveBeenCalled();
-  });
+      fixture.detectChanges(); // Ejecuta ngOnInit
 
-  it('debería llamar a authService.logout() cuando se hace click en logout', () => {
-    // Simular click en el botón de logout
-    component.logout();
+      expect(component.userEmail).toBe('');
+      expect(authService.getUserData).toHaveBeenCalled();
+    });
 
-    expect(authService.logout).toHaveBeenCalled();
-  });
+    it('debería llamar a logout cuando se ejecuta logout()', () => {
+      component.logout();
+      expect(authService.logout).toHaveBeenCalled();
+    });
+
 
   it('debería renderizar el email del usuario en el template', () => {
     // Configurar mock para devolver datos de usuario
