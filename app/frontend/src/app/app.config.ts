@@ -7,17 +7,55 @@ import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatIconRegistry } from '@angular/material/icon';
-import { AuthInterceptor } from './interceptors/auth.interceptor'; // ✅ Importar el interceptor
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 /**
- * APP_INITIALIZER: se ejecuta antes de que Angular arranque y antes de que el router
- * evalúe las rutas. Aquí examinamos window.location.hash para extraer token+userData
- * que el backend dejó en el fragmento: #/auth-callback?token=...&success=true
+ * Función para limpiar localStorage si el token está expirado
+ */
+function cleanExpiredTokens(): void {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      // Verificar si el token está expirado
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split('')
+            .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+            .join('')
+        );
+        const payload = JSON.parse(jsonPayload);
+
+        const currentTime = Math.floor(Date.now() / 1000);
+        if (payload.exp && payload.exp < currentTime) {
+          console.log('🧹 Limpiando token expirado en app initialization');
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('userData');
+        }
+      } catch (error) {
+        console.warn('Error verificando token durante inicialización:', error);
+        // Si hay error decodificando, limpiar por seguridad
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('userData');
+      }
+    }
+  } catch (error) {
+    console.error('Error en cleanExpiredTokens:', error);
+  }
+}
+
+/**
+ * APP_INITIALIZER: se ejecuta antes de que Angular arranque
  */
 export function authInitializer() {
   return () => {
     try {
-      const hash = window.location.hash; // e.g. "#/auth-callback?token=xxx&success=true"
+      // Limpiar tokens expirados primero
+      cleanExpiredTokens();
+
+      const hash = window.location.hash;
       if (!hash) return;
 
       const isAuthCallback = hash.includes('auth-callback');
@@ -32,10 +70,7 @@ export function authInitializer() {
         console.log('APP_INIT: auth callback detectado', { tokenPresent: !!token, success });
 
         if (token && success === 'true') {
-          // Guardar token
-          localStorage.setItem('authToken', token);
-
-          // Intentar decodificar JWT para userData (no crítico si falla)
+          // Verificar si el token no está expirado antes de guardarlo
           try {
             const base64Url = token.split('.')[1];
             const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -46,6 +81,15 @@ export function authInitializer() {
                 .join('')
             );
             const payload = JSON.parse(jsonPayload);
+
+            const currentTime = Math.floor(Date.now() / 1000);
+            if (payload.exp && payload.exp < currentTime) {
+              console.log('❌ Token de callback expirado, no se guardará');
+              return;
+            }
+
+            // Guardar token
+            localStorage.setItem('authToken', token);
 
             const userData = {
               _id: payload.userId,
@@ -60,7 +104,7 @@ export function authInitializer() {
           }
 
           // Limpiar fragmento para no dejar el token visible en la URL
-          const cleanHash = hash.split('?')[0]; // => "#/auth-callback"
+          const cleanHash = hash.split('?')[0];
           history.replaceState(null, '', window.location.pathname + window.location.search + cleanHash);
         }
       }
@@ -72,9 +116,7 @@ export function authInitializer() {
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    // ✅ HttpClient con interceptors
     provideHttpClient(withInterceptorsFromDi()),
-
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withHashLocation()),
     provideAnimationsAsync(),
@@ -88,13 +130,11 @@ export const appConfig: ApplicationConfig = {
         suffix: '.json'
       })
     }),
-    // ✅ Registrar APP_INITIALIZER
     {
       provide: APP_INITIALIZER,
       useFactory: authInitializer,
       multi: true
     },
-    // ✅ Registrar AuthInterceptor
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

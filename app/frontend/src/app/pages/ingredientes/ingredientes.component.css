@@ -65,6 +65,8 @@
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  max-width: 90%;
+  margin: 0 auto;
 }
 
 table {
@@ -101,6 +103,13 @@ table {
     padding: 1rem;
   }
 
+  .header h1 {
+    margin: 0;
+    color: #333;
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+
   .header-actions {
     width: 100%;
     justify-content: space-between;
@@ -108,7 +117,57 @@ table {
 
   .table-container {
     overflow-x: auto;
+    font-size: 12px;
   }
+
+  .mat-column-nombre {
+      min-width: 2em;
+      max-width: 6em;
+      padding: 0;
+      margin: 0;
+  }
+
+  .mat-column-precio {
+      min-width: 3em;
+      max-width: 7em;
+      padding: 0;
+      margin: 0;
+    }
+
+    .mat-column-medida {
+      min-width: 3em;
+      max-width: 7em;
+      padding-left: 0.8em;
+      margin: 0;
+    }
+
+    .mat-column-unidad {
+      min-width: 1em;
+      max-width: 2em;
+      padding: 0;
+      margin: 0;
+    }
+
+    .mat-column-acciones {
+      min-width: 1em;
+      max-width: 2em;
+      padding: 0;
+      margin: 0;
+    }
+
+    /* Botones más pequeños en móviles */
+    .mat-icon-button {
+      width: 32px !important;
+      height: 32px !important;
+      line-height: 32px !important;
+    }
+
+    .mat-icon {
+      font-size: 18px !important;
+      width: 18px !important;
+      height: 18px !important;
+      line-height: 18px !important;
+    }
 }
 
 /* CONTENEDOR DE TABLA CON SCROLL INTERNO */

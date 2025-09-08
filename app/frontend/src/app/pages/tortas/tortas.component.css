@@ -1,3 +1,4 @@
+/* tortas.component.css */
 .tortas-container {
   padding: 0;
   max-width: 100%;
@@ -65,11 +66,11 @@
 }
 
 .sub-header {
-  padding: 1rem 2rem;
+  padding: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   flex-wrap: wrap;
   gap: 1rem;
   background-color: var(--surface);
@@ -80,12 +81,14 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .back-button {
   background-color: var(--surface) !important;
   border: 1px solid var(--border-color) !important;
   color: var(--on-surface) !important;
+  white-space: nowrap;
 }
 
 .back-button:hover {
@@ -96,12 +99,14 @@
 .sub-header h1 {
   margin: 0;
   color: var(--on-surface);
+  font-size: 1.5rem;
 }
 
 .header-actions {
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .total-badge {
@@ -110,10 +115,11 @@
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .content-container {
-  padding: 0 2rem 2rem 2rem;
+  padding: 0 1rem 1rem 1rem;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -123,7 +129,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 3rem;
+  padding: 2rem;
   color: var(--on-background);
 }
 
@@ -179,7 +185,7 @@ th {
 
 .empty-state {
   text-align: center;
-  padding: 3rem;
+  padding: 2rem;
   color: var(--on-surface);
   flex: 1;
   display: flex;
@@ -189,9 +195,9 @@ th {
 }
 
 .empty-state mat-icon {
-  font-size: 4rem;
-  width: 4rem;
-  height: 4rem;
+  font-size: 3rem;
+  width: 3rem;
+  height: 3rem;
   margin-bottom: 1rem;
   color: var(--secondary-dark);
 }
@@ -199,16 +205,17 @@ th {
 .empty-state h3 {
   margin: 0 0 0.5rem 0;
   color: var(--on-surface);
+  font-size: 1.25rem;
 }
 
 .empty-state p {
-  margin: 0 0 2rem 0;
+  margin: 0 0 1.5rem 0;
   color: var(--on-surface);
 }
 
 /* Botón de volver al final */
 .back-button-container {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   text-align: center;
 }
 
@@ -240,19 +247,28 @@ button[mat-icon-button]:hover {
   color: var(--primary-color);
 }
 
-/* Responsive */
+/* Responsive para móviles */
 @media (max-width: 768px) {
-  .content-container {
-    padding: 0 1rem 1rem 1rem;
-  }
-
   .sub-header {
-    padding: 1rem;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
   }
 
-  .header-actions {
-    width: 100%;
-    justify-content: space-between;
+  .sub-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .header-left, .header-actions {
+    gap: 0.75rem;
+  }
+
+  .total-badge {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .content-container {
+    padding: 0 0.75rem 0.75rem 0.75rem;
   }
 
   .table-container {
@@ -264,29 +280,193 @@ button[mat-icon-button]:hover {
     overflow-x: auto;
   }
 
-  .header-left {
-    flex-wrap: wrap;
+  /* Ocultar columna "N° Subrecetas" en móviles */
+  .mat-column-subrecetasCount {
+    display: none !important;
   }
 
-  .back-button {
-    margin-bottom: 0.5rem;
+  /* Ajustar tamaño de la previsualización */
+  .torta-preview, .no-preview {
+    width: 60px;
+    height: 45px;
+  }
+
+  .play-icon {
+    font-size: 18px;
+  }
+
+  .no-preview mat-icon {
+    font-size: 18px;
+    margin-bottom: 2px;
+  }
+
+  .no-preview span {
+    font-size: 8px;
+  }
+
+  /* Mejorar espaciado en filas */
+  .mat-row, .mat-header-row {
+    min-height: 60px;
+  }
+
+  .mat-cell, .mat-header-cell {
+    padding: 8px;
+  }
+
+  .empty-state {
+    padding: 1.5rem;
+  }
+
+  .empty-state mat-icon {
+    font-size: 2.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .empty-state h3 {
+    font-size: 1.1rem;
+  }
+
+  .back-button-container {
+    margin-top: 1rem;
   }
 }
 
+/* Responsive para tablets pequeñas */
+@media (max-width: 600px) {
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .sub-header h1 {
+    font-size: 1.1rem;
+  }
+
+  .total-badge {
+    font-size: 0.85rem;
+  }
+
+  /* Ajustar botones de acción */
+  button[mat-icon-button] {
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+  }
+
+  button[mat-icon-button] mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+  }
+}
+
+/* Responsive para móviles muy pequeños */
 @media (max-width: 480px) {
   .sub-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .header-left {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .header-actions {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+    width: 100%;
+    justify-content: space-between;
   }
 
-  .total-badge {
-    align-self: flex-start;
+  .sub-header h1 {
+    font-size: 1rem;
+  }
+
+  .content-container {
+    padding: 0 0.5rem 0.5rem 0.5rem;
+  }
+
+  .loading {
+    padding: 1.5rem;
+  }
+
+  .loading p {
+    font-size: 0.9rem;
+  }
+
+  /* Ocultar encabezados de tabla en móviles muy pequeños */
+  .mat-header-row {
+    display: none;
+  }
+
+  /* Convertir tabla a formato de tarjeta */
+  .mat-row {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .mat-cell {
+    padding: 6px 0;
+    border: none;
+  }
+
+  /* Añadir etiquetas a las celdas */
+  .mat-cell::before {
+    content: attr(data-label);
+    font-weight: bold;
+    display: block;
+    margin-bottom: 4px;
+    color: var(--primary-color);
+    font-size: 0.8rem;
+  }
+
+  /* Ajustar botones de acción */
+  .mat-column-acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border-color);
+  }
+
+  .mat-column-acciones::before {
+    display: none;
+  }
+
+  .empty-state {
+    padding: 1rem;
+  }
+
+  .empty-state h3 {
+    font-size: 1rem;
+  }
+
+  .empty-state p {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .back-button-container {
+    margin-top: 0.75rem;
+  }
+}
+
+/* Mejoras de usabilidad táctil para dispositivos móviles */
+@media (hover: none) and (pointer: coarse) {
+  .action-button {
+    width: 44px;
+    height: 44px;
+    line-height: 44px;
+  }
+
+  button, .mat-icon-button {
+    min-height: 44px;
+    min-width: 44px;
   }
 }
 
@@ -297,4 +477,15 @@ button[mat-icon-button]:hover {
 
 .mat-table {
   background-color: var(--surface) !important;
+}
+
+/* Añadir estas reglas para mejorar la visualización en móviles */
+.mobile-hidden {
+  display: none;
+}
+
+@media (min-width: 769px) {
+  .mobile-hidden {
+    display: table-cell;
+  }
 }

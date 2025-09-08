@@ -43,3 +43,33 @@
   font-weight: bold;
   font-size: 1.5rem;
 }
+
+/* Responsive */
+@media (max-width: 768px) {
+   .logout-btn {
+     background-color: black !important;
+     font-size: 0.5rem;
+     width: 50% !important;
+     height: 10% !important;
+     line-height: 120% !important;
+   }
+   .logo-image {
+     width: 20px;
+     height: 20px;
+     border-radius: 8px;
+     margin-right: 0px;
+   }
+
+   .logo-text {
+     font-weight: bold;
+     font-size: 1.2rem;
+     left: 10px;
+   }
+
+   .welcome-text {
+     opacity: 0.9;
+     font-size: 0.7rem;
+     width: 50%;
+   }
+
+}

@@ -36,7 +36,7 @@ interface Ingrediente {
 }
 
 interface IngredienteEnSubreceta {
-  ingrediente: string; // Cambiado a string para almacenar solo el ID
+  ingrediente: string;
   cantidad: number;
   costo: number;
   editing?: boolean;
@@ -61,6 +61,14 @@ interface Torta {
 interface PresupuestoConfig {
   porcentajeGastos: number;
   porcentajeGanancia: number;
+}
+
+interface CostoAdicional {
+  ingredienteId: string;
+  nombre: string;
+  cantidad: number;
+  precioUnitario: number;
+  costoTotal: number;
 }
 
 @Component({
@@ -112,9 +120,18 @@ export class PresupuestoTortaComponent implements OnInit {
   ingredienteSeleccionado: Ingrediente | null = null;
   cantidadIngrediente: number = 0;
 
+  // Para costos adicionales
+  costosAdicionales: CostoAdicional[] = [];
+  mostrarSelectorCostoAdicional: boolean = false;
+  ingredienteCostoAdicionalSeleccionado: Ingrediente | null = null;
+  cantidadCostoAdicional: number = 1;
+
   // Para búsqueda de ingredientes
   ingredienteSearchControl = new FormControl('');
   filteredIngredientes!: Observable<Ingrediente[]>;
+
+  costoAdicionalSearchControl = new FormControl('');
+  filteredIngredientesCosto!: Observable<Ingrediente[]>;
 
   constructor(
     private http: HttpClient,
@@ -128,8 +145,22 @@ export class PresupuestoTortaComponent implements OnInit {
     this.cargarTortas();
     this.cargarIngredientes();
 
-    // Configurar el filtro de autocompletado
+    // Configurar el filtro de autocompletado para ingredientes
     this.filteredIngredientes = this.ingredienteSearchControl.valueChanges.pipe(
+      startWith(''),
+      map(value => {
+        if (typeof value === 'string') {
+          return this._filterIngredientes(value);
+        } else if (value && typeof value === 'object' && '_id' in value) {
+          const ingredienteValue = value as Ingrediente;
+          return this._filterIngredientes(ingredienteValue.nombre);
+        }
+        return this.ingredientesDisponibles.slice();
+      })
+    );
+
+    // Configurar el filtro de autocompletado para costos adicionales
+    this.filteredIngredientesCosto = this.costoAdicionalSearchControl.valueChanges.pipe(
       startWith(''),
       map(value => {
         if (typeof value === 'string') {
@@ -162,6 +193,11 @@ export class PresupuestoTortaComponent implements OnInit {
   onIngredienteSelected(event: any): void {
     const ingrediente = event.option.value as Ingrediente;
     this.ingredienteSeleccionado = ingrediente;
+  }
+
+  onCostoAdicionalSelected(event: any): void {
+    const ingrediente = event.option.value as Ingrediente;
+    this.ingredienteCostoAdicionalSeleccionado = ingrediente;
   }
 
   cargarTortas() {
@@ -216,6 +252,7 @@ export class PresupuestoTortaComponent implements OnInit {
 
   seleccionarTorta(torta: Torta) {
     this.tortaSeleccionada = { ...torta };
+    this.costosAdicionales = []; // Reiniciar costos adicionales al cambiar de torta
   }
 
   calcularCostoSubreceta(subreceta: Subreceta): number {
@@ -237,9 +274,15 @@ export class PresupuestoTortaComponent implements OnInit {
     return costoTotal * (1 + this.configuracion.porcentajeGastos / 100);
   }
 
+  calcularTotalCostosAdicionales(): number {
+    return this.costosAdicionales.reduce((total, costo) => total + costo.costoTotal, 0);
+  }
+
   calcularPrecioVenta(): number {
     const costoConGastos = this.calcularCostoConGastos();
-    return costoConGastos * (1 + this.configuracion.porcentajeGanancia / 100);
+    const costosAdicionales = this.calcularTotalCostosAdicionales();
+    const precioBase = (costoConGastos + costosAdicionales) * (1 + this.configuracion.porcentajeGanancia / 100);
+    return precioBase;
   }
 
   cambiarFactorSubreceta(subreceta: Subreceta, factor: number) {
@@ -356,6 +399,47 @@ export class PresupuestoTortaComponent implements OnInit {
     this.ingredienteSearchControl.setValue('');
   }
 
+  abrirSelectorCostoAdicional() {
+    this.mostrarSelectorCostoAdicional = true;
+    this.ingredienteCostoAdicionalSeleccionado = null;
+    this.cantidadCostoAdicional = 1;
+    this.costoAdicionalSearchControl.setValue('');
+  }
+
+  agregarCostoAdicional() {
+    if (this.ingredienteCostoAdicionalSeleccionado && this.cantidadCostoAdicional > 0) {
+      const precio = this.ingredienteCostoAdicionalSeleccionado.precio || 0;
+      const costoTotal = precio * this.cantidadCostoAdicional;
+
+      const nuevoCosto: CostoAdicional = {
+        ingredienteId: this.ingredienteCostoAdicionalSeleccionado._id,
+        nombre: this.ingredienteCostoAdicionalSeleccionado.nombre,
+        cantidad: this.cantidadCostoAdicional,
+        precioUnitario: precio,
+        costoTotal: costoTotal
+      };
+
+      this.costosAdicionales.push(nuevoCosto);
+      this.cerrarSelectorCostoAdicional();
+
+      this.snackBar.open('Costo adicional agregado', 'Cerrar', { duration: 2000 });
+    } else {
+      this.snackBar.open('Seleccione un ingrediente y especifique una cantidad válida', 'Cerrar', { duration: 3000 });
+    }
+  }
+
+  eliminarCostoAdicional(index: number) {
+    this.costosAdicionales.splice(index, 1);
+    this.snackBar.open('Costo adicional eliminado', 'Cerrar', { duration: 2000 });
+  }
+
+  cerrarSelectorCostoAdicional() {
+    this.mostrarSelectorCostoAdicional = false;
+    this.ingredienteCostoAdicionalSeleccionado = null;
+    this.cantidadCostoAdicional = 1;
+    this.costoAdicionalSearchControl.setValue('');
+  }
+
   editarIngrediente(subreceta: Subreceta, ingredienteIndex: number) {
     // Cancelar edición de otros ingredientes
     subreceta.ingredientes.forEach((ing, i) => {
@@ -417,8 +501,10 @@ export class PresupuestoTortaComponent implements OnInit {
       tortaId: this.tortaSeleccionada._id,
       tortaNombre: this.tortaSeleccionada.nombre,
       configuracion: this.configuracion,
+      costosAdicionales: this.costosAdicionales,
       costoTotal: this.calcularCostoTotal(),
       costoConGastos: this.calcularCostoConGastos(),
+      totalCostosAdicionales: this.calcularTotalCostosAdicionales(),
       precioVenta: this.calcularPrecioVenta(),
       fecha: new Date()
     };

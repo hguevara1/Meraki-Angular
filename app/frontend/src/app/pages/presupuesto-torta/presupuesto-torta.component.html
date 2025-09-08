@@ -1,6 +1,4 @@
 <div class="presupuesto-container">
-  <!-- Encabezado reutilizable -->
-
 
   <!-- Sub-encabezado específico de esta vista -->
   <div class="sub-header">
@@ -77,6 +75,38 @@
                 </mat-form-field>
               </div>
             </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Sección de Costos Adicionales -->
+        <mat-card *ngIf="tortaSeleccionada">
+          <mat-card-header>
+            <mat-card-title>Costos Adicionales</mat-card-title>
+            <mat-card-subtitle>Se suman directamente al total</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="costos-adicionales-list">
+              <div *ngFor="let costo of costosAdicionales; let i = index" class="costo-adicional-item">
+                <div class="costo-info">
+                  <div class="costo-nombre">{{costo.nombre}}</div>
+                  <div class="costo-detalle">{{costo.cantidad}} x {{costo.precioUnitario | number:'1.2-2'}}€ = {{costo.costoTotal | number:'1.2-2'}}€</div>
+                </div>
+                <div class="costo-actions">
+                  <button mat-icon-button color="warn" (click)="eliminarCostoAdicional(i)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </div>
+
+              <div *ngIf="costosAdicionales.length === 0" class="empty-state-small">
+                <p>No hay costos adicionales</p>
+              </div>
+            </div>
+
+            <button mat-raised-button color="accent" class="full-width" (click)="mostrarSelectorCostoAdicional = true">
+              <mat-icon>add</mat-icon>
+              Agregar Costo Adicional
+            </button>
           </mat-card-content>
         </mat-card>
       </div>
@@ -229,17 +259,28 @@
             </div>
 
             <div class="resumen-item total">
-              <span>Costo total:</span>
+              <span>Costo total producción:</span>
               <span>{{calcularCostoConGastos() | number:'1.2-2'}}€</span>
+            </div>
+
+            <!-- Costos adicionales -->
+            <div *ngFor="let costo of costosAdicionales" class="resumen-item adicional">
+              <span>{{costo.nombre}}:</span>
+              <span>{{costo.costoTotal | number:'1.2-2'}}€</span>
+            </div>
+
+            <div *ngIf="costosAdicionales.length > 0" class="resumen-item adicional-total">
+              <span>Total con adicionales:</span>
+              <span>{{calcularCostoConGastos() + calcularTotalCostosAdicionales() | number:'1.2-2'}}€</span>
             </div>
 
             <div class="resumen-item">
               <span>Ganancia ({{configuracion.porcentajeGanancia}}%):</span>
-              <span>{{calcularPrecioVenta() - calcularCostoConGastos() | number:'1.2-2'}}€</span>
+              <span>{{calcularPrecioVenta() - (calcularCostoConGastos() + calcularTotalCostosAdicionales()) | number:'1.2-2'}}€</span>
             </div>
 
             <div class="resumen-item final">
-              <span>Precio de venta:</span>
+              <span>Precio de venta final:</span>
               <span>{{calcularPrecioVenta() | number:'1.2-2'}}€</span>
             </div>
           </mat-card-content>
@@ -280,6 +321,37 @@
         <div class="modal-actions">
           <button mat-button (click)="cerrarSelectorIngredientes()">Cancelar</button>
           <button mat-raised-button color="primary" (click)="agregarIngredienteASubreceta()">Agregar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selector de costos adicionales modal -->
+    <div *ngIf="mostrarSelectorCostoAdicional" class="modal-backdrop">
+      <div class="modal-content">
+        <h3>Agregar Costo Adicional</h3>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Buscar Ingrediente</mat-label>
+          <input type="text" matInput [formControl]="costoAdicionalSearchControl" [matAutocomplete]="autoCosto">
+          <mat-autocomplete #autoCosto="matAutocomplete" [displayWith]="displayIngrediente" (optionSelected)="onCostoAdicionalSelected($event)">
+            <mat-option *ngFor="let ingrediente of filteredIngredientesCosto | async" [value]="ingrediente">
+              {{ingrediente.nombre}} - {{ingrediente.precio | number:'1.2-2'}}€/{{ingrediente.medida}}{{ingrediente.unidad}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Cantidad</mat-label>
+          <input matInput type="number" [(ngModel)]="cantidadCostoAdicional" min="1" step="1" value="1">
+        </mat-form-field>
+
+        <div *ngIf="ingredienteCostoAdicionalSeleccionado" class="costo-preview">
+          <strong>Total: {{(ingredienteCostoAdicionalSeleccionado.precio || 0) * cantidadCostoAdicional | number:'1.2-2'}}€</strong>
+        </div>
+
+        <div class="modal-actions">
+          <button mat-button (click)="cerrarSelectorCostoAdicional()">Cancelar</button>
+          <button mat-raised-button color="primary" (click)="agregarCostoAdicional()">Agregar</button>
         </div>
       </div>
     </div>
