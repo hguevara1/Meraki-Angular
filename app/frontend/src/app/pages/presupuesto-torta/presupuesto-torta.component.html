@@ -356,4 +356,36 @@
       </div>
     </div>
   </div>
+  <!-- Selector de subrecetas modal -->
+  <div *ngIf="mostrarSelectorSubrecetas" class="modal-backdrop">
+    <div class="modal-content">
+      <h3>Agregar Subreceta Existente</h3>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Buscar Subreceta</mat-label>
+        <input type="text" matInput [formControl]="subrecetaSearchControl" [matAutocomplete]="autoSubreceta">
+        <mat-autocomplete #autoSubreceta="matAutocomplete" [displayWith]="displaySubreceta" (optionSelected)="onSubrecetaSelected($event)">
+          <mat-option *ngFor="let subreceta of filteredSubrecetas | async" [value]="subreceta">
+            {{subreceta.nombre}} ({{subreceta.costoTotal | number:'1.2-2'}}€)
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <div *ngIf="subrecetaSeleccionada" class="subreceta-preview">
+        <h4>Vista previa:</h4>
+        <p><strong>Nombre:</strong> {{subrecetaSeleccionada.nombre}}</p>
+        <p><strong>Costo:</strong> {{subrecetaSeleccionada.costoTotal | number:'1.2-2'}}€</p>
+        <p><strong>Ingredientes:</strong> {{subrecetaSeleccionada.ingredientes.length}}</p>
+      </div>
+
+      <div class="modal-actions">
+        <button mat-button (click)="cerrarSelectorSubrecetas()">Cancelar</button>
+        <button mat-raised-button color="primary"
+                (click)="agregarSubrecetaSeleccionada()"
+                [disabled]="!subrecetaSeleccionada">
+          Agregar Subreceta
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

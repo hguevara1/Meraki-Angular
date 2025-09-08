@@ -35,6 +35,13 @@ interface Ingrediente {
   unidad: string;
 }
 
+interface SubrecetaDisponible {
+  _id: string;
+  nombre: string;
+  ingredientes: any[];
+  costoTotal: number;
+}
+
 interface IngredienteEnSubreceta {
   ingrediente: string;
   cantidad: number;
@@ -133,6 +140,12 @@ export class PresupuestoTortaComponent implements OnInit {
   costoAdicionalSearchControl = new FormControl('');
   filteredIngredientesCosto!: Observable<Ingrediente[]>;
 
+  subrecetasDisponibles: SubrecetaDisponible[] = [];
+  mostrarSelectorSubrecetas: boolean = false;
+  subrecetaSearchControl = new FormControl('');
+  filteredSubrecetas!: Observable<SubrecetaDisponible[]>;
+  subrecetaSeleccionada: SubrecetaDisponible | null = null;
+
   constructor(
     private http: HttpClient,
     private route: ActivatedRoute,
@@ -144,6 +157,7 @@ export class PresupuestoTortaComponent implements OnInit {
   ngOnInit() {
     this.cargarTortas();
     this.cargarIngredientes();
+    this.cargarSubrecetasDisponibles();
 
     // Configurar el filtro de autocompletado para ingredientes
     this.filteredIngredientes = this.ingredienteSearchControl.valueChanges.pipe(
@@ -296,8 +310,51 @@ export class PresupuestoTortaComponent implements OnInit {
   }
 
   agregarSubrecetaExistente() {
-    this.snackBar.open('Funcionalidad en desarrollo', 'Cerrar', { duration: 2000 });
+    this.mostrarSelectorSubrecetas = true;
+    this.subrecetaSeleccionada = null;
+    this.subrecetaSearchControl.setValue('');
+
+    // Cargar subrecetas disponibles si no están cargadas
+    if (this.subrecetasDisponibles.length === 0) {
+      this.cargarSubrecetasDisponibles();
+    }
   }
+
+  agregarSubrecetaSeleccionada() {
+    if (this.subrecetaSeleccionada && this.tortaSeleccionada) {
+      // Verificar si la subreceta ya existe en la torta
+      const subrecetaExistente = this.tortaSeleccionada.subrecetas.find(
+        (sub: any) => sub._id === this.subrecetaSeleccionada!._id
+      );
+
+      if (subrecetaExistente) {
+        this.snackBar.open('Esta subreceta ya fue agregada a la torta', 'Cerrar', { duration: 3000 });
+        return;
+      }
+
+      // Crear una copia de la subreceta con factor de multiplicación
+      const nuevaSubreceta: Subreceta = {
+        ...this.subrecetaSeleccionada,
+        factorMultiplicacion: 1,
+        editing: false
+      };
+
+      this.tortaSeleccionada.subrecetas.push(nuevaSubreceta);
+      this.cerrarSelectorSubrecetas();
+
+      this.snackBar.open('Subreceta agregada correctamente', 'Cerrar', { duration: 2000 });
+    } else {
+      this.snackBar.open('Seleccione una subreceta válida', 'Cerrar', { duration: 3000 });
+    }
+  }
+
+  // Método para cerrar el selector de subrecetas
+  cerrarSelectorSubrecetas() {
+    this.mostrarSelectorSubrecetas = false;
+    this.subrecetaSeleccionada = null;
+    this.subrecetaSearchControl.setValue('');
+  }
+
 
   crearNuevaSubreceta() {
     if (this.nuevaSubrecetaNombre.trim() && this.tortaSeleccionada) {
@@ -516,4 +573,54 @@ export class PresupuestoTortaComponent implements OnInit {
   imprimirPresupuesto() {
     window.print();
   }
+
+  cargarSubrecetasDisponibles() {
+    this.http.get<SubrecetaDisponible[]>(`${environment.apiUrl}/subrecetas`)
+      .subscribe({
+        next: (data) => {
+          this.subrecetasDisponibles = data;
+          // Configurar el filtro después de cargar los datos
+          this.filteredSubrecetas = this.subrecetaSearchControl.valueChanges.pipe(
+            startWith(''),
+            map(value => {
+              if (typeof value === 'string') {
+                return this._filterSubrecetas(value);
+              } else if (value && typeof value === 'object' && '_id' in value) {
+                const subrecetaValue = value as SubrecetaDisponible;
+                return this._filterSubrecetas(subrecetaValue.nombre);
+              }
+              return this.subrecetasDisponibles.slice();
+            })
+          );
+        },
+        error: (error) => {
+          console.error('Error cargando subrecetas:', error);
+          this.snackBar.open('Error al cargar las subrecetas', 'Cerrar', { duration: 3000 });
+        }
+      });
+  }
+
+  // Método para filtrar subrecetas
+  private _filterSubrecetas(value: string): SubrecetaDisponible[] {
+    if (!value) {
+      return this.subrecetasDisponibles.slice();
+    }
+
+    const filterValue = value.toLowerCase();
+    return this.subrecetasDisponibles.filter(subreceta =>
+      subreceta.nombre.toLowerCase().includes(filterValue)
+    );
+  }
+
+  // Método para mostrar subreceta en el autocomplete
+  displaySubreceta(subreceta: SubrecetaDisponible | null): string {
+    return subreceta && subreceta.nombre ? subreceta.nombre : '';
+  }
+
+  // Método cuando se selecciona una subreceta
+  onSubrecetaSelected(event: any): void {
+    const subreceta = event.option.value as SubrecetaDisponible;
+    this.subrecetaSeleccionada = subreceta;
+  }
+
 }
