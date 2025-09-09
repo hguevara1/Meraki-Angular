@@ -31,6 +31,7 @@ export class RegistrarComponent {
   errorMessage: string = '';
   successMessage: string = '';
   private apiUrl = environment.apiUrl;
+  isSubmitting: boolean = false; // Nueva propiedad para controlar estado de envío
 
   constructor(private fb: FormBuilder, private http: HttpClient) {
     this.registerForm = this.fb.group({
@@ -44,7 +45,10 @@ export class RegistrarComponent {
   }
 
   onSubmit() {
-     console.log('Formulario enviado:', this.registerForm.value);
+    if (this.isSubmitting) return; // Evitar múltiples envíos
+
+    console.log('Formulario enviado:', this.registerForm.value);
+
     if (this.registerForm.invalid) {
       this.errorMessage = 'Por favor completa todos los campos correctamente.';
       return;
@@ -55,15 +59,25 @@ export class RegistrarComponent {
       return;
     }
 
+    this.isSubmitting = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+
     this.http.post(`${environment.apiUrl}/users/register`, this.registerForm.value)
       .subscribe({
         next: (res: any) => {
           this.successMessage = 'Usuario registrado correctamente 🎉';
           this.errorMessage = '';
+          this.registerForm.reset(); // Limpiar formulario después de éxito
+          Object.keys(this.registerForm.controls).forEach(key => {
+            this.registerForm.get(key)?.setErrors(null);
+          });
+          this.isSubmitting = false;
         },
         error: (err) => {
           this.errorMessage = err.error?.message || 'Error al registrar usuario';
           this.successMessage = '';
+          this.isSubmitting = false;
         }
       });
   }

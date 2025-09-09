@@ -43,8 +43,8 @@
         </mat-form-field>
 
         <!-- Botón Registrar -->
-        <button mat-flat-button color="primary" type="submit" class="full-width">
-          Registrarse
+        <button mat-flat-button color="primary" type="submit" class="full-width" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Registrando...' : 'Registrarse' }}
         </button>
       </form>
 
