@@ -378,7 +378,7 @@ export class PresupuestoTortaComponent implements OnInit {
   calcularPrecioVenta(): number {
     const costoConGastos = this.calcularCostoConGastos();
     const costosAdicionales = this.calcularTotalCostosAdicionales();
-    const precioBase = (costoConGastos + costosAdicionales) * (1 + this.configuracion.porcentajeGanancia / 100);
+    const precioBase = (costoConGastos ) * (1 + this.configuracion.porcentajeGanancia / 100) + costosAdicionales;
     return precioBase;
   }
 
