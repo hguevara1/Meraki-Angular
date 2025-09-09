@@ -3,6 +3,8 @@
   padding: 0;
   max-width: 1800px;
   margin: 0 auto;
+  background-color: var(--background);
+  color: black;
 }
 
 .header {
@@ -609,134 +611,7 @@
 
 /* app/frontend/src/app/pages/presupuesto-torta/presupuesto-torta.component.css */
 
-/* CORRECCIÓN PARA MODO OSCURO - TEXTO Y FORMULARIOS */
-.presupuesto-container {
-  --text-color: #333333;
-  --background-color: #ffffff;
-  --card-bg: #ffffff;
-  --border-color: #e0e0e0;
-}
 
-body.dark-mode .presupuesto-container {
-  --text-color: #ffffff;
-  --background-color: #1a1a1a;
-  --card-bg: #2d2d2d;
-  --border-color: #444444;
-}
-
-/* Aplicar colores variables */
-.presupuesto-container,
-.presupuesto-container .mat-card,
-.presupuesto-container .mat-card-content {
-  background-color: var(--background-color) !important;
-  color: var(--text-color) !important;
-}
-
-/* Corrección específica para texto en modo oscuro */
-.presupuesto-container .torta-item h4,
-.presupuesto-container .torta-item span,
-.presupuesto-container .subreceta-header h3,
-.presupuesto-container .ingrediente-nombre,
-.presupuesto-container .resumen-item,
-.presupuesto-container .config-field,
-.presupuesto-container .factor-multiplicacion span {
-  color: var(--text-color) !important;
-}
-
-/* Corrección para inputs y formularios en modo oscuro */
-.presupuesto-container .mat-mdc-form-field {
-  --mdc-filled-text-field-container-color: var(--card-bg) !important;
-  --mdc-filled-text-field-input-text-color: var(--text-color) !important;
-  --mdc-filled-text-field-label-text-color: var(--text-color) !important;
-}
-
-.presupuesto-container .mat-mdc-input-element {
-  color: var(--text-color) !important;
-}
-
-/* Placeholders visibles */
-.presupuesto-container .mat-mdc-form-field-label {
-  color: var(--text-color) !important;
-}
-
-/* Bordes de inputs */
-.presupuesto-container .mdc-text-field--outlined {
-  --mdc-outlined-text-field-outline-color: var(--border-color) !important;
-}
-
-/* Cards y contenedores */
-.presupuesto-container .mat-card {
-  background-color: var(--card-bg) !important;
-  border-color: var(--border-color) !important;
-}
-
-.presupuesto-container .subreceta-card,
-.presupuesto-container .torta-item {
-  background-color: var(--card-bg) !important;
-  border-color: var(--border-color) !important;
-  color: var(--text-color) !important;
-}
-
-/* Estados hover y seleccionados */
-.presupuesto-container .torta-item:hover {
-  background-color: var(--card-bg) !important;
-  opacity: 0.8;
-}
-
-.presupuesto-container .torta-item.selected {
-  background-color: rgba(63, 81, 181, 0.1) !important;
-}
-
-/* Modal en modo oscuro */
-body.dark-mode .presupuesto-container .modal-content {
-  background-color: var(--card-bg) !important;
-  color: var(--text-color) !important;
-}
-
-/* Texto específico del resumen */
-.presupuesto-container .resumen-item.final {
-  color: #3f51b5 !important; /* Mantener azul para destacar */
-}
-
-.presupuesto-container .resumen-item.adicional {
-  color: #ff5722 !important; /* Naranja para costos adicionales */
-}
-
-.presupuesto-container .resumen-item.adicional-total {
-  color: #f44336 !important; /* Rojo para total con adicionales */
-}
-
-/* Botones y elementos interactivos */
-.presupuesto-container .factor-button {
-  background-color: var(--card-bg) !important;
-  color: var(--text-color) !important;
-  border-color: var(--border-color) !important;
-}
-
-.presupuesto-container .factor-button.active {
-  background-color: #3f51b5 !important;
-  color: white !important;
-}
-
-/* Asegurar visibilidad en todos los elementos de texto */
-.presupuesto-container h1,
-.presupuesto-container h2,
-.presupuesto-container h3,
-.presupuesto-container h4,
-.presupuesto-container p,
-.presupuesto-container span {
-  color: var(--text-color) !important;
-}
-
-/* Corrección para el mensaje de estado vacío */
-.presupuesto-container .empty-state {
-  color: var(--text-color) !important;
-}
-
-/* Asegurar que los mat-icons tengan color apropiado */
-.presupuesto-container .empty-state mat-icon {
-  color: var(--text-color) !important;
-}
 
 /* Estilos para el modal de subrecetas */
 .subreceta-preview {
@@ -771,4 +646,69 @@ body.dark-mode .subreceta-preview p {
   color: #ffffff;
 }
 
+/* Estilos mejorados para la vista previa de subrecetas */
+.subreceta-preview {
+  background-color: var(--secondary-light);
+  padding: 16px;
+  border-radius: 8px;
+  margin: 16px 0;
+  border-left: 4px solid var(--primary-color);
+  max-height: 300px;
+  overflow-y: auto;
+}
 
+.subreceta-preview h4 {
+  margin: 0 0 12px 0;
+  color: var(--primary-color);
+  font-size: 16px;
+}
+
+.preview-details p {
+  margin: 8px 0;
+  color: var(--text-color);
+  font-size: 14px;
+}
+
+.ingredientes-preview {
+  margin-top: 12px;
+}
+
+.ingredientes-preview h5 {
+  margin: 12px 0 8px 0;
+  color: var(--text-color);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.ingredientes-preview .mat-list-item {
+  height: auto;
+  margin-bottom: 8px;
+}
+
+.ingredientes-preview .mat-list-item div[matListItemTitle] {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.ingredientes-preview .mat-list-item div[matListItemLine] {
+  font-size: 12px;
+  color: var(--secondary-dark);
+}
+
+.no-ingredientes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 8px;
+  background-color: rgba(255, 152, 0, 0.1);
+  border-radius: 4px;
+  color: var(--warning-color);
+}
+
+.no-ingredientes mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}

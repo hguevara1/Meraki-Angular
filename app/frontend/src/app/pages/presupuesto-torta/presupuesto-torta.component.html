@@ -372,10 +372,30 @@
       </mat-form-field>
 
       <div *ngIf="subrecetaSeleccionada" class="subreceta-preview">
-        <h4>Vista previa:</h4>
-        <p><strong>Nombre:</strong> {{subrecetaSeleccionada.nombre}}</p>
-        <p><strong>Costo:</strong> {{subrecetaSeleccionada.costoTotal | number:'1.2-2'}}€</p>
-        <p><strong>Ingredientes:</strong> {{subrecetaSeleccionada.ingredientes.length}}</p>
+        <h4>Vista previa: {{subrecetaSeleccionada.nombre}}</h4>
+        <div class="preview-details">
+          <p><strong>Ingredientes:</strong> {{subrecetaSeleccionada.ingredientes.length || 0}}</p>
+
+          <div *ngIf="subrecetaSeleccionada.ingredientes && subrecetaSeleccionada.ingredientes.length > 0"
+               class="ingredientes-preview">
+            <h5>Lista de Ingredientes:</h5>
+            <mat-list dense>
+              <mat-list-item *ngFor="let ingrediente of subrecetaSeleccionada.ingredientes">
+                <div matListItemTitle>{{getNombreIngrediente(ingrediente.ingrediente)}}</div>
+                <div matListItemLine>
+                  {{ingrediente.cantidad}} {{getUnidadIngrediente(ingrediente.ingrediente)}} •
+                  {{ingrediente.costo | number:'1.2-2'}}€
+                </div>
+              </mat-list-item>
+            </mat-list>
+          </div>
+
+          <div *ngIf="!subrecetaSeleccionada.ingredientes || subrecetaSeleccionada.ingredientes.length === 0"
+               class="no-ingredientes">
+            <mat-icon>info</mat-icon>
+            <span>Esta subreceta no tiene ingredientes</span>
+          </div>
+        </div>
       </div>
 
       <div class="modal-actions">
