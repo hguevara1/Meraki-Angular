@@ -14,23 +14,28 @@ export const crearSubreceta = async (req, res) => {
     const ingredientesConCosto = [];
 
     for (const ing of ingredientes) {
+      // Normalizar ID del ingrediente (puede venir como string ID o como objeto populado)
+      const ingredienteId = ing.ingrediente && typeof ing.ingrediente === 'object' && ing.ingrediente._id
+        ? ing.ingrediente._id
+        : ing.ingrediente;
+
       // Verificar que el ingrediente existe
-      const ingredienteExistente = await Ingrediente.findById(ing.ingrediente);
+      const ingredienteExistente = await Ingrediente.findById(ingredienteId);
       if (!ingredienteExistente) {
-        return res.status(400).json({ error: `Ingrediente con ID ${ing.ingrediente} no encontrado` });
+        return res.status(400).json({ error: `Ingrediente con ID ${ingredienteId} no encontrado` });
       }
 
       // Calcular costo basado en el precio del ingrediente y la cantidad
       let costo = 0;
-      if (ingredienteExistente.precio !== null && ingredienteExistente.precio !== undefined) {
-        // Calcular el costo unitario por gramo/ml (asumiendo que la medida está en gramos o ml)
+      if (ingredienteExistente.precio !== null && ingredienteExistente.precio !== undefined && ingredienteExistente.medida) {
+        // Calcular el costo unitario por gramo/ml/unidad
         const costoUnitario = ingredienteExistente.precio / ingredienteExistente.medida;
         // Calcular el costo total para la cantidad especificada
         costo = costoUnitario * ing.cantidad;
       }
 
       ingredientesConCosto.push({
-        ingrediente: ing.ingrediente,
+        ingrediente: ingredienteId,
         cantidad: ing.cantidad,
         costo: parseFloat(costo.toFixed(2)) // Redondear a 2 decimales
       });
@@ -92,19 +97,23 @@ export const actualizarSubreceta = async (req, res) => {
       const ingredientesConCosto = [];
 
       for (const ing of ingredientes) {
-        const ingredienteExistente = await Ingrediente.findById(ing.ingrediente);
+        const ingredienteId = ing.ingrediente && typeof ing.ingrediente === 'object' && ing.ingrediente._id
+          ? ing.ingrediente._id
+          : ing.ingrediente;
+
+        const ingredienteExistente = await Ingrediente.findById(ingredienteId);
         if (!ingredienteExistente) {
-          return res.status(400).json({ error: `Ingrediente con ID ${ing.ingrediente} no encontrado` });
+          return res.status(400).json({ error: `Ingrediente con ID ${ingredienteId} no encontrado` });
         }
 
         let costo = 0;
-        if (ingredienteExistente.precio !== null && ingredienteExistente.precio !== undefined) {
+        if (ingredienteExistente.precio !== null && ingredienteExistente.precio !== undefined && ingredienteExistente.medida) {
           const costoUnitario = ingredienteExistente.precio / ingredienteExistente.medida;
           costo = costoUnitario * ing.cantidad;
         }
 
         ingredientesConCosto.push({
-          ingrediente: ing.ingrediente,
+          ingrediente: ingredienteId,
           cantidad: ing.cantidad,
           costo: parseFloat(costo.toFixed(2))
         });

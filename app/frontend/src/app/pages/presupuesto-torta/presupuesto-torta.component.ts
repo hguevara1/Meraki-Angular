@@ -483,10 +483,15 @@ export class PresupuestoTortaComponent implements OnInit {
   guardarEdicionIngrediente(subreceta: Subreceta, ingredienteIndex: number) {
     const ingrediente = subreceta.ingredientes[ingredienteIndex];
     if (ingrediente.tempCantidad !== undefined && ingrediente.tempCantidad > 0) {
+      const ingredienteId = typeof ingrediente.ingrediente === 'object' && ingrediente.ingrediente !== null
+        ? (ingrediente.ingrediente as any)._id
+        : ingrediente.ingrediente;
+
       const ingredienteData = this.ingredientesDisponibles.find(
-        ing => ing._id === ingrediente.ingrediente
-      );
-      if (ingredienteData && ingredienteData.precio !== null && ingredienteData.precio !== undefined) {
+        ing => ing._id === ingredienteId
+      ) || (typeof ingrediente.ingrediente === 'object' && ingrediente.ingrediente !== null ? ingrediente.ingrediente as any : null);
+
+      if (ingredienteData && ingredienteData.precio !== null && ingredienteData.precio !== undefined && ingredienteData.medida) {
         const costoUnitario = ingredienteData.precio / ingredienteData.medida;
         ingrediente.cantidad = ingrediente.tempCantidad;
         ingrediente.costo = parseFloat((costoUnitario * ingrediente.tempCantidad).toFixed(2));

@@ -323,6 +323,25 @@ describe('PresupuestoTortaComponent', () => {
       expect(ingrediente.editing).toBeFalse();
     });
 
+    it('debería guardar edición de ingrediente cuando viene como objeto populado sin perder precio', () => {
+      const subreceta = component.tortaSeleccionada!.subrecetas[0];
+      subreceta.ingredientes = [
+        {
+          ingrediente: { _id: 'ing1', nombre: 'Chocolate', precio: 10, medida: 1, unidad: 'kg' } as any,
+          cantidad: 1,
+          costo: 10.0,
+          editing: true,
+          tempCantidad: 3
+        }
+      ];
+
+      component.guardarEdicionIngrediente(subreceta, 0);
+
+      expect(subreceta.ingredientes[0].cantidad).toBe(3);
+      expect(subreceta.ingredientes[0].costo).toBe(30.0);
+      expect(subreceta.ingredientes[0].editing).toBeFalse();
+    });
+
     it('debería cancelar edición de ingrediente', () => {
       const subreceta = component.tortaSeleccionada!.subrecetas[0];
       const ingrediente = subreceta.ingredientes[0];

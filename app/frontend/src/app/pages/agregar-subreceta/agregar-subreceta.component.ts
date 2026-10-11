@@ -239,12 +239,16 @@ export class AgregarSubrecetaComponent implements OnInit {
     const ingrediente = this.subreceta.ingredientes[index];
 
     if (ingrediente.tempCantidad !== null && ingrediente.tempCantidad > 0) {
-      // Recalcular costo
-      const ingredienteData = this.ingredientesDisponibles.find(
-        ing => ing._id === ingrediente.ingrediente
-      );
+      // Recalcular costo obteniendo datos tanto si es objeto populado como ID string
+      const ingredienteId = typeof ingrediente.ingrediente === 'object' && ingrediente.ingrediente !== null
+        ? (ingrediente.ingrediente as any)._id
+        : ingrediente.ingrediente;
 
-      if (ingredienteData && ingredienteData.precio !== null && ingredienteData.precio !== undefined) {
+      const ingredienteData = this.ingredientesDisponibles.find(
+        ing => ing._id === ingredienteId
+      ) || (typeof ingrediente.ingrediente === 'object' && ingrediente.ingrediente !== null ? ingrediente.ingrediente as any : null);
+
+      if (ingredienteData && ingredienteData.precio !== null && ingredienteData.precio !== undefined && ingredienteData.medida) {
         const costoUnitario = ingredienteData.precio / ingredienteData.medida;
         ingrediente.cantidad = ingrediente.tempCantidad;
         ingrediente.costo = parseFloat((costoUnitario * ingrediente.tempCantidad).toFixed(2));
@@ -280,8 +284,17 @@ export class AgregarSubrecetaComponent implements OnInit {
   }
 
   guardarSubreceta() {
+    const payload = {
+      ...this.subreceta,
+      ingredientes: this.subreceta.ingredientes.map((ing: any) => ({
+        ingrediente: typeof ing.ingrediente === 'object' && ing.ingrediente !== null ? ing.ingrediente._id : ing.ingrediente,
+        cantidad: ing.cantidad,
+        costo: ing.costo
+      }))
+    };
+
     if (this.isEditMode) {
-      this.http.put(`${this.apiUrl}/subrecetas/${this.subreceta._id}`, this.subreceta)
+      this.http.put(`${this.apiUrl}/subrecetas/${this.subreceta._id}`, payload)
         .subscribe({
           next: () => {
             this.router.navigate(['/subrecetas']);
@@ -291,7 +304,7 @@ export class AgregarSubrecetaComponent implements OnInit {
           }
         });
     } else {
-      this.http.post(`${this.apiUrl}/subrecetas`, this.subreceta)
+      this.http.post(`${this.apiUrl}/subrecetas`, payload)
         .subscribe({
           next: () => {
             this.router.navigate(['/subrecetas']);
@@ -323,7 +336,7 @@ export class AgregarSubrecetaComponent implements OnInit {
     return 0;
   }
 
-  getNombreIngrediente(ingredienteId: string): string {
+  getNombreIngrediente(ingredienteId: any): string {
     if (typeof ingredienteId === 'object' && ingredienteId !== null) {
       return (ingredienteId as any).nombre || 'Nombre no disponible';
     }
@@ -334,7 +347,7 @@ export class AgregarSubrecetaComponent implements OnInit {
     return ingrediente ? ingrediente.nombre : 'Nombre no disponible';
   }
 
-  getUnidadIngrediente(ingredienteId: string): string {
+  getUnidadIngrediente(ingredienteId: any): string {
     if (typeof ingredienteId === 'object' && ingredienteId !== null) {
       return (ingredienteId as any).unidad || 'u';
     }
@@ -345,14 +358,22 @@ export class AgregarSubrecetaComponent implements OnInit {
     return ingrediente ? ingrediente.unidad : 'u';
   }
 
-  getPrecioIngrediente(ingredienteId: string): number {
+  getPrecioIngrediente(ingredienteId: any): number {
+    if (typeof ingredienteId === 'object' && ingredienteId !== null) {
+      return (ingredienteId as any).precio !== null && (ingredienteId as any).precio !== undefined ? (ingredienteId as any).precio : 0;
+    }
+
     const ingrediente = this.ingredientesDisponibles.find(
       ing => ing._id === ingredienteId
     );
-    return ingrediente ? (ingrediente.precio || 0) : 0;
+    return ingrediente && ingrediente.precio !== null && ingrediente.precio !== undefined ? ingrediente.precio : 0;
   }
 
-  getMedidaIngrediente(ingredienteId: string): number {
+  getMedidaIngrediente(ingredienteId: any): number {
+    if (typeof ingredienteId === 'object' && ingredienteId !== null) {
+      return (ingredienteId as any).medida || 0;
+    }
+
     const ingrediente = this.ingredientesDisponibles.find(
       ing => ing._id === ingredienteId
     );

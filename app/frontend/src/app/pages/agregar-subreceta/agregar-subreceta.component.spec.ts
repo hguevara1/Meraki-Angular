@@ -215,5 +215,62 @@ describe('AgregarSubrecetaComponent', () => {
       component.eliminarIngrediente(0);
       expect(component.subreceta.ingredientes.length).toBe(0);
     });
+
+    it('should calculate cost correctly when saving edition for string ingrediente ID', () => {
+      component.ingredientesDisponibles = [
+        { _id: '1', nombre: 'Huevos', precio: 3.94, medida: 12, unidad: 'unidad' }
+      ];
+      component.subreceta.ingredientes = [
+        { ingrediente: '1', cantidad: 6, costo: 1.97, editing: true, tempCantidad: 6 }
+      ];
+
+      component.guardarEdicionIngrediente(0);
+
+      expect(component.subreceta.ingredientes[0].editing).toBeFalse();
+      expect(component.subreceta.ingredientes[0].cantidad).toBe(6);
+      expect(component.subreceta.ingredientes[0].costo).toBe(1.97);
+    });
+
+    it('should calculate cost correctly and NOT reset to 0 when ingrediente is a populated object', () => {
+      // Caso reportado en producción: el ingrediente viene populado desde el backend
+      const huevoPopulado = { _id: '1', nombre: 'Huevos', precio: 3.94, medida: 12, unidad: 'unidad' };
+      component.ingredientesDisponibles = [huevoPopulado];
+      component.subreceta.ingredientes = [
+        {
+          ingrediente: huevoPopulado as any,
+          cantidad: 6,
+          costo: 1.97,
+          editing: true,
+          tempCantidad: 6
+        }
+      ];
+
+      component.guardarEdicionIngrediente(0);
+
+      expect(component.subreceta.ingredientes[0].editing).toBeFalse();
+      expect(component.subreceta.ingredientes[0].cantidad).toBe(6);
+      // El costo debe preservarse en 1.97 y no terminar en 0
+      expect(component.subreceta.ingredientes[0].costo).toBe(1.97);
+    });
+
+    it('should recalculate cost correctly when quantity changes on populated ingrediente', () => {
+      const huevoPopulado = { _id: '1', nombre: 'Huevos', precio: 3.94, medida: 12, unidad: 'unidad' };
+      component.ingredientesDisponibles = [huevoPopulado];
+      component.subreceta.ingredientes = [
+        {
+          ingrediente: huevoPopulado as any,
+          cantidad: 6,
+          costo: 1.97,
+          editing: true,
+          tempCantidad: 8
+        }
+      ];
+
+      component.guardarEdicionIngrediente(0);
+
+      expect(component.subreceta.ingredientes[0].cantidad).toBe(8);
+      // (3.94 / 12) * 8 = 2.6266... redondeado a 2 decimales = 2.63
+      expect(component.subreceta.ingredientes[0].costo).toBe(2.63);
+    });
   });
 });
