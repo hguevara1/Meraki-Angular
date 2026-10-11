@@ -148,6 +148,13 @@ docker-compose up --build
 ```bash
 docker-compose up -d
 ```
+### 🖥️ Notas de Desarrollo Local (Docker)
+
+El frontend está configurado de forma dinámica en `src/index.html` para detectar el entorno de ejecución:
+* Si accedes desde `localhost`, las peticiones de la API se redirigen automáticamente a `http://localhost:5000/api`.
+* En entornos de staging/producción containerizados, se mantiene la resolución interna a `http://backend:5000/api`.
+
+No es necesario modificar el archivo `environment.docker.ts` ni el archivo `hosts` del sistema operativo para realizar pruebas locales.
 
 ---
 
