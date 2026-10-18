@@ -273,4 +273,40 @@ describe('AgregarSubrecetaComponent', () => {
       expect(component.subreceta.ingredientes[0].costo).toBe(2.63);
     });
   });
+
+  describe('step and unit measurement increment logic', () => {
+    it('should return step 1 for countable units like unidad, u, docena, huevo', () => {
+      expect(component.getStepParaUnidad('unidad')).toBe(1);
+      expect(component.getStepParaUnidad('u')).toBe(1);
+      expect(component.getStepParaUnidad('docena')).toBe(1);
+      expect(component.getStepParaUnidad('huevo')).toBe(1);
+      expect(component.getStepParaUnidad('huevos')).toBe(1);
+    });
+
+    it('should return step 1 for practical units like gr and ml, and 0.1 for kg and lt', () => {
+      expect(component.getStepParaUnidad('gr')).toBe(1);
+      expect(component.getStepParaUnidad('ml')).toBe(1);
+      expect(component.getStepParaUnidad('kg')).toBe(0.1);
+      expect(component.getStepParaUnidad('lt')).toBe(0.1);
+    });
+
+    it('should allow min 0 so quantities can decrease to 0', () => {
+      expect(component.getMinParaUnidad('unidad')).toBe(0);
+      expect(component.getMinParaUnidad('kg')).toBe(0);
+    });
+
+    it('should correctly increment an integer quantity from 8 to 9 using the countable step', () => {
+      const step = component.getStepParaUnidad('unidad');
+      const cantidadInicial = 8;
+      const incrementado = cantidadInicial + step;
+      expect(incrementado).toBe(9);
+    });
+
+    it('should correctly decrement an integer quantity from 1 to 0 using the countable step', () => {
+      const step = component.getStepParaUnidad('unidad');
+      const cantidadInicial = 1;
+      const decrementado = cantidadInicial - step;
+      expect(decrementado).toBe(0);
+    });
+  });
 });

@@ -382,4 +382,24 @@ describe('PresupuestoTortaComponent', () => {
       expect(window.print).toHaveBeenCalled();
     });
   });
+
+  describe('Configuración de incremento y límites para unidades de medida', () => {
+    it('debería retornar step 1 para unidades contables (unidad, u, docena, etc.)', () => {
+      expect(component.getStepParaUnidad('unidad')).toBe(1);
+      expect(component.getStepParaUnidad('u')).toBe(1);
+      expect(component.getStepParaUnidad('docena')).toBe(1);
+    });
+
+    it('debería retornar step 1 para unidades prácticas (gr, ml) y step 0.1 para granel (kg, lt)', () => {
+      expect(component.getStepParaUnidad('gr')).toBe(1);
+      expect(component.getStepParaUnidad('ml')).toBe(1);
+      expect(component.getStepParaUnidad('kg')).toBe(0.1);
+      expect(component.getStepParaUnidad('lt')).toBe(0.1);
+    });
+
+    it('debería retornar min 0 para permitir decremento hasta cero', () => {
+      expect(component.getMinParaUnidad('unidad')).toBe(0);
+      expect(component.getMinParaUnidad('kg')).toBe(0);
+    });
+  });
 });

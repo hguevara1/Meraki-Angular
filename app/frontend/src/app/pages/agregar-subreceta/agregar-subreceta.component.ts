@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { HeaderComponent } from '../header/header.component';
 import { environment } from '../../../environments/environment';
+import { getStepPorUnidad, getMinPorUnidad } from '../../utils/unidad-medida.util';
 
 // Angular Material
 import { MatButtonModule } from '@angular/material/button';
@@ -378,6 +379,14 @@ export class AgregarSubrecetaComponent implements OnInit {
       ing => ing._id === ingredienteId
     );
     return ingrediente ? ingrediente.medida : 0;
+  }
+
+  getStepParaUnidad(unidad: string | null | undefined): number {
+    return getStepPorUnidad(unidad);
+  }
+
+  getMinParaUnidad(unidad: string | null | undefined): number {
+    return getMinPorUnidad(unidad);
   }
 
   private procesarIngredientesSubreceta() {

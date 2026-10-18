@@ -7,6 +7,7 @@ import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { HeaderComponent } from '../header/header.component';
+import { getStepPorUnidad, getMinPorUnidad } from '../../utils/unidad-medida.util';
 
 import { environment } from '../../../environments/environment';
 
@@ -329,6 +330,14 @@ export class PresupuestoTortaComponent implements OnInit {
       return ingrediente.unidad || ingrediente.ingredienteUnidad || 'u';
     }
     return 'u';
+  }
+
+  getStepParaUnidad(unidad: string | null | undefined): number {
+    return getStepPorUnidad(unidad);
+  }
+
+  getMinParaUnidad(unidad: string | null | undefined): number {
+    return getMinPorUnidad(unidad);
   }
 
   // Métodos de selección y manipulación de tortas
