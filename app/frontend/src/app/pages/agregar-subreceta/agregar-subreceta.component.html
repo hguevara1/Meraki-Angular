@@ -59,7 +59,10 @@
                   <mat-form-field appearance="outline" class="compact-field">
                     <mat-label>Cantidad</mat-label>
                     <input matInput type="number" [(ngModel)]="nuevoIngrediente.cantidad"
-                           name="cantidadNuevo" min="0" step="0.1" placeholder="0.0">
+                           name="cantidadNuevo"
+                           [min]="getMinParaUnidad(getUnidadIngrediente(nuevoIngrediente.ingrediente))"
+                           [step]="getStepParaUnidad(getUnidadIngrediente(nuevoIngrediente.ingrediente))"
+                           placeholder="0">
                     <span matSuffix>{{ getUnidadIngrediente(nuevoIngrediente.ingrediente) }}</span>
                   </mat-form-field>
 
@@ -121,7 +124,9 @@
                           <div class="edit-container">
                             <input type="number" [(ngModel)]="item.tempCantidad"
                                    [ngModelOptions]="{standalone: true}"
-                                   min="0.01" step="0.01" class="cantidad-input">
+                                   [min]="getMinParaUnidad(getUnidadIngrediente(item.ingrediente))"
+                                   [step]="getStepParaUnidad(getUnidadIngrediente(item.ingrediente))"
+                                   class="cantidad-input">
                             <span>{{ getUnidadIngrediente(item.ingrediente) }}</span>
                             <button mat-icon-button color="primary" (click)="guardarEdicionIngrediente(i); $event.stopPropagation()"
                                     matTooltip="Guardar cambios" type="button">
