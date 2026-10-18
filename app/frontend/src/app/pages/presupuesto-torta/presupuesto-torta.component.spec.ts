@@ -390,11 +390,11 @@ describe('PresupuestoTortaComponent', () => {
       expect(component.getStepParaUnidad('docena')).toBe(1);
     });
 
-    it('debería retornar step 0.01 para unidades fraccionables (kg, lt, gr, ml)', () => {
-      expect(component.getStepParaUnidad('kg')).toBe(0.01);
-      expect(component.getStepParaUnidad('lt')).toBe(0.01);
-      expect(component.getStepParaUnidad('gr')).toBe(0.01);
-      expect(component.getStepParaUnidad('ml')).toBe(0.01);
+    it('debería retornar step 1 para unidades prácticas (gr, ml) y step 0.1 para granel (kg, lt)', () => {
+      expect(component.getStepParaUnidad('gr')).toBe(1);
+      expect(component.getStepParaUnidad('ml')).toBe(1);
+      expect(component.getStepParaUnidad('kg')).toBe(0.1);
+      expect(component.getStepParaUnidad('lt')).toBe(0.1);
     });
 
     it('debería retornar min 0 para permitir decremento hasta cero', () => {

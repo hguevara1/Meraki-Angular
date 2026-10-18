@@ -20,14 +20,11 @@ describe('unidad-medida.util', () => {
       expect(esUnidadContable('U')).toBeTrue();
     });
 
-    it('debería retornar false para unidades fraccionables', () => {
+    it('debería retornar false para unidades de peso y volumen', () => {
       expect(esUnidadContable('kg')).toBeFalse();
       expect(esUnidadContable('lt')).toBeFalse();
       expect(esUnidadContable('gr')).toBeFalse();
       expect(esUnidadContable('ml')).toBeFalse();
-      expect(esUnidadContable('kilos')).toBeFalse();
-      expect(esUnidadContable('litros')).toBeFalse();
-      expect(esUnidadContable('gramos')).toBeFalse();
     });
 
     it('debería retornar false para valores nulos, indefinidos o vacíos', () => {
@@ -39,7 +36,7 @@ describe('unidad-medida.util', () => {
   });
 
   describe('getStepPorUnidad', () => {
-    it('debería retornar 1 para ingredientes contables', () => {
+    it('debería retornar 1 para ingredientes contables y unidades culinarias prácticas (unidad, ml, gr)', () => {
       expect(getStepPorUnidad('unidad')).toBe(1);
       expect(getStepPorUnidad('unidades')).toBe(1);
       expect(getStepPorUnidad('u')).toBe(1);
@@ -47,39 +44,48 @@ describe('unidad-medida.util', () => {
       expect(getStepPorUnidad('huevos')).toBe(1);
       expect(getStepPorUnidad('docena')).toBe(1);
       expect(getStepPorUnidad('pieza')).toBe(1);
+      expect(getStepPorUnidad('ml')).toBe(1);
+      expect(getStepPorUnidad('gr')).toBe(1);
+      expect(getStepPorUnidad('g')).toBe(1);
     });
 
-    it('debería retornar 0.01 para unidades fraccionables preservando su precisión decimal', () => {
-      expect(getStepPorUnidad('kg')).toBe(0.01);
-      expect(getStepPorUnidad('lt')).toBe(0.01);
-      expect(getStepPorUnidad('gr')).toBe(0.01);
-      expect(getStepPorUnidad('ml')).toBe(0.01);
+    it('debería retornar 0.1 para unidades a granel (kg, lt)', () => {
+      expect(getStepPorUnidad('kg')).toBe(0.1);
+      expect(getStepPorUnidad('lt')).toBe(0.1);
+      expect(getStepPorUnidad('kilos')).toBe(0.1);
+      expect(getStepPorUnidad('litros')).toBe(0.1);
     });
 
-    it('debería simular incremento y decremento de unidad entera correctamente', () => {
+    it('debería simular incremento de 300 ml a 301 ml (ejemplo de negocio en repostería)', () => {
+      const step = getStepPorUnidad('ml');
+      const cantidadInicial = 300;
+      const incrementado = cantidadInicial + step;
+      expect(incrementado).toBe(301);
+    });
+
+    it('debería simular incremento de 8 unidades a 9 unidades y decremento de 1 a 0', () => {
       const step = getStepPorUnidad('unidad');
-      // Incremento de 8 unidades debe pasar a 9
       const cantidadInicial = 8;
       const incrementado = cantidadInicial + step;
       expect(incrementado).toBe(9);
 
-      // Decremento de 1 unidad debe pasar a 0
       const uno = 1;
       const decrementado = uno - step;
       expect(decrementado).toBe(0);
     });
 
-    it('debería simular incremento y decremento fraccionable correctamente', () => {
-      const step = getStepPorUnidad('kg');
-      const cantidadInicial = 0.50;
-      const incrementado = +(cantidadInicial + step).toFixed(2);
-      expect(incrementado).toBe(0.51);
+    it('debería simular incremento de 250 gr a 251 gr', () => {
+      const step = getStepPorUnidad('gr');
+      const cantidadInicial = 250;
+      const incrementado = cantidadInicial + step;
+      expect(incrementado).toBe(251);
     });
   });
 
   describe('getMinPorUnidad', () => {
     it('debería retornar 0 permitiendo decrementar a cero cuando las reglas lo contemplan', () => {
       expect(getMinPorUnidad('unidad')).toBe(0);
+      expect(getMinPorUnidad('ml')).toBe(0);
       expect(getMinPorUnidad('kg')).toBe(0);
     });
   });

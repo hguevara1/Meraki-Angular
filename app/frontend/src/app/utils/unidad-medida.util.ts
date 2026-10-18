@@ -29,13 +29,27 @@ export function esUnidadContable(unidad: string | null | undefined): boolean {
 }
 
 /**
- * Retorna el incremento (step) permitido según la unidad de medida:
- * - Para ingredientes contables (como huevos, unidades o piezas): 1 (unidad completa)
- * - Para unidades fraccionables (como kg, lt, gr, ml): 0.01 (conservando precisión decimal existente)
+ * Retorna el incremento (step) adecuado según la unidad de medida en recetas de cocina/repostería:
+ * - Para unidades base prácticas (ml, gr, unidad, docena, piezas, huevos, etc.): step 1
+ *   (incremento de 1 en 1, por ejemplo: 300 ml -> 301 ml, 250 gr -> 251 gr, 8 u -> 9 u).
+ * - Para unidades a granel (kg, lt): step 0.1 (décimas, por ejemplo: 0.5 kg -> 0.6 kg).
+ * - En ningún caso se utilizan centésimas (0.01).
  * @param unidad Nombre o símbolo de la unidad de medida
  */
 export function getStepPorUnidad(unidad: string | null | undefined): number {
-  return esUnidadContable(unidad) ? 1 : 0.01;
+  if (!unidad) return 1;
+  const normalizada = unidad.trim().toLowerCase();
+
+  if (
+    normalizada === 'kg' || normalizada === 'kilo' || normalizada === 'kilos' ||
+    normalizada === 'kilogramo' || normalizada === 'kilogramos' ||
+    normalizada === 'lt' || normalizada === 'l' || normalizada === 'litro' || normalizada === 'litros'
+  ) {
+    return 0.1;
+  }
+
+  // Todas las unidades culinarias prácticas (gr, ml, unidad, docena, huevo, etc.) avanzan de 1 en 1
+  return 1;
 }
 
 /**

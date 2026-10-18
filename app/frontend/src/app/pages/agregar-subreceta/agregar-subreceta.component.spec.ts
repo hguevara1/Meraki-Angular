@@ -283,11 +283,11 @@ describe('AgregarSubrecetaComponent', () => {
       expect(component.getStepParaUnidad('huevos')).toBe(1);
     });
 
-    it('should return step 0.01 for fractional units like kg, lt, gr, ml preserving decimal precision', () => {
-      expect(component.getStepParaUnidad('kg')).toBe(0.01);
-      expect(component.getStepParaUnidad('lt')).toBe(0.01);
-      expect(component.getStepParaUnidad('gr')).toBe(0.01);
-      expect(component.getStepParaUnidad('ml')).toBe(0.01);
+    it('should return step 1 for practical units like gr and ml, and 0.1 for kg and lt', () => {
+      expect(component.getStepParaUnidad('gr')).toBe(1);
+      expect(component.getStepParaUnidad('ml')).toBe(1);
+      expect(component.getStepParaUnidad('kg')).toBe(0.1);
+      expect(component.getStepParaUnidad('lt')).toBe(0.1);
     });
 
     it('should allow min 0 so quantities can decrease to 0', () => {
